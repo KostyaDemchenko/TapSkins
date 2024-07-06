@@ -1,0 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+@import "./shortSyles.scss";
+
+:root {
+  // FONTS
+  --font-main: "Montserrat", sans-serif;
+
+  // COLOR-BASE
+  --color-base-white: #fbfbfb;
+  --color-base-light-gray: #e2e2e2;
+  --color-base-dark-high-purple: #080918;
+  --color-base-dark-mid-purple: #0a0b1e;
+  --color-base-dark-mid-secondary-purple: #101124;
+  --color-base-dark-low-purple: #212342;
+
+  // SYSTEM
+  --color-system-green: #16c392;
+  --color-system-red: #ea4d4d;
+  --color-system-yellow: #ffe607;
+
+  // BUTTONS
+  --color-buttons-content-black: #16c392;
+  --color-buttons-content-white: #fbfbfb;
+  --color-buttons-content-purple: #6549f4;
+  --color-buttons-secondary-fill: #212342;
+
+  // INPUTS
+  --color-inputs-fill: #101124;
+  --color-inputs-content: #e2e2e2;
+  --color-inputs-validation-success: #16c392;
+  --color-inputs-validation-failure: #ea4d4d;
+
+  // CHECKBOX
+  --color-checkbox-content: #fbfbfb;
+  --color-checkbox-checked: #212342;
+  --color-checkbox-stroke: #6549f4;
+
+  // GARDIENTS
+  --purple-grad: linear-gradient(180deg, #8069f6 0%, #4b3d90 100%);
+  --main-grad: linear-gradient(
+    116deg,
+    #8c76ff 17.13%,
+    #b187ab 49.87%,
+    #efad4c 83.94%
+  );
+  --yelow-grad: linear-gradient(
+    180deg,
+    #ff9d0e 0%,
+    #ffc167 54.5%,
+    #ff9d0e 100%
+  );
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+  width: 100%;
+  min-height: 100vh;
+}
