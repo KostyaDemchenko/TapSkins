@@ -20,8 +20,8 @@
   --color-system-yellow: #ffe607;
 
   // BUTTONS
-  --color-buttons-content-black: #16c392;
-  --color-buttons-content-white: #fbfbfb;
+  --color-buttons-text-black: #080918;
+  --color-buttons-text-white: #fbfbfb;
   --color-buttons-content-purple: #6549f4;
   --color-buttons-secondary-fill: #212342;
 
@@ -63,6 +63,10 @@ body {
   width: 100%;
   min-height: 100vh;
   background-color: var(--color-base-dark-high-purple);
+}
+
+.icon {
+  user-select: none;
 }
 
 .material-symbols-outlined,
