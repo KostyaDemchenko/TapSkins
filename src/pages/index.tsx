@@ -3,7 +3,7 @@ import Script from "next/script";
 
 import Button from "@/src/components/Button";
 import Filters from "@/src/components/Filters";
-import Modal from "@/src/components/Modal";
+import Nav from "@/src/components/Nav";
 
 import "@/src/app/globals.scss";
 
@@ -47,6 +47,7 @@ export default function Home() {
 
         <Filters />
       </main>
+      <Nav />
     </>
   );
 }

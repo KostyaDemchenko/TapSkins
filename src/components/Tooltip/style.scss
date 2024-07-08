@@ -1,0 +1,13 @@
+@import "@/app/shortSyles.scss";
+
+#disabled {
+  @include p-montserrat-10-125-medium;
+
+  color: var(--color-text-primary);
+  background: var(--color-ui-bg);
+
+  width: fit-content;
+
+  padding: 5px 6px;
+  border-radius: 3px;
+}
