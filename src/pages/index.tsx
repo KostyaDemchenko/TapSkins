@@ -3,6 +3,7 @@ import "@/app/globals.scss";
 import Script from "next/script";
 
 import Button from "@/components/button";
+import Components from "@/components/components_test";
 
 
 export default function Home() {
