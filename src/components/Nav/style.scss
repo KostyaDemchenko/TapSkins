@@ -1,0 +1,25 @@
+@import "@/app/shortSyles.scss";
+
+nav {
+  @include flex(space-between, center);
+  @include f-direction(row);
+
+  position: fixed;
+  bottom: 0;
+
+  width: 100%;
+  padding: 0 18px;
+
+  margin-bottom: 5px;
+
+  .link {
+    @include flex(center, center);
+    width: 52px;
+    height: 52px;
+  }
+
+  .disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

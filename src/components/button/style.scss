@@ -41,6 +41,12 @@ button {
   .icon {
     display: block;
     color: var(--color-buttons-text-black);
+    font-size: 18px;
+  }
+
+  .icon-img {
+    width: 20px;
+    height: 20px;
   }
 
   &:disabled {
@@ -66,6 +72,12 @@ button {
   .icon {
     display: block;
     color: var(--color-buttons-text-black);
+    font-size: 18px;
+  }
+
+  .icon-img {
+    width: 20px;
+    height: 20px;
   }
 
   &:disabled {
@@ -93,6 +105,12 @@ button {
   .icon {
     display: block;
     color: var(--color-buttons-text-white);
+    font-size: 18px;
+  }
+
+  .icon-img {
+    width: 20px;
+    height: 20px;
   }
 
   &:disabled {
@@ -118,6 +136,12 @@ button {
   .icon {
     display: block;
     color: var(--color-buttons-text-white);
+    font-size: 18px;
+  }
+
+  .icon-img {
+    width: 20px;
+    height: 20px;
   }
 
   &:disabled {
@@ -145,6 +169,12 @@ button {
   .icon {
     display: block;
     color: var(--color-buttons-text-white);
+    font-size: 18px;
+  }
+
+  .icon-img {
+    width: 20px;
+    height: 20px;
   }
 
   &:disabled {
@@ -170,6 +200,12 @@ button {
   .icon {
     display: block;
     color: var(--color-buttons-text-white);
+    font-size: 18px;
+  }
+
+  .icon-img {
+    width: 20px;
+    height: 20px;
   }
 
   &:disabled {
@@ -197,6 +233,12 @@ button {
   .icon {
     display: block;
     color: var(--color-buttons-text-purple);
+    font-size: 18px;
+  }
+
+  .icon-img {
+    width: 20px;
+    height: 20px;
   }
 
   &:disabled {
@@ -222,6 +264,76 @@ button {
   .icon {
     display: block;
     color: var(--color-buttons-text-purple);
+    font-size: 18px;
+  }
+
+  .icon-img {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+// TYPE 5 (ICON BUTTON)
+
+.btn-icon-fill-28 {
+  @include flex(center, center);
+  @include f-direction(row);
+  @include p-montserrat-14-125-medium;
+
+  width: fit-content;
+  height: 35px;
+  padding: 2px;
+  border-radius: 5px;
+
+  gap: 7px;
+
+  color: var(--color-buttons-text-white);
+  background: var(--color-base-dark-low-purple);
+
+  .icon {
+    display: block;
+    color: var(--color-buttons-text-white);
+    font-size: 18px;
+  }
+
+  .icon-img {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+.btn-icon-transparent-28 {
+  @include flex(center, center);
+  @include f-direction(row);
+  @include p-montserrat-14-125-medium;
+
+  width: fit-content;
+  height: 35px;
+  padding: 2px;
+  border-radius: 5px;
+
+  gap: 7px;
+
+  color: var(--color-buttons-text-white);
+  background: transparent;
+
+  .icon {
+    display: block;
+    color: var(--color-buttons-text-white);
+    font-size: 18px;
+  }
+
+  .icon-img {
+    width: 20px;
+    height: 20px;
   }
 
   &:disabled {

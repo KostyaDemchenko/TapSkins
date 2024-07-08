@@ -1,0 +1,87 @@
+@import "@/app/shortSyles.scss";
+
+.price-ranger {
+  @include flex(center, center);
+  @include f-direction(column);
+
+  width: 100%;
+  gap: 16px;
+
+  .top-box {
+    @include flex(space-between, center);
+    @include f-direction(row);
+
+    width: 100%;
+
+    .range-title {
+      @include p-montserrat-14-125-regular;
+      color: var(--color-text-primary);
+    }
+
+    .from-to {
+      @include flex(flex-start, center);
+      @include f-direction(row);
+      @include p-montserrat-14-125-regular;
+      color: var(--color-text-primary);
+      gap: 10px;
+
+      .from,
+      .to {
+        @include flex(flex-start, center);
+        gap: 5px;
+      }
+    }
+  }
+
+  .range-box {
+    @include flex(center, center);
+    width: 100%;
+
+    .rs-slider {
+      width: calc(100% - 25px);
+
+      .rs-slider-bar {
+        background-color: var(--color-ui-bg);
+        border-radius: 3px;
+        cursor: pointer;
+        height: 4px;
+        transition: background-color 0.3s ease-in-out;
+
+        .rs-slider-progress-bar {
+          background-color: var(--color-buttons-content-purple);
+          border-radius: 3px 0 0 3px;
+          height: 4px;
+        }
+      }
+
+      .rs-slider-handle {
+        outline: none;
+        position: absolute;
+        top: -150%;
+        transform: translateY(-50%);
+
+        &.active::before,
+        &:active::before {
+          transform: scale(1.1);
+        }
+
+        &:hover::before,
+        &:focus::before {
+          box-shadow: 0 0 0 0px rgb(from #a6a6a6 r g b/25%);
+        }
+
+        &::before {
+          background-color: var(--color-buttons-content-purple);
+          border: 1px solid var(--color-base-white);
+          height: 16px;
+          width: 16px;
+          margin-left: -8px;
+        }
+
+        .rs-tooltip {
+          display: none;
+        }
+      }
+    }
+  }
+}
