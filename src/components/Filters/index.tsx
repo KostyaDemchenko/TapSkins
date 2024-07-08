@@ -1,18 +1,15 @@
 import React, { useState } from "react";
+import Rodal from "rodal";
 
 import Button from "@/src/components/Button";
-
-import Rodal from "rodal";
+import PriceRanger from "@/src/components/PriceRanger";
 
 import "rodal/lib/rodal.css";
 import "./style.scss";
 
-interface ModalProps {
-  modalTitle: string;
-  modalBtnText: string;
-}
+interface FiltersProps {}
 
-const Modal: React.FC<ModalProps> = ({ modalTitle, modalBtnText }) => {
+const Filters: React.FC<FiltersProps> = () => {
   // Rodal
   const [visible, setVisible] = useState(false);
 
@@ -28,8 +25,8 @@ const Modal: React.FC<ModalProps> = ({ modalTitle, modalBtnText }) => {
     <>
       <Button
         label=''
-        icon='swap_vert'
-        className='btn-icon-28'
+        icon='tune'
+        className='btn-icon-transparent-28'
         onClick={show}
       />
 
@@ -41,11 +38,13 @@ const Modal: React.FC<ModalProps> = ({ modalTitle, modalBtnText }) => {
         customStyles={{ width: "100dvw", height: "70dvh" }}
       >
         <div className='container'>
-          <h2 className='modal-title'>Convert</h2>
-          <div className='content'></div>
+          <h2 className='modal-title'>Filters</h2>
+          <div className='content'>
+            <PriceRanger maxValue={100} minValue={0} rangeTitle='Price Range' />
+          </div>
 
           <Button
-            label='Convert'
+            label='Apply'
             className='btn-primary-50 icon'
             onClick={() => console.log("test")} // there should be logic for currency transfer
           />
@@ -55,4 +54,4 @@ const Modal: React.FC<ModalProps> = ({ modalTitle, modalBtnText }) => {
   );
 };
 
-export default Modal;
+export default Filters;

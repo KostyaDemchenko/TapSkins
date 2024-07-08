@@ -1,10 +1,11 @@
 import React from "react";
-import "@/app/globals.scss";
 import Script from "next/script";
 
-import Button from "@/components/Button";
-import Modal from "@/components/Modal";
-import Components from "@/components/Components_test";
+import Button from "@/src/components/Button";
+import Filters from "@/src/components/Filters";
+import Modal from "@/src/components/Modal";
+
+import "@/src/app/globals.scss";
 
 export default function Home() {
   const [tg, setTg] = React.useState<WebApp | null>();
@@ -44,9 +45,7 @@ export default function Home() {
           onClick={() => console.log("test")}
         />
 
-        {/* <Components /> */}
-
-        <Modal />
+        <Filters />
       </main>
     </>
   );

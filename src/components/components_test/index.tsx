@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import Button from "@/components/Button";
+import Button from "@/src/components/Button";
 
 import { RangeSlider } from "rsuite";
 import Rodal from "rodal";
