@@ -2,9 +2,9 @@ import React from "react";
 import "@/app/globals.scss";
 import Script from "next/script";
 
-import Button from "@/components/button";
-import Components from "@/components/components_test";
-
+import Button from "@/components/Button";
+import Modal from "@/components/Modal";
+import Components from "@/components/Components_test";
 
 export default function Home() {
   const [tg, setTg] = React.useState<WebApp | null>();
@@ -18,9 +18,12 @@ export default function Home() {
 
   return (
     <>
-      <Script src="https://telegram.org/js/telegram-web-app.js" onLoad={() => {
-        setTg(global.window.Telegram.WebApp);
-      }} />
+      <Script
+        src='https://telegram.org/js/telegram-web-app.js'
+        onLoad={() => {
+          setTg(global.window.Telegram.WebApp);
+        }}
+      />
       <main>
         <Button
           label={`Buy it now, ${tg?.initDataUnsafe?.user?.first_name}`}
@@ -40,7 +43,10 @@ export default function Home() {
           icon='shopping_cart'
           onClick={() => console.log("test")}
         />
-        
+
+        {/* <Components /> */}
+
+        <Modal />
       </main>
     </>
   );
