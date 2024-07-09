@@ -6,6 +6,7 @@ import Filters from "@/src/components/Filters";
 import Nav from "@/src/components/Nav";
 
 import "@/src/app/globals.scss";
+const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
 
 export default function Home() {
   const [tg, setTg] = React.useState<WebApp | null>();
@@ -15,6 +16,25 @@ export default function Home() {
 
     tg.expand();
     tg.setHeaderColor("#080918");
+
+    const initData = tg.initData;
+    const hash = tg.initDataUnsafe.hash;
+
+    fetch(`${backendAddress}/auth`, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ hash, initData })
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.message)
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+
   }, [tg]);
 
   return (
@@ -44,7 +64,6 @@ export default function Home() {
           icon='shopping_cart'
           onClick={() => console.log("test")}
         />
-
         <Filters />
       </main>
       <Nav />
