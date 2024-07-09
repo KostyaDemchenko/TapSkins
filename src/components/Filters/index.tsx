@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Rodal from "rodal";
 
+import Modal from "@/src/components/Modal";
 import Button from "@/src/components/Button";
 import PriceRanger from "@/src/components/PriceRanger";
 
@@ -10,46 +11,24 @@ import "./style.scss";
 interface FiltersProps {}
 
 const Filters: React.FC<FiltersProps> = () => {
-  // Rodal
-  const [visible, setVisible] = useState(false);
-
-  const show = () => {
-    setVisible(true);
-  };
-
-  const hide = () => {
-    setVisible(false);
-  };
-
   return (
     <>
-      <Button
-        label=''
-        icon='tune'
-        className='btn-icon-transparent-28'
-        onClick={show}
-      />
-
-      <Rodal
-        visible={visible}
-        onClose={hide}
-        animation='slideUp'
-        showCloseButton={false}
-        customStyles={{ width: "100dvw", height: "70dvh" }}
+      <Modal
+        modalTitle='Filters'
+        btnTriggerIcon='tune'
+        btnTriggerLabel=''
+        btnTriggerClassName='btn-icon-transparent-28'
       >
-        <div className='container'>
-          <h2 className='modal-title'>Filters</h2>
-          <div className='content'>
-            <PriceRanger maxValue={100} minValue={0} rangeTitle='Price Range' />
-          </div>
-
-          <Button
-            label='Apply'
-            className='btn-primary-50 icon'
-            onClick={() => console.log("test")} // there should be logic for currency transfer
-          />
+        <div className='content'>
+          <PriceRanger maxValue={100} minValue={0} rangeTitle='Price Range' />
         </div>
-      </Rodal>
+
+        <Button
+          label='Apply'
+          className='btn-primary-50 icon'
+          onClick={() => console.log("test")} // there should be logic for currency transfer
+        />
+      </Modal>
     </>
   );
 };

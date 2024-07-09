@@ -1,18 +1,26 @@
 import React, { useState } from "react";
+import Rodal from "rodal";
 
 import Button from "@/src/components/Button";
-
-import Rodal from "rodal";
 
 import "rodal/lib/rodal.css";
 import "./style.scss";
 
 interface ModalProps {
   modalTitle: string;
-  modalBtnText: string;
+  btnTriggerIcon?: string;
+  btnTriggerLabel: string;
+  btnTriggerClassName: string;
+  children: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ modalTitle, modalBtnText }) => {
+const Modal: React.FC<ModalProps> = ({
+  modalTitle,
+  btnTriggerIcon,
+  btnTriggerLabel,
+  btnTriggerClassName,
+  children,
+}) => {
   // Rodal
   const [visible, setVisible] = useState(false);
 
@@ -27,9 +35,9 @@ const Modal: React.FC<ModalProps> = ({ modalTitle, modalBtnText }) => {
   return (
     <>
       <Button
-        label=''
-        icon='swap_vert'
-        className='btn-icon-28'
+        label={btnTriggerLabel}
+        icon={btnTriggerIcon}
+        className={btnTriggerClassName}
         onClick={show}
       />
 
@@ -40,15 +48,9 @@ const Modal: React.FC<ModalProps> = ({ modalTitle, modalBtnText }) => {
         showCloseButton={false}
         customStyles={{ width: "100dvw", height: "70dvh" }}
       >
-        <div className='container'>
-          <h2 className='modal-title'>Convert</h2>
-          <div className='content'></div>
-
-          <Button
-            label='Convert'
-            className='btn-primary-50 icon'
-            onClick={() => console.log("test")} // there should be logic for currency transfer
-          />
+        <div className='modal-box'>
+          <h2 className='modal-title'>{modalTitle}</h2>
+          <div className='content'>{children}</div>
         </div>
       </Rodal>
     </>

@@ -284,12 +284,8 @@ button {
   @include f-direction(row);
   @include p-montserrat-14-125-medium;
 
-  width: fit-content;
-  height: 35px;
-  padding: 2px;
-  border-radius: 5px;
-
-  gap: 7px;
+  width: 28px;
+  height: 28px;
 
   color: var(--color-buttons-text-white);
   background: var(--color-base-dark-low-purple);
@@ -315,12 +311,8 @@ button {
   @include f-direction(row);
   @include p-montserrat-14-125-medium;
 
-  width: fit-content;
-  height: 35px;
-  padding: 2px;
-  border-radius: 5px;
-
-  gap: 7px;
+  width: 28px;
+  height: 28px;
 
   color: var(--color-buttons-text-white);
   background: transparent;
