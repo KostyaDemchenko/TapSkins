@@ -1,0 +1,27 @@
+@import "@/src/app/shortSyles.scss";
+
+.custom-checkbox {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border: 1px solid var(--color-checkbox-stroke);
+  border-radius: 3px;
+
+  &.checked {
+    @include flex(center, center);
+    @include f-direction(row);
+
+    background-color: var(--color-checkbox-checked);
+    border: 1px solid var(--color-checkbox-checked);
+
+    color: var(--color-checkbox-content);
+    .icon {
+      font-size: 16px;
+    }
+  }
+}
