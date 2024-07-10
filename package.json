@@ -15,9 +15,11 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@notionhq/client": "^2.2.15",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "notion-client": "^6.16.0",
     "react-tooltip": "^5.27.1",
     "rodal": "^2.1.0",
     "rsuite": "^5.65.1",
