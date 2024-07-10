@@ -1,6 +1,14 @@
+export type UserObj = {
+  user_id: number;
+  balance_common: number;
+  ballance_purple: number;
+  last_daily_bonus_time_clicked: number;
+  invited_users: number;
+  [key: string]: number;
+};
+
 export class User {
   public user_id: number;
-  public experience: number = 0;
   public balance_common: number = 0;
   public ballance_purple: number = 0;
   public last_daily_bonus_time_clicked: number = 0;
@@ -12,8 +20,70 @@ export class User {
 
   exchangeBallance() {}
   // loginning user into tap skins
-  async authUser() {
-    
+  // will return true if everything is okay, and false is everything is bad
+  async authUser(tg: WebApp) {
+    // проверяем подлинность данных телеграмма, получаем пользователя и\или создаем его,
+    // устанавливаем webSocket соединение
+    const initData = tg.initData;
+    const hash = tg.initDataUnsafe.hash;
+
+    const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
+
+    const response = await fetch(`${backendAddress}/auth`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ hash, initData }),
+    });
+
+    if (!response.ok) {
+      console.log("Error to auth", response);
+      return false;
+    }
+
+    const data = (await response.json()) as UserObj;
+
+    if (!data) {
+      console.log("Error ocured due to getting user");
+      return false;
+    }
+
+    this.setUser(data);
+
+    return true;
+  }
+
+  async increaseBallance(wss: WebSocket) {
+    if (!wss) {
+      console.log("There is no connection!");
+      return false;
+    }
+
+    try {
+      wss.send(String(this.user_id));
+      return true;
+    }
+    catch(e) {
+      console.log(e);
+      return false;
+    }
+  }
+
+  public setUser(obj: UserObj) {
+    this.user_id = obj.user_id;
+    this.ballance_purple = obj.ballance_purple;
+    this.balance_common = obj.balance_common;
+    this.last_daily_bonus_time_clicked = obj.last_daily_bonus_time_clicked;
+    this.invited_users = obj.invited_users;
+  }
+
+  public copyUser(user: User) {
+    this.user_id = user.user_id;
+    this.ballance_purple = user.ballance_purple;
+    this.balance_common = user.balance_common;
+    this.last_daily_bonus_time_clicked = user.last_daily_bonus_time_clicked;
+    this.invited_users = user.invited_users;
   }
 }
 
