@@ -3,25 +3,30 @@
 .custom-checkbox {
   display: inline-block;
   cursor: pointer;
-}
+  position: relative;
 
-.checkbox {
-  width: 20px;
-  height: 20px;
-  background-color: transparent;
-  border: 1px solid var(--color-checkbox-stroke);
-  border-radius: 3px;
+  input {
+    display: none;
+  }
 
-  &.checked {
-    @include flex(center, center);
-    @include f-direction(row);
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border: 1px solid var(--color-checkbox-stroke);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    background-color: var(--color-checkbox-checked);
-    border: 1px solid var(--color-checkbox-checked);
+    &.checked {
+      background-color: var(--color-checkbox-checked);
+      border: 1px solid var(--color-checkbox-checked);
+      color: var(--color-checkbox-content);
 
-    color: var(--color-checkbox-content);
-    .icon {
-      font-size: 16px;
+      .icon {
+        font-size: 16px;
+      }
     }
   }
 }
