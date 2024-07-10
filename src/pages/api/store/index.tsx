@@ -1,47 +1,24 @@
 import { Client } from "@notionhq/client";
 import type { NextApiRequest, NextApiResponse } from "next";
+import type { Row, StoreDataStructured, MultiSelectOption } from "@/typing";
 
 const notionSecret = process.env.NOTION_SECRET;
 const notionStoreDataBaseld = process.env.NOTION_STORE_DATABASE_ID;
-
 const notion = new Client({ auth: notionSecret });
 
-// Sort multi select options by name
-function sortMultiSelectOptions(options: {
+// Извлечение имен из мультиселектов
+function extractMultiSelectNames(options: {
   multi_select: MultiSelectOption[];
-}): MultiSelectOption[] {
-  return options.multi_select.sort((a, b) => a.name.localeCompare(b.name));
+}): string {
+  return options.multi_select.map((option) => option.name).join(", ");
 }
 
-type Row = {
-  // надо посмотреть как айди обрабатывать
-
-  // for name
-  ai_name: { id: string; title: [{ type: string; text: { content: string } }] };
-
-  // for regular text
-  ai_description: { id: string; rich_text: { text: { content: string } }[] };
-
-  // for link
-  ai_img_url: { id: string; url: string };
-
-  // for number
-  ai_rate: {
-    id: string;
-    name: string;
-    type: string;
-    number: { format: string };
-  };
-
-  // for multi select
-  ai_input: { id: string; multi_select: { id: string; name: string }[] };
-};
-
+// Обработка запроса
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // Set CORS headers
+  // Обработка CORS заголовков
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader(
@@ -49,23 +26,54 @@ export default async function handler(
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  // Preflight request
+  // Обработка предварительных запросов (OPTIONS)
   if (req.method === "OPTIONS") {
     res.status(200).end();
     return;
   }
 
+  // Проверка наличия необходимых переменных окружения
   if (!notionSecret || !notionStoreDataBaseld) {
-    throw new Error("Missing notion secret or DB-ID.");
+    res.status(500).json({ error: "Missing notion secret or DB-ID." });
+    return;
   }
 
-  const query = await notion.databases.query({
-    database_id: notionStoreDataBaseld,
-  });
+  try {
+    const query = await notion.databases.query({
+      database_id: notionStoreDataBaseld,
+    });
 
-  // @ts-ignore
-  const rows = query.results.map((res) => res.properties) as Row[];
-  const storeDataStructured = rows.map((row) => ({}));
+    // @ts-ignore
+    const rows = query.results.map((res) => res.properties) as Row[];
+    const storeDataStructured: StoreDataStructured[] = rows.map((row) => ({
+      // for id
+      item_id: row.item_id.unique_id.number || 0,
 
-  res.status(200).json({ storeDataStructured });
+      // for name
+      skin_name: row.skin_name.title?.[0]?.text?.content ?? "Default Name",
+
+      // for rich_text
+      weapon_name:
+        row.weapon_name.rich_text
+          .map((richText) => richText.text.content)
+          .filter((content) => content.trim() !== "")
+          .join(" ") || "Default Description",
+
+      // for url
+      image_src: row.image_src?.url ?? "URL not available",
+
+      // for number
+      price: row.price.number || 0,
+      float: row.float.number || 0,
+
+      // for multi_select
+      rarity: extractMultiSelectNames(row.rarity),
+      weapon_type: extractMultiSelectNames(row.weapon_type),
+      startrack: extractMultiSelectNames(row.startrack),
+    }));
+
+    res.status(200).json({ storeDataStructured });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch data from Notion" });
+  }
 }
