@@ -3,38 +3,39 @@
 .custom-radio-button {
   display: inline-block;
   cursor: pointer;
-}
+  position: relative;
 
-.radio-button {
-  @include flex(flex-start, center);
-
-  width: 42px;
-  height: 20px;
-
-  background-color: var(--color-checkbox-background);
-  border: 1px solid var(--color-checkbox-stroke);
-  border-radius: 50px;
-
-  display: flex;
-
-  padding: 3px;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-
-  .inner-circle {
-    width: 14px;
-    height: 14px;
-    background-color: var(--color-checkbox-content);
-    border-radius: 50%;
-    transition: transform 0.3s ease;
+  input {
+    display: none;
   }
 
-  &.selected {
-    background-color: var(--color-checkbox-checked);
+  .radio-button {
+    @include flex(flex-start, center);
+    width: 42px;
+    height: 20px;
+    background-color: var(--color-checkbox-background);
     border: 1px solid var(--color-checkbox-stroke);
+    border-radius: 50px;
+    display: flex;
+    padding: 3px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 
     .inner-circle {
+      width: 14px;
+      height: 14px;
       background-color: var(--color-checkbox-content);
-      transform: translateX(20px);
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+    }
+
+    &.selected {
+      background-color: var(--color-checkbox-checked);
+      border: 1px solid var(--color-checkbox-stroke);
+
+      .inner-circle {
+        background-color: var(--color-checkbox-content);
+        transform: translateX(20px);
+      }
     }
   }
 }
