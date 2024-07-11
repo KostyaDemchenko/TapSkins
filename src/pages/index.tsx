@@ -4,14 +4,20 @@ import Script from "next/script";
 import Button from "@/src/components/Button";
 import Filters from "@/src/components/Filters";
 import Nav from "@/src/components/Nav";
-import { User, UserObj } from "../utils/types";
+import { User } from "../utils/types";
 
 import "@/src/app/globals.scss";
-const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
+import { checkSubscription, logs } from "../utils/functions";
 
 export default function Home() {
   const [tg, setTg] = React.useState<WebApp | null>();
+  // нужно добавить еще одно состояние, undefined, которое бы значило что аворизация провалилась
+  // null - еще пользователя нету, то есть был послан запрос с авторизацией
   const [user, setUser] = React.useState<User | null>(null);
+  // boolean - подписан\неподписан
+  // undefined - еще ничего не отправлено
+  // null - ошибка какая-то
+  const [userSubscribed, setUserSubscribed] = React.useState<boolean | null | undefined>(undefined);
 
   React.useEffect(() => {
     if (!tg) return;
@@ -65,6 +71,16 @@ export default function Home() {
     }
   }
 
+  const getSubsMsg = () => {
+    switch(true) {
+      case userSubscribed === undefined: return "Check if you are subscribed";
+      case userSubscribed === null: return "Error :(";
+      case userSubscribed: return "Yes, you are!";
+      case !userSubscribed: return "No, you aren't :(";
+      default: return "Some error occured :(";
+    }
+  }
+
   return (
     <>
       <Script
@@ -95,11 +111,10 @@ export default function Home() {
         <span style={{
           color: "white"
         }}>
-          {user && user.balance_common && <>{user.balance_common}</>}
           {!user && "Error occured :("}
         </span>
 
-        <Button label={`Increase user money`} className="btn-primary-50 icon"
+        <Button label={`Increase user money: ${user ? user.balance_common : "no user"}`} className="btn-primary-50 icon"
           onClick={() => {
             // this will be an imitation of clicking chicken
             // func will return false if there is some error with balance increase
@@ -107,6 +122,13 @@ export default function Home() {
             if (!user) return;
             user.increaseBallance(wss);
           }} />
+
+        <Button label={getSubsMsg()} className="btn-primary-50 icon" onClick={async () => {
+          if (!user) return;
+          // первый аргумент - айди пользователя, второй - телеграм id
+          const subscribed = (await checkSubscription(user.user_id, "@OutTestChanel") as boolean | null);
+          setUserSubscribed(subscribed);
+        }} />
         <Filters />
       </main>
       <Nav />
