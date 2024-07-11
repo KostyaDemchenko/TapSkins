@@ -1,21 +1,72 @@
 @import "@/src/app/shortSyles.scss";
 
-.rodal {
+.rodal, .modal-background {
+  //! added
+  position: fixed;
+  width: 100vw;
+  height: 100dvh;
+  bottom: 0;
+  z-index: 99;
+  visibility: hidden;
+  opacity: 0;
+  transition: .5s all;
+  overflow: hidden;
+
+  .drag-zone {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 5%;
+    width: 100%;
+  }
+
+  &.show {
+    visibility: visible;
+    opacity: 1;
+
+    .modal-fade {
+      opacity: .5;
+      visibility: visible;
+    }
+
+    .modal-dialog {
+      top: 30vh;
+    }
+  }
+
+  .modal-fade {
+    opacity: 0;
+    visibility: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: var(--color-background);
+    width: 100vw;
+    height: 100dvh;
+  }
+
   .rodal-mask {
     position: absolute;
     background: var(--color-background);
     opacity: 0.5;
   }
 
-  .rodal-dialog {
-    top: unset;
-    bottom: 0;
+  .rodal-dialog, .modal-dialog {
+    position: absolute;
+    height: 70vh;
+    width: 100%;
+    top: 100%;
+    transition: .5s;
+    //! added
+
+    // top: unset;
+    // bottom: 0;
     padding: 0;
 
     background: var(--color-surface);
     border-radius: 20px 20px 0px 0px;
 
-    &:before {
+    &::before {
       content: "";
       position: absolute;
 

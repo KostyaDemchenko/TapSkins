@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import Rodal from "rodal";
-
+import React, { useState, useRef } from "react";
 import Button from "@/src/components/Button";
 
 import "rodal/lib/rodal.css";
@@ -21,15 +19,52 @@ const Modal: React.FC<ModalProps> = ({
   btnTriggerClassName,
   children,
 }) => {
-  // Rodal
   const [visible, setVisible] = useState(false);
+  const [top, setTop] = useState("100%");
+  const positionRef = useRef({
+    startY: 0,
+    currentTop: 0,
+    isDragging: false,
+  });
 
   const show = () => {
+    setTop("30vh");
     setVisible(true);
   };
 
   const hide = () => {
+    setTop("100%");
     setVisible(false);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const element = e.currentTarget.closest(".modal-dialog") as HTMLDivElement;
+    const initialTop = element.offsetTop;
+
+    positionRef.current = {
+      startY: e.touches[0].clientY,
+      currentTop: initialTop,
+      isDragging: true,
+    };
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!positionRef.current.isDragging) return;
+
+    const { clientY } = e.touches[0];
+    const deltaY = clientY - positionRef.current.startY;
+
+    setTop(`${positionRef.current.currentTop + deltaY}px`);
+  };
+
+  const handleTouchEnd = () => {
+    positionRef.current.isDragging = false;
+
+    if (parseInt(top) > window.innerHeight * 0.5) {
+      hide();
+    } else {
+      setTop("30vh");
+    }
   };
 
   return (
@@ -41,18 +76,22 @@ const Modal: React.FC<ModalProps> = ({
         onClick={show}
       />
 
-      <Rodal
-        visible={visible}
-        onClose={hide}
-        animation='slideUp'
-        showCloseButton={false}
-        customStyles={{ width: "100dvw", height: "70dvh" }}
-      >
-        <div className='modal-box'>
-          <h2 className='modal-title'>{modalTitle}</h2>
-          <div className='content'>{children}</div>
+      <div className={`modal-background ${visible ? "show" : ""}`}>
+        <div className="modal-fade" onClick={hide}></div>
+
+        <div className="modal-dialog" style={{ top }}>
+          <div
+            className="drag-zone"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          ></div>
+          <div className="modal-box">
+            <h2 className="modal-title">{modalTitle}</h2>
+            <div className="content">{children}</div>
+          </div>
         </div>
-      </Rodal>
+      </div>
     </>
   );
 };
