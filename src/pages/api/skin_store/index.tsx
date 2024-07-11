@@ -1,9 +1,13 @@
 import { Client } from "@notionhq/client";
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { Row, StoreDataStructured, MultiSelectOption } from "@/typing";
+import type {
+  RowSkinStore,
+  SkinStoreDataStructured,
+  MultiSelectOption,
+} from "@/typing";
 
 const notionSecret = process.env.NOTION_SECRET;
-const notionStoreDataBaseld = process.env.NOTION_STORE_DATABASE_ID;
+const notionStoreDataBaseld = process.env.NOTION_SKIN_STORE_DATABASE_ID;
 const notion = new Client({ auth: notionSecret });
 
 // Извлечение имен из мультиселектов
@@ -44,8 +48,8 @@ export default async function handler(
     });
 
     // @ts-ignore
-    const rows = query.results.map((res) => res.properties) as Row[];
-    const storeDataStructured: StoreDataStructured[] = rows.map((row) => ({
+    const rows = query.results.map((res) => res.properties) as RowSkinStore[];
+    const storeDataStructured: SkinStoreDataStructured[] = rows.map((row) => ({
       // for id
       item_id: row.item_id.unique_id.number || 0,
 

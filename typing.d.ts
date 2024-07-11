@@ -4,8 +4,8 @@ export type MultiSelectOption = {
   name: string;
 };
 
-// Store_data_types1
-export interface StoreDataStructured {
+// Skin_Store_data_types
+export interface SkinStoreDataStructured {
   item_id: number;
   skin_name: string;
   rarity: string;
@@ -18,7 +18,17 @@ export interface StoreDataStructured {
   [key: string]: any;
 }
 
-export interface Row {
+// Task_Store_data_types
+export interface TaskStoreDataStructured {
+  task_id: number;
+  task_name: string;
+  type: string;
+  link_to_join: string;
+  social_icon: string;
+  [key: string]: any;
+}
+
+export interface RowSkinStore {
   item_id: {
     id: string;
     type: string;
@@ -37,15 +47,44 @@ export interface Row {
     id: string;
     name: string;
     type: string;
-    number: number; // Изменено на number
+    number: number;
   };
   float: {
     id: string;
     name: string;
     type: string;
-    number: number; // Изменено на number
+    number: number;
   };
   rarity: { id: string; multi_select: MultiSelectOption[] };
   weapon_type: { id: string; multi_select: MultiSelectOption[] };
   startrack: { id: string; multi_select: MultiSelectOption[] };
+}
+
+export interface RowTaskStore {
+  task_id: {
+    id: string;
+    type: string;
+    unique_id: {
+      prefix: string | null;
+      number: number;
+    };
+  };
+  task_name: {
+    id: string;
+    title: [{ type: string; text: { content: string } }];
+  };
+  type: { id: string; multi_select: MultiSelectOption[] };
+  link_to_join?: { id: string; name: string; type: string; url: string };
+  reward: {
+    id: string;
+    name: string;
+    type: string;
+    number: number;
+  };
+  social_icon: {
+    id: string;
+    name: string;
+    type: string;
+    files: { name: string; file: { url: string } }[];
+  };
 }
