@@ -65,7 +65,8 @@ export default async function handler(
         task_name: row.task_name.title?.[0]?.text?.content ?? "Default Name",
 
         // for multi_select
-        type: extractMultiSelectNames(row.type),
+        platform_type: extractMultiSelectNames(row.platform_type),
+        reward_type: extractMultiSelectNames(row.reward_type),
 
         // for number
         reward: row.reward.number || 0,

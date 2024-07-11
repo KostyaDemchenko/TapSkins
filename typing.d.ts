@@ -22,7 +22,8 @@ export interface SkinStoreDataStructured {
 export interface TaskStoreDataStructured {
   task_id: number;
   task_name: string;
-  type: string;
+  platform_type: string;
+  reward_type: string;
   link_to_join: string;
   social_icon: string;
   [key: string]: any;
@@ -73,7 +74,8 @@ export interface RowTaskStore {
     id: string;
     title: [{ type: string; text: { content: string } }];
   };
-  type: { id: string; multi_select: MultiSelectOption[] };
+  platform_type: { id: string; multi_select: MultiSelectOption[] };
+  reward_type: { id: string; multi_select: MultiSelectOption[] };
   link_to_join?: { id: string; name: string; type: string; url: string };
   reward: {
     id: string;
