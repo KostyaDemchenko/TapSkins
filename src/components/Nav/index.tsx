@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import MyTooltip from "@/src/components/Tooltip";
+import { useRouter } from "next/router";
 
 import iconObj from "@/public/icons/utils";
 
@@ -9,39 +10,58 @@ import "./style.scss";
 interface NavProps {}
 
 const Nav: React.FC<NavProps> = () => {
+  const router = useRouter();
+  const [activePage, setActivePage] = useState("");
+
+  useEffect(() => {
+    setActivePage(router.pathname);
+  }, [router.pathname]);
+
   return (
     <>
       <nav>
-        <a href='#' className='link'>
+        <a href='/' className='link'>
           <Image
-            src={iconObj.mainPage}
+            src={activePage === "/" ? iconObj.mainPageActive : iconObj.mainPage}
             width={32}
             height={32}
             alt='Main page'
           />
         </a>
-        <a href='#' className='link'>
+        <a href='/skin_store_page' className='link'>
           <Image
-            src={iconObj.storePage}
+            src={
+              activePage === "/skin_store_page"
+                ? iconObj.storePageActive
+                : iconObj.storePage
+            }
             width={32}
             height={32}
-            alt='Main page'
+            alt='Store page'
           />
         </a>
-        <a href='#' className='link'>
+        <a href='/cart_page' className='link'>
           <Image
-            src={iconObj.cartPage}
+            src={
+              activePage === "/cart_page"
+                ? iconObj.cartPageActive
+                : iconObj.cartPage
+            }
             width={32}
             height={32}
-            alt='Main page'
+            alt='Cart page'
           />
         </a>
-        <a href='#' className='link'>
+        <a href='/rewards_page' className='link'>
           <Image
-            src={iconObj.referalPage}
+            src={
+              activePage === "/rewards_page"
+                ? iconObj.referalPageActive
+                : iconObj.referalPage
+            }
             width={32}
             height={32}
-            alt='Main page'
+            alt='Rewards page'
           />
         </a>
         <a href='#' className='link disabled' data-tooltip-id='disabled'>
@@ -49,7 +69,7 @@ const Nav: React.FC<NavProps> = () => {
             src={iconObj.pokerChip}
             width={32}
             height={32}
-            alt='Main page'
+            alt='Poker chip'
           />
         </a>
       </nav>
