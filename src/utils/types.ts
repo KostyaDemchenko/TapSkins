@@ -90,7 +90,7 @@ export class User {
 
       if (!response.ok) {
         console.log("Error!", response);
-        rej(null);
+        res(null);
         return;
       }
 
