@@ -1,12 +1,12 @@
 import React from "react";
 import Script from "next/script";
 
-import Button from "@/src/components/Button";
-import Filters from "@/src/components/Filters";
 import Nav from "@/src/components/Nav";
+import RewardCenter from "@/src/components/RewardCenter";
 import { User, UserObj } from "@/src/utils/types";
 
 import "@/src/app/globals.scss";
+import "./style.scss";
 const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
 
 export default function rewards_page() {
@@ -72,28 +72,9 @@ export default function rewards_page() {
         }}
       />
       <main>
-        <h1>Rewards Page</h1>
-        <span
-          style={{
-            color: "white",
-          }}
-        >
-          {user && user.balance_common && <>{user.balance_common}</>}
-          {!user && "Error occured :("}
-        </span>
+        <h1 className='page-title'>Reward Center</h1>
 
-        <Button
-          label={`Increase user money`}
-          className='btn-primary-50 icon'
-          onClick={() => {
-            // this will be an imitation of clicking chicken
-            // func will return false if there is some error with balance increase
-            // and true, if everything is okay
-            if (!user) return;
-            user.increaseBallance(wss);
-          }}
-        />
-        <Filters />
+        <RewardCenter />
       </main>
       <Nav />
     </>
