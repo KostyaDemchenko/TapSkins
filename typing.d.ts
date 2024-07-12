@@ -62,6 +62,7 @@ export interface RowSkinStore {
 }
 
 export interface RowTaskStore {
+  type(type: any): string;
   task_id: {
     id: string;
     type: string;
