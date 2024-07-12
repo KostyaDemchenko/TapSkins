@@ -58,12 +58,6 @@ export class User {
       console.log("Error ocured due to getting user");
       return false;
     }
-
-    const difClick = (Date.now() - data.last_click) / 1000;
-    logs({
-      secconds_passed: difClick,
-    });
-    // this.stamina = ;
     this.setUser(data);
 
     return true;
