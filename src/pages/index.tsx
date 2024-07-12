@@ -29,7 +29,6 @@ export default function Home() {
     tg.expand();
     tg.setHeaderColor("#080918");
 
-
     (async () => {
       if (!tg.initDataUnsafe || !tg.initDataUnsafe.user) {
         return;
@@ -39,7 +38,7 @@ export default function Home() {
 
       // пока не будет это выполнено, никаких нахуй дальше действий
       if (response) setUser(userClass);
-    })()
+    })();
   }, [tg]);
 
   const wss = new WebSocket(webSocketAddress);
@@ -74,11 +73,10 @@ export default function Home() {
         updatedUser.setUser(response.newUser);
 
         setUser(updatedUser);
-      }
-      else {
+      } else {
         console.log("Money has not increased");
       }
-    }
+    };
   }
 
   const getSubsMsg = () => {
@@ -107,7 +105,7 @@ export default function Home() {
       }}>
         <Button
           label={`Buy it now, ${tg?.initDataUnsafe?.user?.first_name}`}
-          className='btn-primary-50 icon'
+          className='btn-primary-50 '
           onClick={() => console.log("test")}
         />
 
@@ -119,6 +117,12 @@ export default function Home() {
           const subscribed = (await user.checkSubscription("@OutTestChanel") as boolean | null);
           setUserSubscribed(subscribed);
         }} />
+        <Button
+          label={`I know your id. ${tg?.initDataUnsafe?.user?.id}`}
+          className='btn-primary-50 '
+          icon='shopping_cart'
+          onClick={() => console.log("test")}
+        />
         <Filters />
       </main>
       <Nav />

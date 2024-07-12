@@ -1,0 +1,8 @@
+@import "@/src/app/shortSyles.scss";
+
+main {
+  @include flex(center, center);
+  @include f-direction(column);
+  gap: 30px;
+  margin-top: 30px;
+}
