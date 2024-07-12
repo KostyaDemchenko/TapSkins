@@ -54,6 +54,8 @@ const Modal: React.FC<ModalProps> = ({
     const { clientY } = e.touches[0];
     const deltaY = clientY - positionRef.current.startY;
 
+    if (deltaY < 0) return; // Игнорируем движения вверх
+
     setTop(`${positionRef.current.currentTop + deltaY}px`);
   };
 
@@ -77,18 +79,18 @@ const Modal: React.FC<ModalProps> = ({
       />
 
       <div className={`modal-background ${visible ? "show" : ""}`}>
-        <div className="modal-fade" onClick={hide}></div>
+        <div className='modal-fade' onClick={hide}></div>
 
-        <div className="modal-dialog" style={{ top }}>
+        <div className='modal-dialog' style={{ top }}>
           <div
-            className="drag-zone"
+            className='drag-zone'
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           ></div>
-          <div className="modal-box">
-            <h2 className="modal-title">{modalTitle}</h2>
-            <div className="content">{children}</div>
+          <div className='modal-box'>
+            <h2 className='modal-title'>{modalTitle}</h2>
+            <div className='content'>{children}</div>
           </div>
         </div>
       </div>
