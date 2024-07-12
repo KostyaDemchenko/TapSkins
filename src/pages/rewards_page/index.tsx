@@ -31,38 +31,6 @@ export default function rewards_page() {
     })();
   }, [tg]);
 
-  const wss = new WebSocket("ws://localhost:8081");
-
-  wss.onopen = () => {
-    console.log("Connected!");
-  };
-
-  wss.onerror = (error) => {
-    console.log("Error", error);
-  };
-
-  wss.onclose = (event) => {
-    console.log(
-      `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
-    );
-  };
-
-  if (user) {
-    wss.onmessage = (e) => {
-      const response = JSON.parse(e.data);
-
-      if (response.success) {
-        console.log("Money increased successfully");
-
-        const updatedUser = new User(response.newUser.id);
-        updatedUser.copyUser(response.newUser);
-        setUser(updatedUser);
-      } else {
-        console.log("Money has not increased");
-      }
-    };
-  }
-
   return (
     <>
       <Script
@@ -81,18 +49,6 @@ export default function rewards_page() {
           {user && user.balance_common && <>{user.balance_common}</>}
           {!user && "Error occured :("}
         </span>
-
-        <Button
-          label={`Increase user money`}
-          className='btn-primary-50 icon'
-          onClick={() => {
-            // this will be an imitation of clicking chicken
-            // func will return false if there is some error with balance increase
-            // and true, if everything is okay
-            if (!user) return;
-            user.increaseBallance(wss);
-          }}
-        />
         <Filters />
       </main>
       <Nav />
