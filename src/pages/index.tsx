@@ -7,7 +7,7 @@ import Nav from "@/src/components/Nav";
 import { User } from "../utils/types";
 
 import "@/src/app/globals.scss";
-import { checkSubscription, logs } from "../utils/functions";
+import { logs } from "../utils/functions";
 
 export default function Home() {
   const [tg, setTg] = React.useState<WebApp | null>();
@@ -59,10 +59,8 @@ export default function Home() {
       const response = JSON.parse(e.data);
 
       if (response.success) {
-        console.log("Money increased successfully");
-
         const updatedUser = new User(response.newUser.id);
-        updatedUser.copyUser(response.newUser);
+        updatedUser.setUser(response.newUser);
         setUser(updatedUser);
       }
       else {
@@ -123,10 +121,17 @@ export default function Home() {
             user.increaseBallance(wss);
           }} />
 
+        <span style={{
+          color: "white"
+        }}>
+          {!user && "Error occured :("}
+          {user && `Stamina: ${user.stamina}/1000`}
+        </span>
+
         <Button label={getSubsMsg()} className="btn-primary-50 icon" onClick={async () => {
           if (!user) return;
           // первый аргумент - айди пользователя, второй - телеграм id
-          const subscribed = (await checkSubscription(user.user_id, "@OutTestChanel") as boolean | null);
+          const subscribed = (await user.checkSubscription("@OutTestChanel") as boolean | null);
           setUserSubscribed(subscribed);
         }} />
         <Filters />

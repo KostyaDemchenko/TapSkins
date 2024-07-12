@@ -13,6 +13,10 @@ export class User {
   public ballance_purple: number = 0;
   public last_daily_bonus_time_clicked: number = 0;
   public invited_users: number = 0;
+  public stamina: number = 0;
+  public last_online: number = 0;
+
+  private backendAddress: string = process.env.NEXT_PUBLIC_BACKEND_ADDRESS!;
 
   constructor(user_id: number) {
     this.user_id = user_id;
@@ -63,27 +67,46 @@ export class User {
     try {
       wss.send(String(this.user_id));
       return true;
-    }
-    catch(e) {
+    } catch (e) {
       console.log(e);
       return false;
     }
   }
 
-  public setUser(obj: UserObj) {
+  checkSubscription(channelId: `@${string}`) {
+    const {user_id} = this;
+    return new Promise(async (res, rej) => {
+      
+      const response = await fetch(`${this.backendAddress}/subscription`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "post",
+        body: JSON.stringify({
+          user_id,
+          channelId,
+        }),
+      });
+
+      if (!response.ok) {
+        console.log("Error!", response);
+        rej(null);
+        return;
+      }
+
+      const data = await response.json();
+      res(data.subscribed);
+    });
+  }
+
+  setUser(obj: UserObj) {
     this.user_id = obj.user_id;
     this.ballance_purple = obj.ballance_purple;
     this.balance_common = obj.balance_common;
     this.last_daily_bonus_time_clicked = obj.last_daily_bonus_time_clicked;
     this.invited_users = obj.invited_users;
-  }
-
-  public copyUser(user: User) {
-    this.user_id = user.user_id;
-    this.ballance_purple = user.ballance_purple;
-    this.balance_common = user.balance_common;
-    this.last_daily_bonus_time_clicked = user.last_daily_bonus_time_clicked;
-    this.invited_users = user.invited_users;
+    this.stamina = obj.stamina;
+    this.last_online = obj.last_online;
   }
 }
 
