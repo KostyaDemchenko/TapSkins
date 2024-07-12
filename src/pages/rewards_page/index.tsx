@@ -3,7 +3,6 @@ import Script from "next/script";
 
 import Nav from "@/src/components/Nav";
 import { User } from "@/src/utils/types";
-import Filters from "@/src/components/Filters";
 
 import "@/src/app/globals.scss";
 import "./style.scss";
@@ -39,16 +38,9 @@ export default function rewards_page() {
         }}
       />
       <main>
-        <h1>Rewards Page</h1>
-        <span
-          style={{
-            color: "white",
-          }}
-        >
-          {user && user.balance_common && <>{user.balance_common}</>}
-          {!user && "Error occured :("}
-        </span>
-        <Filters />
+        <h1 style={{
+          color: "white"
+        }}>Rewards Page</h1>
       </main>
       <Nav />
     </>

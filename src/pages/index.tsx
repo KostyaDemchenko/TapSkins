@@ -4,10 +4,9 @@ import Script from "next/script";
 import Button from "@/src/components/Button";
 import Filters from "@/src/components/Filters";
 import Nav from "@/src/components/Nav";
-import { User, UserObj } from "../utils/types";
+import { User } from "../utils/types";
 
 import "@/src/app/globals.scss";
-import { logs } from "../utils/functions";
 import UserBalance from "../components/UserBalance";
 
 const webSocketAddress = process.env.NEXT_PUBLIC_WEBSOCKET_ADDRESS!;
