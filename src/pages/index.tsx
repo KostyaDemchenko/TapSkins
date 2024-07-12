@@ -19,7 +19,6 @@ export default function Home() {
     tg.expand();
     tg.setHeaderColor("#080918");
 
-
     (async () => {
       if (!tg.initDataUnsafe || !tg.initDataUnsafe.user) {
         return;
@@ -29,7 +28,7 @@ export default function Home() {
 
       // пока не будет это выполнено, никаких нахуй дальше действий
       if (response) setUser(userClass);
-    })()
+    })();
   }, [tg]);
 
   const wss = new WebSocket("ws://localhost:8081");
@@ -58,11 +57,10 @@ export default function Home() {
         const updatedUser = new User(response.newUser.id);
         updatedUser.copyUser(response.newUser);
         setUser(updatedUser);
-      }
-      else {
+      } else {
         console.log("Money has not increased");
       }
-    }
+    };
   }
 
   return (
@@ -76,37 +74,42 @@ export default function Home() {
       <main>
         <Button
           label={`Buy it now, ${tg?.initDataUnsafe?.user?.first_name}`}
-          className='btn-primary-50 icon'
+          className='btn-primary-50 '
           onClick={() => console.log("test")}
         />
         <Button
           label={`I know your id. ${tg?.initDataUnsafe?.user?.id}`}
-          className='btn-primary-50 icon'
+          className='btn-primary-50 '
           icon='shopping_cart'
           onClick={() => console.log("test")}
         />
 
         <Button
           label={`Your platform: ${tg?.platform}`}
-          className='btn-primary-50 icon'
+          className='btn-primary-50 '
           icon='shopping_cart'
           onClick={() => console.log("test")}
         />
-        <span style={{
-          color: "white"
-        }}>
+        <span
+          style={{
+            color: "white",
+          }}
+        >
           {user && user.balance_common && <>{user.balance_common}</>}
           {!user && "Error occured :("}
         </span>
 
-        <Button label={`Increase user money`} className="btn-primary-50 icon"
+        <Button
+          label={`Increase user money`}
+          className='btn-primary-50 '
           onClick={() => {
             // this will be an imitation of clicking chicken
             // func will return false if there is some error with balance increase
             // and true, if everything is okay
             if (!user) return;
             user.increaseBallance(wss);
-          }} />
+          }}
+        />
         <Filters />
       </main>
       <Nav />
