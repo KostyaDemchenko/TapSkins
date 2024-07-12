@@ -1,0 +1,77 @@
+@import "@/src/app/shortSyles.scss";
+
+.reward-center {
+  .navigation {
+    @include flex(center, flex-start);
+    @include f-direction(row);
+    gap: 25px;
+    height: 30px;
+
+    .page-link {
+      @include p-montserrat-16-125-medium;
+      color: var(--color-text-secondary);
+      transition: 0.3s;
+
+      &.active {
+        @include p-montserrat-16-125-semibold;
+        color: var(--color-text-primary);
+        position: relative;
+        transition: 0.3s;
+
+        &::before {
+          content: "";
+          position: absolute;
+
+          bottom: -7px;
+          left: 50%;
+          transform: translateX(-50%);
+
+          width: 20px;
+          height: 2px;
+
+          background: var(--color-buttons-content-purple);
+        }
+      }
+    }
+  }
+
+  .content {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+
+    .task-container,
+    .referal-container {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 560px;
+    }
+
+    .task-container {
+      transform: translateX(0);
+    }
+
+    .referal-container {
+      transform: translateX(100%);
+    }
+
+    .tasks {
+      .task-container {
+        transform: translateX(0);
+      }
+      .referal-container {
+        transform: translateX(100%);
+      }
+    }
+    .referrals {
+      .task-container {
+        transform: translateX(-100%);
+      }
+      .referal-container {
+        transform: translateX(0);
+      }
+    }
+  }
+}

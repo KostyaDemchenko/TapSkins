@@ -1,12 +1,12 @@
 import React from "react";
 import Script from "next/script";
 
-import Button from "@/src/components/Button";
-import Filters from "@/src/components/Filters";
 import Nav from "@/src/components/Nav";
+import RewardCenter from "@/src/components/RewardCenter";
 import { User, UserObj } from "@/src/utils/types";
 
 import "@/src/app/globals.scss";
+import "./style.scss";
 const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
 
 export default function rewards_page() {
