@@ -1,0 +1,48 @@
+@import "@/src/app/shortSyles.scss";
+
+.tasks-list {
+  @include flex(flex-start, center);
+  @include f-direction(column);
+  gap: 5px;
+
+  .task-card {
+    @include flex(flex-start, center);
+    @include f-direction(row);
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border-radius: 5px;
+
+    width: 100%;
+    gap: 15px;
+    padding: 10px;
+
+    .task-icon {
+      img {
+        width: 60px;
+        height: 60px;
+      }
+    }
+
+    .task-details {
+      @include flex(center, flex-start);
+      @include f-direction(column);
+      gap: 5px;
+
+      .task-name {
+        @include p-montserrat-14-125-medium;
+        color: var(--color-text-primary);
+      }
+
+      .reward-count-box {
+        @include flex(flex-start, center);
+        @include f-direction(row);
+        gap: 5px;
+
+        .reward-count {
+          @include p-montserrat-16-125-bold;
+          color: var(--color-text-primary);
+        }
+      }
+    }
+  }
+}

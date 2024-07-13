@@ -56,6 +56,11 @@
     }
 
     .referal-container {
+      @include flex(flex-start, center);
+      @include f-direction(column);
+
+      width: 100%;
+      gap: 30px;
       transform: translateX(100%);
     }
 

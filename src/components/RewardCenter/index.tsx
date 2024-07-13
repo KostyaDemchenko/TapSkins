@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+
+import TasksList from "@/src/components/TasksList";
+import ReferralsList from "@/src/components/Referal";
 import Button from "@/src/components/Button";
 
 import "./style.scss";
@@ -35,8 +38,7 @@ const RewardCenter = () => {
               activeSection === "tasks" ? "active" : ""
             }`}
           >
-            <div className='progress-bar'></div>
-            <div className='tasks-list'></div>
+            <TasksList />
           </div>
           <div
             className={`referal-container ${
@@ -50,8 +52,7 @@ const RewardCenter = () => {
               icon=''
               onClick={() => {}}
             />
-            <div className='send-invite'></div>
-            <div className='referal-rewards'></div>
+            <ReferralsList />
           </div>
         </div>
       </div>
