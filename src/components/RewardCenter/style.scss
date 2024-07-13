@@ -39,35 +39,48 @@
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: 100%;
+    height: calc(100dvh - 202px);
 
     .task-container,
     .referal-container {
       position: absolute;
       top: 0;
       width: 100%;
-      height: 560px;
+      height: 100%;
+      transition: transform 0.5s ease-in-out;
+      backface-visibility: hidden;
     }
 
     .task-container {
+      @include flex(flex-start, center);
+      @include f-direction(column);
+
+      width: 100%;
+      gap: 30px;
       transform: translateX(0);
     }
 
     .referal-container {
+      @include flex(flex-start, center);
+      @include f-direction(column);
+
+      width: 100%;
+      gap: 30px;
       transform: translateX(100%);
     }
 
-    .tasks {
+    &.tasks {
       .task-container {
         transform: translateX(0);
       }
       .referal-container {
-        transform: translateX(100%);
+        transform: translateX(110%);
       }
     }
-    .referrals {
+
+    &.referrals {
       .task-container {
-        transform: translateX(-100%);
+        transform: translateX(-110%);
       }
       .referal-container {
         transform: translateX(0);

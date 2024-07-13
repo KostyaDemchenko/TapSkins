@@ -28,7 +28,7 @@ const Modal: React.FC<ModalProps> = ({
   });
 
   const show = () => {
-    setTop("30vh");
+    setTop("30dvh");
     setVisible(true);
   };
 

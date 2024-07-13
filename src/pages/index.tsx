@@ -12,7 +12,6 @@ import UserBalance from "../components/UserBalance";
 const webSocketAddress = process.env.NEXT_PUBLIC_WEBSOCKET_ADDRESS!;
 
 export default function Home() {
-
   const [tg, setTg] = React.useState<WebApp | null>();
   // нужно добавить еще одно состояние, undefined, которое бы значило что аворизация провалилась
   // null - еще пользователя нету, то есть был послан запрос с авторизацией
@@ -20,7 +19,9 @@ export default function Home() {
   // boolean - подписан\неподписан
   // undefined - еще ничего не отправлено
   // null - ошибка какая-то
-  const [userSubscribed, setUserSubscribed] = React.useState<boolean | null | undefined>(undefined);
+  const [userSubscribed, setUserSubscribed] = React.useState<
+    boolean | null | undefined
+  >(undefined);
 
   React.useEffect(() => {
     if (!tg) return;
@@ -57,9 +58,8 @@ export default function Home() {
         `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
       );
     };
-  }
+  };
   wssCallbacks();
-
 
   //? при отправке сообщения с бекенда по вебсокету
   if (user) {
@@ -80,13 +80,18 @@ export default function Home() {
 
   const getSubsMsg = () => {
     switch (true) {
-      case userSubscribed === undefined: return "Check if you are subscribed";
-      case userSubscribed === null: return "Error :(";
-      case userSubscribed: return "Yes, you are!";
-      case !userSubscribed: return "No, you aren't :(";
-      default: return "Some error occured :(";
+      case userSubscribed === undefined:
+        return "Check if you are subscribed";
+      case userSubscribed === null:
+        return "Error :(";
+      case userSubscribed:
+        return "Yes, you are!";
+      case !userSubscribed:
+        return "No, you aren't :(";
+      default:
+        return "Some error occured :(";
     }
-  }
+  };
 
   return (
     <>
@@ -96,12 +101,14 @@ export default function Home() {
           setTg(global.window.Telegram.WebApp);
         }}
       />
-      <main style={{
-        display: "flex",
-        gap: "15px",
-        flexDirection: "column",
-        alignItems: "center"
-      }}>
+      <main
+        style={{
+          display: "flex",
+          gap: "15px",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
         <Button
           label={`Buy it now, ${tg?.initDataUnsafe?.user?.first_name}`}
           className='btn-primary-50 '
@@ -110,12 +117,18 @@ export default function Home() {
 
         {user && <UserBalance wss={wss} user={user} />}
 
-        <Button label={getSubsMsg()} className="btn-primary-50 icon" onClick={async () => {
-          if (!user) return;
-          // первый аргумент id канала
-          const subscribed = (await user.checkSubscription("@OutTestChanel") as boolean | null);
-          setUserSubscribed(subscribed);
-        }} />
+        <Button
+          label={getSubsMsg()}
+          className='btn-primary-50 icon'
+          onClick={async () => {
+            if (!user) return;
+            // первый аргумент id канала
+            const subscribed = (await user.checkSubscription(
+              "@OutTestChanel"
+            )) as boolean | null;
+            setUserSubscribed(subscribed);
+          }}
+        />
         <Button
           label={`I know your id. ${tg?.initDataUnsafe?.user?.id}`}
           className='btn-primary-50 '

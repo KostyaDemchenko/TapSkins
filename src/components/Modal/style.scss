@@ -1,15 +1,16 @@
 @import "@/src/app/shortSyles.scss";
 
-.rodal, .modal-background {
+.rodal,
+.modal-background {
   //! added
   position: fixed;
-  width: 100vw;
+  width: 100dvw;
   height: 100dvh;
   bottom: 0;
   z-index: 99;
   visibility: hidden;
   opacity: 0;
-  transition: .5s all;
+  transition: 0.5s all;
   overflow: hidden;
 
   .drag-zone {
@@ -25,12 +26,12 @@
     opacity: 1;
 
     .modal-fade {
-      opacity: .5;
+      opacity: 0.5;
       visibility: visible;
     }
 
     .modal-dialog {
-      top: 30vh;
+      top: 30dvh;
     }
   }
 
@@ -41,7 +42,7 @@
     top: 0;
     left: 0;
     background: var(--color-background);
-    width: 100vw;
+    width: 100dvw;
     height: 100dvh;
   }
 
@@ -51,12 +52,13 @@
     opacity: 0.5;
   }
 
-  .rodal-dialog, .modal-dialog {
+  .rodal-dialog,
+  .modal-dialog {
     position: absolute;
-    height: 70vh;
+    height: 70dvh;
     width: 100%;
     top: 100%;
-    transition: .5s;
+    transition: 0.5s;
     //! added
 
     // top: unset;
