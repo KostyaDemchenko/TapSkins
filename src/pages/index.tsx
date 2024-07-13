@@ -96,33 +96,10 @@ export default function Home() {
           setTg(global.window.Telegram.WebApp);
         }}
       />
-      <main style={{
-        display: "flex",
-        gap: "15px",
-        flexDirection: "column",
-        alignItems: "center"
-      }}>
-        <Button
-          label={`Buy it now, ${tg?.initDataUnsafe?.user?.first_name}`}
-          className='btn-primary-50 '
-          onClick={() => console.log("test")}
-        />
-
+      <main>
+        {/* <UserBalance wss={wss} user={user!}/> */}
         {user && <UserBalance wss={wss} user={user} />}
-
-        <Button label={getSubsMsg()} className="btn-primary-50 icon" onClick={async () => {
-          if (!user) return;
-          // первый аргумент id канала
-          const subscribed = (await user.checkSubscription("@OutTestChanel") as boolean | null);
-          setUserSubscribed(subscribed);
-        }} />
-        <Button
-          label={`I know your id. ${tg?.initDataUnsafe?.user?.id}`}
-          className='btn-primary-50 '
-          icon='shopping_cart'
-          onClick={() => console.log("test")}
-        />
-        <Filters />
+        {/* <Filters /> */}
       </main>
       <Nav />
     </>

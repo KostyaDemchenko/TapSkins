@@ -1,7 +1,10 @@
 import { User, UserObj } from "@/src/utils/types";
 import React from "react";
-import Button from "../Button";
-import { logs } from "@/src/utils/functions";
+import iconObj from "@/public/icons/utils";
+import Image from "next/image";
+import "./style.scss";
+import chicken from "@/public/chicken.png";
+import ExchangeCurrency from "../ExchangeCurrency";
 
 interface UserBalanceProps {
   user: User;
@@ -26,7 +29,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   }
 
   React.useEffect(() => {
-    
+
     wss.onopen = () => {
       wssConnection.current = true;
       increaseStamina();
@@ -50,30 +53,50 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     }));
   }, [userStamina]);
 
+  const clickerButtonHandler = () => {
+    // this will be an imitation of clicking chicken
+    // func will return false if there is some error with balance increase
+    // and true, if everything is okay
+    // функция возвр-ает true\false, в зависимости от того, успешно ли было повышение баланса
+    if (!user) return;
+
+    if (staminaIntervals.current.timeOutId) clearTimeout(staminaIntervals.current.timeOutId);
+    if (staminaIntervals.current.intervalId) clearInterval(staminaIntervals.current.intervalId);
+    // user.increaseBallance(wss);
+    user.dereaseStamina();
+    user.balance_common += 1;
+    setUserStamina(user.stamina);
+
+    staminaIntervals.current.timeOutId = setTimeout(increaseStamina, 300);
+  }
+
   return <>
-    <span style={{
-      color: "white"
-    }}>
-      {!user && "Error occured :("}
-      {user && `Stamina: ${userStamina}/${user.max_stamina}`}
-    </span>
-    <Button label={`Increase user money: ${user ? user.balance_common : "no user"}`} className="btn-primary-50 icon"
-      onClick={() => {
-        // this will be an imitation of clicking chicken
-        // func will return false if there is some error with balance increase
-        // and true, if everything is okay
-        // функция возвр-ает true\false, в зависимости от того, успешно ли было повышение баланса
-        if (!user) return;
-
-        if (staminaIntervals.current.timeOutId) clearTimeout(staminaIntervals.current.timeOutId);
-        if (staminaIntervals.current.intervalId) clearInterval(staminaIntervals.current.intervalId);
-        // user.increaseBallance(wss);
-        user.dereaseStamina();
-        user.balance_common += 1;
-        setUserStamina(user.stamina);
-
-        staminaIntervals.current.timeOutId = setTimeout(increaseStamina, 300);
-      }} />
+    <div className="user-balance-container">
+      <div className="user-balance">
+        <p>Balance</p>
+        <h1>{user.balance_common.toLocaleString('ru-RU')}<Image
+          src={iconObj.yellowCoin}
+          width={16}
+          height={16}
+          alt='Purple coin'
+        /></h1>
+        <ExchangeCurrency />
+        <h3>
+          {user.ballance_purple.toLocaleString('ru-RU')}
+          <Image
+            src={iconObj.purpleCoin}
+            width={16}
+            height={16}
+            alt='Purple coin'
+          /></h3>
+      </div>
+      <div className="clicker-button" onClick={clickerButtonHandler}>
+        <img src={chicken.src} alt="Picture" />
+      </div>
+      <div className="stamina-info">
+        <p><span>Limit</span> <span>{user.stamina}/{user.max_stamina}</span></p>
+      </div>
+    </div>
   </>
 }
 
