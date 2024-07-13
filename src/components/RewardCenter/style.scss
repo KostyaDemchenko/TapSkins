@@ -52,6 +52,11 @@
     }
 
     .task-container {
+      @include flex(flex-start, center);
+      @include f-direction(column);
+
+      width: 100%;
+      gap: 30px;
       transform: translateX(0);
     }
 
@@ -69,13 +74,13 @@
         transform: translateX(0);
       }
       .referal-container {
-        transform: translateX(100%);
+        transform: translateX(110%);
       }
     }
 
     &.referrals {
       .task-container {
-        transform: translateX(-100%);
+        transform: translateX(-110%);
       }
       .referal-container {
         transform: translateX(0);

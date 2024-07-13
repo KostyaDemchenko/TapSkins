@@ -3,7 +3,9 @@
 .tasks-list {
   @include flex(flex-start, center);
   @include f-direction(column);
+
   gap: 5px;
+  width: 100%;
 
   .task-card {
     @include flex(flex-start, center);

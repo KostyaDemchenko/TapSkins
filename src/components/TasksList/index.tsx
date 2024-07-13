@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
+import ProgressBar from "@/src/components/ProgressBar";
 import iconObj from "@/public/icons/utils";
 
 import "./style.scss";
@@ -17,6 +18,7 @@ interface Task {
 
 const TasksList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const completedTasks = 1; // Фиксированное значение для выполненных задач
 
   useEffect(() => {
     fetch("/api/task_store")
@@ -26,38 +28,45 @@ const TasksList: React.FC = () => {
   }, []);
 
   return (
-    <div className='tasks-list'>
-      {tasks.map((task) => (
-        <div key={task.task_id} className='task-card'>
-          <div className='task-icon'>
-            <img src={task.social_icon} alt={task.platform_type} />
-          </div>
-          <div className='task-details'>
-            <h3 className='task-name'>{task.task_name}</h3>
-            <div className='reward-count-box'>
-              <p className='reward-count'>+ {task.reward}</p>
-              <div className='reward-type'>
-                {task.reward_type === "yellow_coin" ? (
-                  <Image
-                    src={iconObj.yellowCoin}
-                    width={12}
-                    height={12}
-                    alt='Yellow coin'
-                  />
-                ) : (
-                  <Image
-                    src={iconObj.purpleCoin}
-                    width={12}
-                    height={12}
-                    alt='Purple coin'
-                  />
-                )}
+    <>
+      <ProgressBar
+        title='Tasks'
+        total={tasks.length}
+        completed={completedTasks}
+      />
+      <div className='tasks-list'>
+        {tasks.map((task) => (
+          <a href={task.link_to_join} key={task.task_id} className='task-card'>
+            <div className='task-icon'>
+              <img src={task.social_icon} alt={task.platform_type} />
+            </div>
+            <div className='task-details'>
+              <h3 className='task-name'>{task.task_name}</h3>
+              <div className='reward-count-box'>
+                <p className='reward-count'>+ {task.reward}</p>
+                <div className='reward-type'>
+                  {task.reward_type === "yellow_coin" ? (
+                    <Image
+                      src={iconObj.yellowCoin}
+                      width={12}
+                      height={12}
+                      alt='Yellow coin'
+                    />
+                  ) : (
+                    <Image
+                      src={iconObj.purpleCoin}
+                      width={12}
+                      height={12}
+                      alt='Purple coin'
+                    />
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      ))}
-    </div>
+          </a>
+        ))}
+      </div>
+    </>
   );
 };
 
