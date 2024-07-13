@@ -1,5 +1,7 @@
+const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
+
 const logs = (obj: object) => {
-  fetch("http://localhost:8080/log", {
+  fetch(`${backendAddress}/log`, {
     method: "post",
     headers: {
       "Content-Type": "application/json",

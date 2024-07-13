@@ -118,6 +118,20 @@ main {
   padding: 0 20px;
 }
 
+.page-title {
+  @include h3-montserrat-24-125-bold;
+  text-align: center;
+  color: var(--color-text-primary);
+}
+
+.container {
+  @include flex(center, center);
+  @include f-direction(column);
+  gap: 25px;
+  width: 100%;
+  padding: 0 20px;
+}
+
 .material-symbols-outlined,
 .material-symbols-rounded {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
