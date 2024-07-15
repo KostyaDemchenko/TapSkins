@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import Button from "@/src/components/Button";
 import Rare from "@/src/components/Rare";
+import SkinBackground from "@/src/components/SkinBackground";
 import Float from "@/src/components/Float";
 import Modal from "@/src/components/Modal";
 import iconObj from "@/public/icons/utils";
@@ -55,13 +56,11 @@ const SkinStore: React.FC = () => {
           height='70dvh'
           trigger={
             <div className='skin-card'>
-              <div className='img-box'>
-                <img
-                  src={skin.image_src}
-                  alt={skin.skin_name}
-                  className='skin-image'
-                />
-              </div>
+              <SkinBackground
+                imageSrc={skin.image_src}
+                rarity={skin.rarity}
+                size='small'
+              />
               <div className='skin-info'>
                 <div className='top-box'>
                   <div className='skin-name-box '>
@@ -107,13 +106,11 @@ const SkinStore: React.FC = () => {
           }
         >
           <div className='skin-full-details'>
-            <div className='img-box'>
-              <img
-                src={skin.image_src}
-                alt={skin.skin_name}
-                className='skin-image'
-              />
-            </div>
+            <SkinBackground
+              imageSrc={skin.image_src}
+              rarity={skin.rarity}
+              size='large'
+            />
 
             <div className='skin-name-box'>
               <h3 className='skin-name'>
