@@ -19,7 +19,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       <div className='progress-bar-info'>
         <div className='progress-bar-count'>
           <p>{completed}</p>
-          <p>/{total} </p>
+          <p>/{total}</p>
         </div>
         <h3 className='progress-bar-title'> {title}</h3>
       </div>

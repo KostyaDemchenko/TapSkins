@@ -53,7 +53,7 @@ const SkinStore: React.FC = () => {
         <Modal
           key={skin.item_id}
           modalTitle=''
-          height='80dvh'
+          height='77dvh'
           trigger={
             <div className='skin-card'>
               <SkinBackground
