@@ -90,10 +90,13 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
             alt='Purple coin'
           /></h3>
       </div>
-      <div className="clicker-button" onClick={clickerButtonHandler}>
-        <img src={chicken.src} alt="Picture" />
+      <div className="clicker-button-container">
+        <div className="clicker-button" onClick={clickerButtonHandler}>
+          <img src={chicken.src} alt="Picture" />
+        </div>
       </div>
       <div className="stamina-info">
+        {/* <span className="material-symbols-rounded">arrow_right_alt</span> */}
         <p><span>Limit</span> <span>{user.stamina}/{user.max_stamina}</span></p>
       </div>
     </div>

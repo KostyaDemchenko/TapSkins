@@ -39,20 +39,35 @@
     }
   }
 
-  .clicker-button {
-    width: 100%;
+  .clicker-button-container {
+    position: relative;
     max-width: 279px;
     height: 279px;
-    background-color: var(--color-background);
-    border-radius: 100%;
-    @include flex(center, center);
-    margin-bottom: 50px;
-    position: relative;
-    cursor: pointer;
+    width: 100%;
     transition: 0.3s;
 
-    &::before {
+    &:active,
+    &:active::before {
+      scale: 0.95;
+    }
+
+    .clicker-button {
+      width: 100%;
+      max-width: 279px;
+      height: 279px;
+      background-color: var(--color-background);
+      border-radius: 100%;
+      @include flex(center, center);
+      margin-bottom: 50px;
+      position: relative;
+      cursor: pointer;
+      transition: 0.3s;
+      transform-origin: center;
+    }
+
+    &::after {
       content: "";
+      transform-origin: center;
       position: absolute;
       top: -1px;
       left: -1px;
@@ -62,6 +77,7 @@
       background: var(--main-grad);
       box-shadow: 0 0 40px -27px var(--color-system-yellow);
       z-index: -1;
+      transition: 0.3s;
     }
   }
 
