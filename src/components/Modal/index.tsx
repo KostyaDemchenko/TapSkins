@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "rodal/lib/rodal.css";
 import "./style.scss";
 
@@ -24,6 +24,17 @@ const Modal: React.FC<ModalProps> = ({
     currentTop: 0,
     isDragging: false,
   });
+
+  useEffect(() => {
+    if (visible) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [visible]);
 
   const show = () => {
     const initialTop = 100 - parseFloat(height);
