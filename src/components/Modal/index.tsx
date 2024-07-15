@@ -1,26 +1,24 @@
 import React, { useState, useRef } from "react";
-import Button from "@/src/components/Button";
-
 import "rodal/lib/rodal.css";
 import "./style.scss";
 
 interface ModalProps {
   modalTitle: string;
   btnTriggerIcon?: string;
-  btnTriggerLabel: string;
-  btnTriggerClassName: string;
+  trigger: React.ReactNode;
   children: React.ReactNode;
+  height?: string; // new prop for custom height
 }
 
 const Modal: React.FC<ModalProps> = ({
   modalTitle,
   btnTriggerIcon,
-  btnTriggerLabel,
-  btnTriggerClassName,
+  trigger,
   children,
+  height = "70dvh", // default value
 }) => {
   const [visible, setVisible] = useState(false);
-  const [top, setTop] = useState("100%");
+  const [top, setTop] = useState("100dvh");
   const positionRef = useRef({
     startY: 0,
     currentTop: 0,
@@ -28,18 +26,19 @@ const Modal: React.FC<ModalProps> = ({
   });
 
   const show = () => {
-    setTop("30dvh");
+    const initialTop = 100 - parseFloat(height);
+    setTop(`${initialTop}dvh`);
     setVisible(true);
   };
 
   const hide = () => {
-    setTop("100%");
+    setTop("100dvh");
     setVisible(false);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     const element = e.currentTarget.closest(".modal-dialog") as HTMLDivElement;
-    const initialTop = element.offsetTop;
+    const initialTop = element.getBoundingClientRect().top;
 
     positionRef.current = {
       startY: e.touches[0].clientY,
@@ -54,7 +53,7 @@ const Modal: React.FC<ModalProps> = ({
     const { clientY } = e.touches[0];
     const deltaY = clientY - positionRef.current.startY;
 
-    if (deltaY < 0) return; // Игнорируем движения вверх
+    if (deltaY < 0) return; // Ignore upward movements
 
     setTop(`${positionRef.current.currentTop + deltaY}px`);
   };
@@ -65,23 +64,18 @@ const Modal: React.FC<ModalProps> = ({
     if (parseInt(top) > window.innerHeight * 0.5) {
       hide();
     } else {
-      setTop("30vh");
+      setTop(`${100 - parseFloat(height)}dvh`);
     }
   };
 
   return (
     <>
-      <Button
-        label={btnTriggerLabel}
-        icon={btnTriggerIcon}
-        className={btnTriggerClassName}
-        onClick={show}
-      />
+      <div onClick={show}>{trigger}</div>
 
       <div className={`modal-background ${visible ? "show" : ""}`}>
         <div className='modal-fade' onClick={hide}></div>
 
-        <div className='modal-dialog' style={{ top }}>
+        <div className='modal-dialog' style={{ top, height }}>
           <div
             className='drag-zone'
             onTouchStart={handleTouchStart}

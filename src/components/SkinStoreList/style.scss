@@ -1,0 +1,89 @@
+@import "@/src/app/shortSyles.scss";
+
+.skin-store-container {
+  @include flex(center, flex-start);
+  @include f-direction(row);
+
+  flex-wrap: wrap;
+
+  width: 100%;
+  gap: 5px 5px;
+
+  .skin-card {
+    @include flex(flex-start, center);
+    @include f-direction(column);
+
+    width: 44dvw;
+    gap: 10px;
+
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border-radius: 5px;
+
+    .skin-image {
+      width: 158px;
+      height: 122px;
+      object-fit: contain;
+    }
+
+    .skin-info {
+      @include flex(flex-start, center);
+      @include f-direction(column);
+
+      width: 100%;
+      gap: 10px;
+      padding: 0 10px 10px 10px;
+
+      .top-box {
+        @include flex(flex-start, center);
+        @include f-direction(column);
+
+        width: 100%;
+        gap: 5px;
+
+        .skin-name-box {
+          @include flex(flex-start, center);
+          @include f-direction(row);
+
+          width: 100%;
+          height: 30px;
+
+          .skin-name,
+          .startrack {
+            @include p-montserrat-12-125-medium;
+          }
+        }
+
+        .price-float-box {
+          @include flex(space-between, center);
+          @include f-direction(row);
+
+          width: 100%;
+
+          .price {
+            @include flex(flex-start, center);
+            gap: 5px;
+
+            .price-value {
+              @include p-montserrat-16-125-bold;
+              color: var(--color-text-primary);
+            }
+          }
+
+          .float {
+            @include p-montserrat-8-125-regular;
+            color: var(--color-text-secondary);
+          }
+        }
+      }
+
+      .bottom-box {
+        @include flex(flex-start, center);
+        @include f-direction(column);
+
+        gap: 5px;
+        width: 100%;
+      }
+    }
+  }
+}

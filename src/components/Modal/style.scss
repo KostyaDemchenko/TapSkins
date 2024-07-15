@@ -2,7 +2,6 @@
 
 .rodal,
 .modal-background {
-  //! added
   position: fixed;
   width: 100dvw;
   height: 100dvh;
@@ -29,10 +28,6 @@
       opacity: 0.5;
       visibility: visible;
     }
-
-    .modal-dialog {
-      top: 30dvh;
-    }
   }
 
   .modal-fade {
@@ -55,14 +50,9 @@
   .rodal-dialog,
   .modal-dialog {
     position: absolute;
-    height: 70dvh;
     width: 100%;
-    top: 100%;
+    top: 100dvh;
     transition: 0.5s;
-    //! added
-
-    // top: unset;
-    // bottom: 0;
     padding: 0;
 
     background: var(--color-surface);
@@ -71,12 +61,9 @@
     &::before {
       content: "";
       position: absolute;
-
       top: 8px;
       left: 50%;
-
       transform: translateX(-50%);
-
       width: 55px;
       height: 4px;
       background: var(--color-base-white);
