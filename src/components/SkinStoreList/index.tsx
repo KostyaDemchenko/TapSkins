@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
 import Button from "@/src/components/Button";
+import Rare from "@/src/components/Rare";
+import Float from "@/src/components/Float";
 import Modal from "@/src/components/Modal";
 import iconObj from "@/public/icons/utils";
 
@@ -49,7 +51,8 @@ const SkinStore: React.FC = () => {
       {skins.map((skin) => (
         <Modal
           key={skin.item_id}
-          modalTitle={skin.skin_name}
+          modalTitle=''
+          height='70dvh'
           trigger={
             <div className='skin-card'>
               <img
@@ -63,7 +66,7 @@ const SkinStore: React.FC = () => {
                     <h3 className='skin-name'>
                       {truncateName(skin.skin_name, 35)}{" "}
                       {skin.startrack && (
-                        <span className='startrack'>({skin.startrack})</span>
+                        <span className='startrack'>{skin.startrack}</span>
                       )}
                     </h3>
                   </div>
@@ -100,21 +103,53 @@ const SkinStore: React.FC = () => {
               </div>
             </div>
           }
-          height='80dvh'
         >
-          <div className='skin-details'>
+          <div className='skin-full-details'>
             <img
               src={skin.image_src}
               alt={skin.skin_name}
               className='skin-image'
             />
-            <h4 className='skin-name'>{skin.skin_name}</h4>
-            <p>Weapon Name: {skin.weapon_name}</p>
-            <p>Price: ${skin.price}</p>
-            <p>Float: {skin.float}</p>
-            <p>Rarity: {skin.rarity}</p>
-            <p>Weapon Type: {skin.weapon_type}</p>
-            {skin.startrack && <p>Startrack: {skin.startrack}</p>}
+
+            <div className='skin-name-box'>
+              <h3 className='skin-name'>
+                {truncateName(skin.skin_name, 35)}{" "}
+                {skin.startrack && (
+                  <span className='startrack'>{skin.startrack}</span>
+                )}
+              </h3>
+              <div className='available-box'>
+                <p className='available'>Available:</p>
+                <p className='available-user-value'>Samle</p>
+                <Image
+                  src={iconObj.purpleCoin}
+                  width={12}
+                  height={12}
+                  alt='Purple coin'
+                />
+              </div>
+            </div>
+
+            <Float floatValue={skin.float} />
+            <Rare rarity={skin.rarity} />
+            <div className='price-box'>
+              <p className='price-label'>Price</p>
+              <div className='price'>
+                <p className='price-value'>{skin.price}</p>
+                <Image
+                  src={iconObj.purpleCoin}
+                  width={12}
+                  height={12}
+                  alt='Purple coin'
+                />
+              </div>
+            </div>
+            <Button
+              label={`Buy Now`}
+              className='btn-primary-50'
+              icon=''
+              onClick={() => {}}
+            />
           </div>
         </Modal>
       ))}

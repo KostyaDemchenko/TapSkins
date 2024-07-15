@@ -87,3 +87,81 @@
     }
   }
 }
+
+.modal-box {
+  .skin-full-details {
+    @include flex(center, center);
+    @include f-direction(column);
+
+    width: 100%;
+    gap: 20px;
+
+    .skin-image {
+      width: 320px;
+      height: 240px;
+      object-fit: contain;
+    }
+
+    .skin-name-box {
+      @include flex(center, center);
+      @include f-direction(column);
+
+      width: 100%;
+      gap: 10px;
+
+      .skin-name {
+        @include h4-montserrat-20-125-bold;
+
+        width: 100%;
+
+        color: var(--color-text-primary);
+        text-align: center;
+      }
+      .available-box {
+        @include flex(center, center);
+        @include f-direction(row);
+
+        gap: 5px;
+        width: 100%;
+
+        .available,
+        .available-user-value {
+          @include p-montserrat-12-125-regular;
+          color: var(--color-text-primary);
+        }
+      }
+    }
+
+    .price-box {
+      @include flex(center, center);
+      @include f-direction(column);
+
+      gap: 7px;
+      padding: 10px 0;
+      width: 100%;
+
+      .price-label {
+        @include p-montserrat-12-125-regular;
+        color: var(--color-text-secondary);
+        text-align: center;
+      }
+
+      .price {
+        @include flex(center, center);
+        @include f-direction(row);
+
+        width: 100%;
+        gap: 5px;
+
+        .price-value {
+          @include h2-montserrat-32-125-bold;
+          color: var(--color-text-primary);
+        }
+
+        img {
+          margin-top: 12px;
+        }
+      }
+    }
+  }
+}

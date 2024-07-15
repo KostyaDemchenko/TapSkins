@@ -35,10 +35,8 @@ const Float: React.FC<FloatProps> = ({ floatValue }) => {
   return (
     <div className='float-box'>
       <div className='top-box'>
-        <h3 className='float-title'>Float: {truncatedFloatValue}</h3>
-        <p className='float-name' style={{ color: sectionColor }}>
-          {sectionLabel}
-        </p>
+        <h3 className='float-title'>Float: {floatValue}</h3>
+        <p className='float-name'>{sectionLabel}</p>
       </div>
       <div className='bottom-box'>
         <div

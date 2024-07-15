@@ -1,0 +1,47 @@
+@import "@/src/app/shortSyles.scss";
+
+.rare-box {
+  @include flex(flex-start, center);
+  @include f-direction(column);
+
+  width: 100%;
+  gap: 10px;
+
+  .top-box {
+    @include flex(space-between, center);
+    @include f-direction(row);
+
+    width: 100%;
+
+    .rare-text {
+      @include p-montserrat-14-125-regular;
+      color: var(--color-text-primary);
+    }
+
+    .rare-details {
+      @include flex(flex-start, center);
+      @include f-direction(row);
+      gap: 10px;
+
+      .rare-name {
+        @include p-montserrat-14-125-medium;
+        color: var(--color-text-primary);
+      }
+      .color-block {
+        width: 18px;
+        height: 18px;
+        border-radius: 3px;
+      }
+    }
+
+    .color-name {
+      font-size: 14px;
+    }
+  }
+
+  .bottom-box {
+    width: 100%;
+    height: 1px;
+    background-color: var(--color-base-dark-low-purple);
+  }
+}
