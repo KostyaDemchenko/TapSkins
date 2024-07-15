@@ -55,11 +55,13 @@ const SkinStore: React.FC = () => {
           height='70dvh'
           trigger={
             <div className='skin-card'>
-              <img
-                src={skin.image_src}
-                alt={skin.skin_name}
-                className='skin-image'
-              />
+              <div className='img-box'>
+                <img
+                  src={skin.image_src}
+                  alt={skin.skin_name}
+                  className='skin-image'
+                />
+              </div>
               <div className='skin-info'>
                 <div className='top-box'>
                   <div className='skin-name-box '>
@@ -105,11 +107,13 @@ const SkinStore: React.FC = () => {
           }
         >
           <div className='skin-full-details'>
-            <img
-              src={skin.image_src}
-              alt={skin.skin_name}
-              className='skin-image'
-            />
+            <div className='img-box'>
+              <img
+                src={skin.image_src}
+                alt={skin.skin_name}
+                className='skin-image'
+              />
+            </div>
 
             <div className='skin-name-box'>
               <h3 className='skin-name'>
