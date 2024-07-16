@@ -1,0 +1,25 @@
+@import "./shortSyles.scss";
+
+.page-not-found {
+  @include flex(center, center);
+  @include f-direction(column);
+  width: 100%;
+  height: calc(100vh - 57px);
+  gap: 35px;
+
+  .description-container {
+    @include flex(center, center);
+    @include f-direction(column);
+    gap: 15px;
+
+    .title {
+      @include h1-montserrat-42-125-bold;
+      color: var(--color-text-primary);
+    }
+
+    .description {
+      @include p-montserrat-18-125-regular;
+      color: var(--color-text-primary);
+    }
+  }
+}
