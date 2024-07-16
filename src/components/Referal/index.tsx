@@ -1,6 +1,8 @@
+// Default import
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import iconObj from "@/public/icons/utils";
+import { ReferalCard } from "@/src/components/Carts";
+
+// Style import
 import "./style.scss";
 
 interface Reward {
@@ -34,34 +36,7 @@ const ReferalList: React.FC = () => {
   return (
     <div className='referal-list'>
       {rewards.map((reward) => (
-        <div className='referal-card' key={reward.reward_id}>
-          <div className='referal-icon'>
-            <img src={reward.referal_icon} alt='referal icon' />
-          </div>
-          <div className='referal-details'>
-            <h3 className='referal-name'>{reward.reward_name}</h3>
-            <div className='reward-count-box'>
-              <p className='reward-count'>+ {reward.reward}</p>
-              <div className='reward-type'>
-                {reward.reward_type === "yellow_coin" ? (
-                  <Image
-                    src={iconObj.yellowCoin}
-                    width={12}
-                    height={12}
-                    alt='Yellow coin'
-                  />
-                ) : (
-                  <Image
-                    src={iconObj.purpleCoin}
-                    width={12}
-                    height={12}
-                    alt='Purple coin'
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+        <ReferalCard key={reward.reward_id} reward={reward} />
       ))}
     </div>
   );
