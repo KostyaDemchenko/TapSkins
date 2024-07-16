@@ -1,9 +1,11 @@
+// Default import
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 
+// Component import
 import ProgressBar from "@/src/components/ProgressBar";
-import iconObj from "@/public/icons/utils";
+import { TaskCard } from "@/src/components/Carts";
 
+// Style import
 import "./style.scss";
 
 interface Task {
@@ -36,34 +38,7 @@ const TasksList: React.FC = () => {
       />
       <div className='tasks-list'>
         {tasks.map((task) => (
-          <a href={task.link_to_join} key={task.task_id} className='task-card'>
-            <div className='task-icon'>
-              <img src={task.social_icon} alt={task.platform_type} />
-            </div>
-            <div className='task-details'>
-              <h3 className='task-name'>{task.task_name}</h3>
-              <div className='reward-count-box'>
-                <p className='reward-count'>+ {task.reward}</p>
-                <div className='reward-type'>
-                  {task.reward_type === "yellow_coin" ? (
-                    <Image
-                      src={iconObj.yellowCoin}
-                      width={12}
-                      height={12}
-                      alt='Yellow coin'
-                    />
-                  ) : (
-                    <Image
-                      src={iconObj.purpleCoin}
-                      width={12}
-                      height={12}
-                      alt='Purple coin'
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
-          </a>
+          <TaskCard key={task.task_id} task={task} />
         ))}
       </div>
     </>

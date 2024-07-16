@@ -67,6 +67,24 @@
       width: 100%;
       gap: 30px;
       transform: translateX(100%);
+
+      .referal-count {
+        @include flex(flex-start, flex-end);
+        @include f-direction(row);
+        gap: 5px;
+
+        .user-amount {
+          @include h3-montserrat-24-125-bold;
+          background: var(--main-grad);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .label {
+          @include p-montserrat-18-125-bold;
+          color: var(--color-text-primary);
+        }
+      }
     }
 
     &.tasks {
