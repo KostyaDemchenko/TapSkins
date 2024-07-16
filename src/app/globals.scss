@@ -58,7 +58,21 @@
 }
 
 ::-webkit-scrollbar {
-  width: 0px;
+  width: 2px;
+  height: 1px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-buttons-content-purple);
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--color-base-dark-high-purple);
 }
 
 * {
@@ -76,6 +90,11 @@ body {
   background-color: var(--color-base-dark-high-purple);
 }
 
+a {
+  text-decoration: none;
+  color: var(--color-text-primary);
+}
+
 main {
   @include flex(center, center);
   @include f-direction(column);
@@ -84,6 +103,20 @@ main {
 
 .icon {
   user-select: none;
+}
+
+.page-title {
+  @include h3-montserrat-24-125-bold;
+  text-align: center;
+  color: var(--color-text-primary);
+}
+
+.container {
+  @include flex(center, center);
+  @include f-direction(column);
+  gap: 25px;
+  width: 100%;
+  padding: 0 20px;
 }
 
 .page-title {

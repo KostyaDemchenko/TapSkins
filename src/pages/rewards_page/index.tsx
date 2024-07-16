@@ -2,10 +2,12 @@ import React from "react";
 import Script from "next/script";
 
 import Nav from "@/src/components/Nav";
-import { User } from "@/src/utils/types";
+import RewardCenter from "@/src/components/RewardCenter";
+import { User, UserObj } from "@/src/utils/types";
 
 import "@/src/app/globals.scss";
 import "./style.scss";
+const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
 
 export default function rewards_page() {
   const [tg, setTg] = React.useState<WebApp | null>();
@@ -38,9 +40,9 @@ export default function rewards_page() {
         }}
       />
       <main>
-        <h1 style={{
-          color: "white"
-        }}>Rewards Page</h1>
+        <h1 className='page-title'>Reward Center</h1>
+
+        <RewardCenter />
       </main>
       <Nav />
     </>

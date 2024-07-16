@@ -17,9 +17,8 @@ const Filters: React.FC<FiltersProps> = () => {
     <>
       <Modal
         modalTitle='Filters'
-        btnTriggerIcon='tune'
-        btnTriggerLabel=''
-        btnTriggerClassName='btn-icon-transparent-28'
+        trigger={<button>Open Modal</button>}
+        height='80dvh' // значение задавать только в dvh
       >
         <div className='content'>
           <PriceRanger maxValue={100} minValue={0} rangeTitle='Price Range' />

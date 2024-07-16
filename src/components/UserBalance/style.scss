@@ -35,6 +35,7 @@
       background-color: var(--color-base-dark-low-purple);
       border-radius: 5px;
       @include flex(center, center);
+      font-weight: 300;
       cursor: pointer;
     }
   }

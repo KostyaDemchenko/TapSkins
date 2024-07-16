@@ -1,8 +1,6 @@
 import React from "react";
 import Script from "next/script";
 
-import Button from "@/src/components/Button";
-import Filters from "@/src/components/Filters";
 import Nav from "@/src/components/Nav";
 import { User } from "../utils/types";
 
@@ -12,7 +10,6 @@ import UserBalance from "../components/UserBalance";
 const webSocketAddress = process.env.NEXT_PUBLIC_WEBSOCKET_ADDRESS!;
 
 export default function Home() {
-
   const [tg, setTg] = React.useState<WebApp | null>();
   // нужно добавить еще одно состояние, undefined, которое бы значило что аворизация провалилась
   // null - еще пользователя нету, то есть был послан запрос с авторизацией
@@ -20,7 +17,9 @@ export default function Home() {
   // boolean - подписан\неподписан
   // undefined - еще ничего не отправлено
   // null - ошибка какая-то
-  const [userSubscribed, setUserSubscribed] = React.useState<boolean | null | undefined>(undefined);
+  const [userSubscribed, setUserSubscribed] = React.useState<
+    boolean | null | undefined
+  >(undefined);
 
   React.useEffect(() => {
     if (!tg) return;
@@ -57,9 +56,8 @@ export default function Home() {
         `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
       );
     };
-  }
+  };
   wssCallbacks();
-
 
   //? при отправке сообщения с бекенда по вебсокету
   if (user) {
@@ -80,28 +78,36 @@ export default function Home() {
 
   const getSubsMsg = () => {
     switch (true) {
-      case userSubscribed === undefined: return "Check if you are subscribed";
-      case userSubscribed === null: return "Error :(";
-      case userSubscribed: return "Yes, you are!";
-      case !userSubscribed: return "No, you aren't :(";
-      default: return "Some error occured :(";
+      case userSubscribed === undefined:
+        return "Check if you are subscribed";
+      case userSubscribed === null:
+        return "Error :(";
+      case userSubscribed:
+        return "Yes, you are!";
+      case !userSubscribed:
+        return "No, you aren't :(";
+      default:
+        return "Some error occured :(";
     }
-  }
+  };
 
-  return (
-    <>
-      <Script
-        src='https://telegram.org/js/telegram-web-app.js'
-        onLoad={() => {
-          setTg(global.window.Telegram.WebApp);
-        }}
-      />
-      <main>
-        {/* <UserBalance wss={wss} user={user!}/> */}
-        {user && <UserBalance wss={wss} user={user} />}
-        {/* <Filters /> */}
-      </main>
-      <Nav />
-    </>
-  );
+  return (<>
+    <Script
+      src='https://telegram.org/js/telegram-web-app.js'
+      onLoad={() => {
+        setTg(global.window.Telegram.WebApp);
+      }}
+    />
+    <main
+      style={{
+        display: "flex",
+        gap: "15px",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      {user && <UserBalance wss={wss} user={user} />}
+    </main>
+    <Nav />
+  </>)
 }

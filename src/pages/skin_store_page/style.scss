@@ -1,0 +1,24 @@
+@import "@/src/app/shortSyles.scss";
+
+.container {
+  @include flex(center, center);
+  @include f-direction(column);
+
+  gap: 30px;
+  width: 100%;
+  margin-top: 20px;
+
+  .top-box {
+    @include flex(space-between, center);
+    @include f-direction(row);
+    width: 100%;
+  }
+
+  .middle-box {
+    @include flex(flex-start, center);
+    @include f-direction(column);
+
+    gap: 20px;
+    width: 100%;
+  }
+}

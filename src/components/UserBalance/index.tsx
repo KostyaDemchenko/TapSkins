@@ -1,10 +1,11 @@
-import { User, UserObj } from "@/src/utils/types";
+import { User } from "@/src/utils/types";
 import React from "react";
 import iconObj from "@/public/icons/utils";
 import Image from "next/image";
 import "./style.scss";
 import chicken from "@/public/chicken.png";
 import ExchangeCurrency from "../ExchangeCurrency";
+import ProgressBar from "../ProgressBar";
 
 interface UserBalanceProps {
   user: User;
@@ -12,8 +13,7 @@ interface UserBalanceProps {
 }
 
 const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
-  // const refStamina = React.useRef(user.stamina);
-  const staminaDelay = 1000; // период добавления стамины
+  const staminaDelay = user.staminaDelay; // период добавления стамины
   const [userStamina, setUserStamina] = React.useState<number>(user.stamina);
   const staminaIntervals = React.useRef<{ timeOutId: any; intervalId: any }>({
     timeOutId: null,
@@ -54,7 +54,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   }, [userStamina]);
 
   const clickerButtonHandler = () => {
-    // this will be an imitation of clicking chicken
     // func will return false if there is some error with balance increase
     // and true, if everything is okay
     // функция возвр-ает true\false, в зависимости от того, успешно ли было повышение баланса
@@ -96,8 +95,8 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
         </div>
       </div>
       <div className="stamina-info">
-        {/* <span className="material-symbols-rounded">arrow_right_alt</span> */}
         <p><span>Limit</span> <span>{user.stamina}/{user.max_stamina}</span></p>
+        <ProgressBar titleVisible={false} total={user.max_stamina} completed={user.stamina} />
       </div>
     </div>
   </>

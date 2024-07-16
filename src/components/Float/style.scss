@@ -21,6 +21,7 @@
 
     .float-name {
       @include p-montserrat-14-125-regular;
+      color: var(--color-text-primary);
     }
   }
 

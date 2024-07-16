@@ -9,11 +9,13 @@ const ExchangeCurrency: React.FC = () => {
       <Modal
         modalTitle="Convert"
         btnTriggerIcon="swap_vert"
-        btnTriggerLabel=""
-        btnTriggerClassName="user-balance-exchange"
+        trigger={
+          <div className="material-symbols-outlined user-balance-exchange">
+            swap_vert
+          </div>}
       >
         <div className="content">
-          
+
         </div>
 
         <Button
