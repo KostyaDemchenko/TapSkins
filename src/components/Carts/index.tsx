@@ -1,16 +1,9 @@
-//Default import
 import React from "react";
 import Image from "next/image";
-
-//Component import
 import Button from "@/src/components/Button";
 import SkinBackground from "@/src/components/SkinBackground";
 import iconObj from "@/public/icons/utils";
-
-//Function import
 import { truncateName, truncateFloat } from "@/src/utils/functions";
-
-//Style import
 import "./style.scss";
 
 // SkinCard
@@ -26,10 +19,11 @@ interface SkinCardProps {
     weapon_type: string;
     startrack: string;
   };
+  className?: string;
 }
 
-const SkinCard: React.FC<SkinCardProps> = ({ skin }) => (
-  <div className='skin-card'>
+const SkinCard: React.FC<SkinCardProps> = ({ skin, className }) => (
+  <div className={`skin-card ${className}`}>
     <SkinBackground
       imageSrc={skin.image_src}
       rarity={skin.rarity}
@@ -88,10 +82,15 @@ interface TaskCardProps {
     link_to_join: string;
     social_icon: string;
   };
+  className?: string;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task }) => (
-  <a href={task.link_to_join} key={task.task_id} className='task-card'>
+const TaskCard: React.FC<TaskCardProps> = ({ task, className }) => (
+  <a
+    href={task.link_to_join}
+    key={task.task_id}
+    className={`task-card ${className}`}
+  >
     <div className='task-icon'>
       <img src={task.social_icon} alt={task.platform_type} />
     </div>
@@ -130,10 +129,11 @@ interface ReferalCardProps {
     reward: number;
     referal_icon: string;
   };
+  className?: string;
 }
 
-const ReferalCard: React.FC<ReferalCardProps> = ({ reward }) => (
-  <div className='referal-card' key={reward.reward_id}>
+const ReferalCard: React.FC<ReferalCardProps> = ({ reward, className }) => (
+  <div className={`referal-card ${className}`} key={reward.reward_id}>
     <div className='referal-icon'>
       <img src={reward.referal_icon} alt='referal icon' />
     </div>
