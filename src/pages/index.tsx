@@ -135,7 +135,6 @@ export default function Home() {
           icon='shopping_cart'
           onClick={() => console.log("test")}
         />
-        <Filters />
       </main>
       <Nav />
     </>
