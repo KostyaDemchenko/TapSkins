@@ -23,6 +23,8 @@ export default function Home() {
     boolean | null | undefined
   >(undefined);
 
+  const [wss, setWss] = React.useState<null | WebSocket>(null);
+
   React.useEffect(() => {
     if (!tg) return;
 
@@ -40,29 +42,34 @@ export default function Home() {
       if (response) setUser(userClass);
     })();
   }, [tg]);
-
-  const wss = new WebSocket(webSocketAddress);
-
-  const wssCallbacks = () => {
-    wss.onopen = () => {
-      if (!user) return;
-      // console.log("Connected!");
-    };
-
-    wss.onerror = (error) => {
-      console.log("Error", error);
-    };
-
-    wss.onclose = (event) => {
-      console.log(
-        `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
-      );
-    };
-  };
-  wssCallbacks();
+  try {
+    const ws = new WebSocket(webSocketAddress);
+    setWss(ws);
+  }
+  catch(e) {
+    console.error(e);
+  }
 
   //? при отправке сообщения с бекенда по вебсокету
-  if (user) {
+  if (user && wss) {
+
+    const wssCallbacks = () => {
+      wss.onopen = () => {
+        if (!user) return;
+        // console.log("Connected!");
+      };
+
+      wss.onerror = (error) => {
+        console.log("Error", error);
+      };
+
+      wss.onclose = (event) => {
+        console.log(
+          `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
+        );
+      };
+    };
+    wssCallbacks();
     wss.onmessage = (e) => {
       const response = JSON.parse(e.data);
 
@@ -83,10 +90,13 @@ export default function Home() {
       case userSubscribed === undefined:
         return "Check if you are subscribed";
       case userSubscribed === null:
+        console.log("error");
         return "Error :(";
       case userSubscribed:
+        console.log("yes");
         return "Yes, you are!";
       case !userSubscribed:
+        console.log("no");
         return "No, you aren't :(";
       default:
         return "Some error occured :(";
@@ -115,7 +125,7 @@ export default function Home() {
           onClick={() => console.log("test")}
         />
 
-        {user && <UserBalance wss={wss} user={user} />}
+        {user && wss && <UserBalance wss={wss} user={user} />}
 
         <Button
           label={getSubsMsg()}
