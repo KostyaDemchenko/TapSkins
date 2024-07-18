@@ -22,8 +22,7 @@ export default function Home() {
   const [userSubscribed, setUserSubscribed] = React.useState<
     boolean | null | undefined
   >(undefined);
-
-  const [wss, setWss] = React.useState<null | WebSocket>(null);
+  const wss = React.useRef<null | WebSocket>(null);
 
   React.useEffect(() => {
     if (!tg) return;
@@ -42,35 +41,38 @@ export default function Home() {
       if (response) setUser(userClass);
     })();
   }, [tg]);
+
+
   try {
     const ws = new WebSocket(webSocketAddress);
-    setWss(ws);
+    wss.current = ws;
   }
   catch(e) {
     console.error(e);
   }
 
   //? при отправке сообщения с бекенда по вебсокету
-  if (user && wss) {
+  if (user && wss.current) {
 
     const wssCallbacks = () => {
-      wss.onopen = () => {
+      if (!wss.current) return;
+      wss.current.onopen = () => {
         if (!user) return;
         // console.log("Connected!");
       };
 
-      wss.onerror = (error) => {
+      wss.current.onerror = (error) => {
         console.log("Error", error);
       };
 
-      wss.onclose = (event) => {
+      wss.current.onclose = (event) => {
         console.log(
           `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
         );
       };
     };
     wssCallbacks();
-    wss.onmessage = (e) => {
+    wss.current.onmessage = (e) => {
       const response = JSON.parse(e.data);
 
       if (response.success) {
@@ -125,7 +127,7 @@ export default function Home() {
           onClick={() => console.log("test")}
         />
 
-        {user && wss && <UserBalance wss={wss} user={user} />}
+        {user && wss.current && <UserBalance wss={wss.current} user={user} />}
 
         <Button
           label={getSubsMsg()}
