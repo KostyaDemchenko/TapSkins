@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-
 import Modal from "@/src/components/Modal";
 import { SkinCard } from "@/src/components/Carts";
 import SkinBackground from "@/src/components/SkinBackground";
@@ -8,9 +7,7 @@ import iconObj from "@/public/icons/utils";
 import Button from "@/src/components/Button";
 import Rare from "@/src/components/Rare";
 import Float from "@/src/components/Float";
-
 import { truncateName, truncateFloat } from "@/src/utils/functions";
-
 import "./style.scss";
 
 interface Skin {
@@ -25,8 +22,13 @@ interface Skin {
   startrack: string;
 }
 
-const SkinStore: React.FC = () => {
+interface SkinStoreProps {
+  searchTerm: string;
+}
+
+const SkinStore: React.FC<SkinStoreProps> = ({ searchTerm }) => {
   const [skins, setSkins] = useState<Skin[]>([]);
+  const [filteredSkins, setFilteredSkins] = useState<Skin[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,6 +36,7 @@ const SkinStore: React.FC = () => {
         const response = await fetch("/api/skin_store");
         const data = await response.json();
         setSkins(data.storeDataStructured);
+        setFilteredSkins(data.storeDataStructured);
       } catch (error) {
         console.error("Error fetching the skin store data:", error);
       }
@@ -42,9 +45,21 @@ const SkinStore: React.FC = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (searchTerm) {
+      setFilteredSkins(
+        skins.filter((skin) =>
+          skin.skin_name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredSkins(skins);
+    }
+  }, [searchTerm, skins]);
+
   return (
     <div className='skin-store-container'>
-      {skins.map((skin) => (
+      {filteredSkins.map((skin) => (
         <Modal
           key={skin.item_id}
           modalTitle=''
@@ -57,7 +72,6 @@ const SkinStore: React.FC = () => {
               rarity={skin.rarity}
               size='large'
             />
-
             <div className='skin-name-box'>
               <h3 className='skin-name'>
                 {truncateName(skin.skin_name, 35)}{" "}
@@ -67,7 +81,7 @@ const SkinStore: React.FC = () => {
               </h3>
               <div className='available-box'>
                 <p className='available'>Available:</p>
-                <p className='available-user-value'>Samle</p>
+                <p className='available-user-value'>Sample</p>
                 <Image
                   src={iconObj.purpleCoin}
                   width={12}
@@ -76,7 +90,6 @@ const SkinStore: React.FC = () => {
                 />
               </div>
             </div>
-
             <Float floatValue={skin.float} />
             <Rare rarity={skin.rarity} />
             <div className='price-box'>

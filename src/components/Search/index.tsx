@@ -1,5 +1,5 @@
 // default import
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 
 // component import
@@ -8,12 +8,28 @@ import iconObj from "@/public/icons/utils";
 // style import
 import "./style.scss";
 
-interface SearchProps {}
+interface SearchProps {
+  onSearch: (searchTerm: string) => void;
+}
 
-const Search: React.FC<SearchProps> = () => {
+const Search: React.FC<SearchProps> = ({ onSearch }) => {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
+  };
+
   return (
     <div className='search-container'>
-      <input type='text' placeholder='Search...' className='search-input' />
+      <input
+        type='text'
+        placeholder='Search...'
+        className='search-input'
+        value={searchTerm}
+        onChange={handleSearch}
+      />
       <Image
         src={iconObj.search}
         alt='search'

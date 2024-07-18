@@ -1,20 +1,23 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Script from "next/script";
 
 import Nav from "@/src/components/Nav";
 import SkinStore from "@/src/components/SkinStoreList";
+import Filters from "@/src/components/Filters";
 import Search from "@/src/components/Search";
-import { User, UserObj } from "@/src/utils/types";
+import { User } from "@/src/utils/types";
 
 import "@/src/app/globals.scss";
 import "./style.scss";
+
 const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
 
-export default function rewards_page() {
-  const [tg, setTg] = React.useState<WebApp | null>();
-  const [user, setUser] = React.useState<User | null>(null);
+export default function RewardsPage() {
+  const [tg, setTg] = useState<WebApp | null>();
+  const [user, setUser] = useState<User | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!tg) return;
 
     tg.expand();
@@ -27,7 +30,6 @@ export default function rewards_page() {
       const userClass = new User(tg.initDataUnsafe.user.id);
       const response = await userClass.authUser(tg);
 
-      // пока не будет это выполнено, никаких нахуй дальше действий
       if (response) setUser(userClass);
     })();
   }, [tg]);
@@ -41,22 +43,22 @@ export default function rewards_page() {
         }}
       />
       <main>
-        <div className='container'>
+        <div className='container filter-box'>
           <div className='top-box'>
             <div className='user-balance'></div>
             <div className='modal-trigger-convert'></div>
           </div>
           <div className='middle-box'>
             <div className='top-box'>
-              <Search />
-              <div className='filter-box'></div>
+              <Search onSearch={setSearchTerm} />
+              <Filters />
             </div>
             <div className='bottom-box'>
               <div className='selected-categories-box'></div>
               <div className='sort-modal-triger'></div>
             </div>
           </div>
-          <SkinStore />
+          <SkinStore searchTerm={searchTerm} />
         </div>
       </main>
       <Nav />

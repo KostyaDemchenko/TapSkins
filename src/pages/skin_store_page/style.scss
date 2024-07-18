@@ -12,6 +12,7 @@
     @include flex(space-between, center);
     @include f-direction(row);
     width: 100%;
+    gap: 20px;
   }
 
   .middle-box {

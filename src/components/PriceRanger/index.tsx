@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
-
 import { RangeSlider } from "rsuite";
-
 import iconObj from "@/public/icons/utils";
-
 import "rsuite/dist/rsuite-no-reset.min.css";
 import "./style.scss";
 
@@ -12,12 +9,14 @@ interface PriceRangerProps {
   maxValue: number;
   minValue: number;
   rangeTitle: string;
+  icons?: boolean;
 }
 
 const PriceRanger: React.FC<PriceRangerProps> = ({
   maxValue,
   minValue,
   rangeTitle,
+  icons = true,
 }) => {
   const [range, setRange] = useState<[number, number]>([minValue, maxValue]);
 
@@ -33,22 +32,26 @@ const PriceRanger: React.FC<PriceRangerProps> = ({
         <div className='from-to'>
           <div className='from'>
             <p>{range[0]}</p>
-            <Image
-              src={iconObj.purpleCoin}
-              width={12}
-              height={12}
-              alt='Purple coin'
-            />
+            {icons && (
+              <Image
+                src={iconObj.purpleCoin}
+                width={12}
+                height={12}
+                alt='Purple coin'
+              />
+            )}
           </div>
           <p>-</p>
           <div className='to'>
             <p>{range[1]}</p>
-            <Image
-              src={iconObj.purpleCoin}
-              width={12}
-              height={12}
-              alt='Purple coin'
-            />
+            {icons && (
+              <Image
+                src={iconObj.purpleCoin}
+                width={12}
+                height={12}
+                alt='Purple coin'
+              />
+            )}
           </div>
         </div>
       </div>

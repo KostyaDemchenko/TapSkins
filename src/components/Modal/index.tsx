@@ -81,7 +81,9 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <>
-      <div onClick={show}>{trigger}</div>
+      <div className='modal-trigger' onClick={show}>
+        {trigger}
+      </div>
 
       <div className={`modal-background ${visible ? "show" : ""}`}>
         <div className='modal-fade' onClick={hide}></div>
