@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+
 import "rodal/lib/rodal.css";
 import "./style.scss";
 
@@ -8,6 +9,8 @@ interface ModalProps {
   trigger: React.ReactNode;
   children: React.ReactNode;
   height?: string; // new prop for custom height
+  onClose?: () => void; // Add onClose prop
+  closeElement?: React.ReactNode; // Add closeElement prop
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -16,6 +19,8 @@ const Modal: React.FC<ModalProps> = ({
   trigger,
   children,
   height = "70dvh", // default value
+  onClose, // Accept onClose prop
+  closeElement, // Accept closeElement prop
 }) => {
   const [visible, setVisible] = useState(false);
   const [top, setTop] = useState("100dvh");
@@ -45,6 +50,7 @@ const Modal: React.FC<ModalProps> = ({
   const hide = () => {
     setTop("100dvh");
     setVisible(false);
+    if (onClose) onClose(); // Call onClose prop when hiding modal
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -98,6 +104,9 @@ const Modal: React.FC<ModalProps> = ({
           <div className='modal-box'>
             <h2 className='modal-title'>{modalTitle}</h2>
             <div className='content'>{children}</div>
+            <div className='modal-close' onClick={hide}>
+              {closeElement}
+            </div>
           </div>
         </div>
       </div>

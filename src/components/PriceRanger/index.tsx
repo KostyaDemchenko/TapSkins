@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { RangeSlider } from "rsuite";
 import iconObj from "@/public/icons/utils";
@@ -9,20 +9,32 @@ interface PriceRangerProps {
   maxValue: number;
   minValue: number;
   rangeTitle: string;
+  step: number;
   icons?: boolean;
+  onChange: (value: [number, number]) => void;
 }
 
 const PriceRanger: React.FC<PriceRangerProps> = ({
   maxValue,
   minValue,
   rangeTitle,
+  step,
   icons = true,
+  onChange,
 }) => {
   const [range, setRange] = useState<[number, number]>([minValue, maxValue]);
 
+  useEffect(() => {
+    setRange([minValue, maxValue]);
+  }, [minValue, maxValue]);
+
   const handleChange = (value: [number, number]) => {
-    setRange(value);
-    console.log("Current Range Values:", value);
+    const truncatedValue: [number, number] = [
+      parseFloat(value[0].toFixed(5)),
+      parseFloat(value[1].toFixed(5)),
+    ];
+    setRange(truncatedValue);
+    onChange(truncatedValue);
   };
 
   return (
@@ -57,9 +69,11 @@ const PriceRanger: React.FC<PriceRangerProps> = ({
       </div>
       <div className='range-box'>
         <RangeSlider
+          min={minValue}
           max={maxValue}
-          defaultValue={range}
-          onChange={handleChange} // тут должна быть обработка значений от и до при изменении
+          step={step}
+          value={range}
+          onChange={handleChange}
         />
       </div>
     </div>

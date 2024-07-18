@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+
 import Modal from "@/src/components/Modal";
 import { SkinCard } from "@/src/components/Carts";
 import SkinBackground from "@/src/components/SkinBackground";
-import iconObj from "@/public/icons/utils";
 import Button from "@/src/components/Button";
 import Rare from "@/src/components/Rare";
 import Float from "@/src/components/Float";
-import { truncateName, truncateFloat } from "@/src/utils/functions";
+import Skeleton from "@mui/material/Skeleton";
+
+import iconObj from "@/public/icons/utils";
+
+import { truncateName } from "@/src/utils/functions";
+
 import "./style.scss";
 
 interface Skin {
@@ -24,26 +29,16 @@ interface Skin {
 
 interface SkinStoreProps {
   searchTerm: string;
+  skins: Skin[];
+  isLoading: boolean;
 }
 
-const SkinStore: React.FC<SkinStoreProps> = ({ searchTerm }) => {
-  const [skins, setSkins] = useState<Skin[]>([]);
-  const [filteredSkins, setFilteredSkins] = useState<Skin[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/skin_store");
-        const data = await response.json();
-        setSkins(data.storeDataStructured);
-        setFilteredSkins(data.storeDataStructured);
-      } catch (error) {
-        console.error("Error fetching the skin store data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+const SkinStore: React.FC<SkinStoreProps> = ({
+  searchTerm,
+  skins,
+  isLoading,
+}) => {
+  const [filteredSkins, setFilteredSkins] = useState<Skin[]>(skins);
 
   useEffect(() => {
     if (searchTerm) {
@@ -56,6 +51,25 @@ const SkinStore: React.FC<SkinStoreProps> = ({ searchTerm }) => {
       setFilteredSkins(skins);
     }
   }, [searchTerm, skins]);
+
+  if (isLoading) {
+    return (
+      <div className='skin-store-container'>
+        {Array.from(new Array(8)).map((_, index) => (
+          <Skeleton
+            key={index}
+            variant='rounded'
+            height={261}
+            animation='wave'
+            sx={{
+              bgcolor: "var(--color-surface)",
+              width: "48%",
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className='skin-store-container'>

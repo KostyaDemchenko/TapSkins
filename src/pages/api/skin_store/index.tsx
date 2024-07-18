@@ -68,7 +68,7 @@ export default async function handler(
 
       // for number
       price: row.price.number || 0,
-      float: row.float.number || 0,
+      float: parseFloat(row.float.number.toFixed(5)) || 0,
 
       // for multi_select
       rarity: extractMultiSelectNames(row.rarity),

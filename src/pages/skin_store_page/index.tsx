@@ -12,10 +12,17 @@ import "./style.scss";
 
 const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
 
-export default function RewardsPage() {
-  const [tg, setTg] = useState<WebApp | null>();
+export default function SkinStorePage() {
+  const [tg, setTg] = useState<WebApp | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [skins, setSkins] = useState([]);
+  const [filteredSkins, setFilteredSkins] = useState([]);
+  const [minPrice, setMinPrice] = useState<number | null>(null);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
+  const [minFloat, setMinFloat] = useState<number | null>(null);
+  const [maxFloat, setMaxFloat] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (!tg) return;
@@ -34,6 +41,44 @@ export default function RewardsPage() {
     })();
   }, [tg]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/skin_store");
+        const data = await response.json();
+        setSkins(data.storeDataStructured);
+        setFilteredSkins(data.storeDataStructured);
+
+        const prices = data.storeDataStructured.map((skin: any) => skin.price);
+        setMinPrice(Math.min(...prices));
+        setMaxPrice(Math.max(...prices));
+
+        const floats = data.storeDataStructured.map((skin: any) => skin.float);
+        setMinFloat(Math.min(...floats));
+        setMaxFloat(Math.max(...floats));
+      } catch (error) {
+        console.error("Error fetching the skin store data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const applyFilters = (filters: any) => {
+    const { priceRange, floatRange } = filters;
+    setFilteredSkins(
+      skins.filter(
+        (skin: any) =>
+          skin.price >= priceRange[0] &&
+          skin.price <= priceRange[1] &&
+          skin.float >= floatRange[0] &&
+          skin.float <= floatRange[1]
+      )
+    );
+  };
+
   return (
     <>
       <Script
@@ -43,7 +88,7 @@ export default function RewardsPage() {
         }}
       />
       <main>
-        <div className='container filter-box'>
+        <div className='container'>
           <div className='top-box'>
             <div className='user-balance'></div>
             <div className='modal-trigger-convert'></div>
@@ -51,14 +96,24 @@ export default function RewardsPage() {
           <div className='middle-box'>
             <div className='top-box'>
               <Search onSearch={setSearchTerm} />
-              <Filters />
+              <Filters
+                minPrice={minPrice ?? 0}
+                maxPrice={maxPrice ?? 100}
+                minFloat={minFloat ?? 0}
+                maxFloat={maxFloat ?? 1}
+                onApply={applyFilters}
+              />
             </div>
             <div className='bottom-box'>
               <div className='selected-categories-box'></div>
               <div className='sort-modal-triger'></div>
             </div>
           </div>
-          <SkinStore searchTerm={searchTerm} />
+          <SkinStore
+            searchTerm={searchTerm}
+            skins={filteredSkins}
+            isLoading={isLoading}
+          />{" "}
         </div>
       </main>
       <Nav />

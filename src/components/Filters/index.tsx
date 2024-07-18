@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
 import Button from "@/src/components/Button";
@@ -12,62 +12,124 @@ import iconObj from "@/public/icons/utils";
 import "rodal/lib/rodal.css";
 import "./style.scss";
 
-interface FiltersProps {}
+interface FiltersProps {
+  minPrice: number;
+  maxPrice: number;
+  minFloat: number;
+  maxFloat: number;
+  onApply: (filters: any) => void;
+}
 
-const Filters: React.FC<FiltersProps> = () => {
+const Filters: React.FC<FiltersProps> = ({
+  minPrice,
+  maxPrice,
+  minFloat,
+  maxFloat,
+  onApply,
+}) => {
+  const [priceRange, setPriceRange] = useState<[number, number]>([
+    minPrice,
+    maxPrice,
+  ]);
+  const [floatRange, setFloatRange] = useState<[number, number]>([
+    minFloat,
+    maxFloat,
+  ]);
+  const [weaponType, setWeaponType] = useState<string | null>(null);
+  const [weapon, setWeapon] = useState<string | null>(null);
+  const [starTrack, setStarTrack] = useState<boolean | null>(null);
+  const [rarity, setRarity] = useState<string | null>(null);
+  const [resetKey, setResetKey] = useState<number>(0); // Add reset key state
+
+  // Add effect to update state when initial values change
+  useEffect(() => {
+    setPriceRange([minPrice, maxPrice]);
+    setFloatRange([minFloat, maxFloat]);
+  }, [minPrice, maxPrice, minFloat, maxFloat]);
+
+  const handleReset = () => {
+    setPriceRange([minPrice, maxPrice]);
+    setFloatRange([minFloat, maxFloat]);
+    setWeaponType(null);
+    setWeapon(null);
+    setStarTrack(null);
+    setRarity(null);
+    setResetKey((prevKey) => prevKey + 1); // Update reset key to force re-render
+  };
+
+  const handleApply = () => {
+    const filters = {
+      priceRange,
+      floatRange,
+      weaponType,
+      weapon,
+      starTrack,
+      rarity,
+    };
+    onApply(filters);
+  };
+
   return (
-    <>
-      <Modal
-        modalTitle='Filters'
-        trigger={
-          <Image src={iconObj.filters} width={24} height={24} alt='Filter' />
-        }
-        height='60dvh'
-      >
-        <div className='content'>
-          <PriceRanger
-            maxValue={100}
-            minValue={0}
-            icons={true}
-            rangeTitle='Price'
-          />
-          <div className='filter-option'>
-            <p className='filter-title'>Weapon type</p>
-            <span className='material-symbols-outlined'>arrow_right_alt</span>
-          </div>
-          <div className='filter-option'>
-            <p className='filter-title'>Weapon</p>
-            <span className='material-symbols-outlined'>arrow_right_alt</span>
-          </div>
-          <div className='filter-option'>
-            <p className='filter-title'>StarTrack</p>
-            <CustomRadioButton name='startrack' />
-          </div>
-          <PriceRanger
-            maxValue={100}
-            minValue={0}
-            icons={false}
-            rangeTitle='Float'
-          />
-          <div className='filter-option'>
-            <p className='filter-title'>Rarity</p>
-            <span className='material-symbols-outlined'>arrow_right_alt</span>
-          </div>
-
-          <Button
-            label='Reset'
-            className='btn-tertiary-white-35'
-            icon='refresh'
-          />
-        </div>
-
+    <Modal
+      modalTitle='Filters'
+      trigger={
+        <Image src={iconObj.filters} width={24} height={24} alt='Filter' />
+      }
+      height='60dvh'
+      closeElement={
         <Button
           label='Apply'
           className='btn-primary-50 icon'
-          onClick={() => console.log("test")}
+          onClick={() => {
+            handleApply();
+          }}
         />
-      </Modal>
-    </>
+      }
+    >
+      <div className='content filter-box'>
+        <PriceRanger
+          key={`price-${resetKey}`} // Add key to force re-render
+          maxValue={maxPrice}
+          minValue={minPrice}
+          icons={true}
+          rangeTitle='Price'
+          onChange={setPriceRange}
+          step={1}
+        />
+        <div className='filter-option'>
+          <p className='filter-title'>Weapon type</p>
+          <span className='material-symbols-outlined'>arrow_right_alt</span>
+        </div>
+        <div className='filter-option'>
+          <p className='filter-title'>Weapon</p>
+          <span className='material-symbols-outlined'>arrow_right_alt</span>
+        </div>
+        <div className='filter-option'>
+          <p className='filter-title'>StarTrack</p>
+          <CustomRadioButton name='startrack' />
+        </div>
+        <PriceRanger
+          key={`float-${resetKey}`} // Add key to force re-render
+          maxValue={maxFloat}
+          minValue={minFloat}
+          icons={false}
+          rangeTitle='Float'
+          onChange={setFloatRange}
+          step={0.0001}
+        />
+        <div className='filter-option'>
+          <p className='filter-title'>Rarity</p>
+          <span className='material-symbols-outlined'>arrow_right_alt</span>
+        </div>
+
+        <Button
+          label='Reset'
+          className='btn-tertiary-white-35'
+          icon='refresh'
+          onClick={handleReset}
+        />
+      </div>
+    </Modal>
   );
 };
 

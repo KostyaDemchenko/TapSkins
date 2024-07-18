@@ -14,7 +14,7 @@ const colorMap: { [key: string]: { color: string; shadow: string } } = {
   Mythical: { color: "#713BDB", shadow: "rgba(113, 59, 219, 0.75)" },
   Legendary: { color: "#CD2ADB", shadow: "rgba(205, 42, 219, 0.75)" },
   Ancient: { color: "#D13E3E", shadow: "rgba(209, 62, 62, 0.75)" },
-  "Exceedingly rare": { color: "#E5A725", shadow: "rgba(229, 167, 37, 0.75)" },
+  ExcedinglyRare: { color: "#E5A725", shadow: "rgba(229, 167, 37, 0.75)" },
 };
 
 const SkinBackground: React.FC<SkinBackgroundProps> = ({
