@@ -79,6 +79,14 @@ const SkinStore: React.FC<SkinStoreProps> = ({
           modalTitle=''
           height='77dvh'
           trigger={<SkinCard skin={skin} />}
+          closeElement={
+            <Button
+              label={`Buy Now`}
+              className='btn-primary-50'
+              icon=''
+              onClick={() => {}}
+            />
+          }
         >
           <div className='skin-full-details'>
             <SkinBackground
@@ -118,12 +126,6 @@ const SkinStore: React.FC<SkinStoreProps> = ({
                 />
               </div>
             </div>
-            <Button
-              label={`Buy Now`}
-              className='btn-primary-50'
-              icon=''
-              onClick={() => {}}
-            />
           </div>
         </Modal>
       ))}
