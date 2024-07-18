@@ -12,6 +12,8 @@
   color: var(--color-text-primary);
   border-radius: 5px;
 
+  transition: all 0.3s ease-in-out;
+
   .skin-info {
     @include flex(flex-start, center);
     @include f-direction(column);
@@ -85,6 +87,8 @@
   gap: 15px;
   padding: 10px;
 
+  transition: all 0.3s ease-in-out;
+
   .task-icon {
     img {
       width: 60px;
@@ -126,6 +130,8 @@
   width: 100%;
   gap: 15px;
   padding: 10px;
+
+  transition: all 0.3s ease-in-out;
 
   .task-icon {
     img {
