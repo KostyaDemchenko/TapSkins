@@ -3,6 +3,7 @@ import Script from "next/script";
 
 import Nav from "@/src/components/Nav";
 import SkinStore from "@/src/components/SkinStoreList";
+import Search from "@/src/components/Search";
 import { User, UserObj } from "@/src/utils/types";
 
 import "@/src/app/globals.scss";
@@ -47,7 +48,7 @@ export default function rewards_page() {
           </div>
           <div className='middle-box'>
             <div className='top-box'>
-              <div className='seach-box'></div>
+              <Search />
               <div className='filter-box'></div>
             </div>
             <div className='bottom-box'>

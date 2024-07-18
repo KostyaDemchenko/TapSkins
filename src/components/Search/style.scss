@@ -1,0 +1,42 @@
+@import "@/src/app/shortSyles.scss";
+
+.search-container {
+  position: relative;
+  width: 100%;
+
+  .search-input {
+    @include p-montserrat-14-125-regular;
+
+    width: 100%;
+    padding: 9px 7px 9px 35px;
+    border: none;
+    border-radius: 3px;
+    color: var(--color-text-primary);
+    background-color: var(--color-inputs-fill);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+
+    &:focus {
+      box-shadow: none;
+      outline: none;
+    }
+
+    &:disabled {
+      color: var(--color-text-secondary);
+      border-color: none;
+      cursor: not-allowed;
+    }
+
+    &::placeholder {
+      @include p-montserrat-14-125-regular;
+      color: var(--color-text-primary);
+    }
+  }
+
+  .search-icon {
+    position: absolute;
+    top: 47%;
+    left: 7px;
+    transform: translateY(-50%);
+  }
+}
