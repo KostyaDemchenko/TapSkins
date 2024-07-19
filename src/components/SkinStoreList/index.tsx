@@ -31,26 +31,32 @@ interface SkinStoreProps {
   searchTerm: string;
   skins: Skin[];
   isLoading: boolean;
+  filters: any; // Add filters prop
 }
 
 const SkinStore: React.FC<SkinStoreProps> = ({
   searchTerm,
   skins,
   isLoading,
+  filters,
 }) => {
   const [filteredSkins, setFilteredSkins] = useState<Skin[]>(skins);
 
   useEffect(() => {
+    let filtered = skins;
+
     if (searchTerm) {
-      setFilteredSkins(
-        skins.filter((skin) =>
-          skin.skin_name.toLowerCase().includes(searchTerm.toLowerCase())
-        )
+      filtered = filtered.filter((skin) =>
+        skin.skin_name.toLowerCase().includes(searchTerm.toLowerCase())
       );
-    } else {
-      setFilteredSkins(skins);
     }
-  }, [searchTerm, skins]);
+
+    if (filters.starTrack) {
+      filtered = filtered.filter((skin) => skin.startrack === "Startrack");
+    }
+
+    setFilteredSkins(filtered);
+  }, [searchTerm, skins, filters]);
 
   if (isLoading) {
     return (

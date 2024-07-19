@@ -23,6 +23,7 @@ export default function SkinStorePage() {
   const [minFloat, setMinFloat] = useState<number | null>(null);
   const [maxFloat, setMaxFloat] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [filters, setFilters] = useState<any>({}); // Add filters state
 
   useEffect(() => {
     if (!tg) return;
@@ -67,16 +68,7 @@ export default function SkinStorePage() {
   }, []);
 
   const applyFilters = (filters: any) => {
-    const { priceRange, floatRange } = filters;
-    setFilteredSkins(
-      skins.filter(
-        (skin: any) =>
-          skin.price >= priceRange[0] &&
-          skin.price <= priceRange[1] &&
-          skin.float >= floatRange[0] &&
-          skin.float <= floatRange[1]
-      )
-    );
+    setFilters(filters); // Update filters state
   };
 
   return (
@@ -113,7 +105,8 @@ export default function SkinStorePage() {
             searchTerm={searchTerm}
             skins={filteredSkins}
             isLoading={isLoading}
-          />{" "}
+            filters={filters} // Pass filters to SkinStore
+          />
         </div>
       </main>
       <Nav />

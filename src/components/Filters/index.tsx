@@ -37,11 +37,10 @@ const Filters: React.FC<FiltersProps> = ({
   ]);
   const [weaponType, setWeaponType] = useState<string | null>(null);
   const [weapon, setWeapon] = useState<string | null>(null);
-  const [starTrack, setStarTrack] = useState<boolean | null>(null);
+  const [starTrack, setStarTrack] = useState<boolean>(false);
   const [rarity, setRarity] = useState<string | null>(null);
-  const [resetKey, setResetKey] = useState<number>(0); // Add reset key state
+  const [resetKey, setResetKey] = useState<number>(0);
 
-  // Add effect to update state when initial values change
   useEffect(() => {
     setPriceRange([minPrice, maxPrice]);
     setFloatRange([minFloat, maxFloat]);
@@ -52,9 +51,9 @@ const Filters: React.FC<FiltersProps> = ({
     setFloatRange([minFloat, maxFloat]);
     setWeaponType(null);
     setWeapon(null);
-    setStarTrack(null);
+    setStarTrack(false);
     setRarity(null);
-    setResetKey((prevKey) => prevKey + 1); // Update reset key to force re-render
+    setResetKey((prevKey) => prevKey + 1);
   };
 
   const handleApply = () => {
@@ -88,7 +87,7 @@ const Filters: React.FC<FiltersProps> = ({
     >
       <div className='content filter-box'>
         <PriceRanger
-          key={`price-${resetKey}`} // Add key to force re-render
+          key={`price-${resetKey}`}
           maxValue={maxPrice}
           minValue={minPrice}
           icons={true}
@@ -106,10 +105,14 @@ const Filters: React.FC<FiltersProps> = ({
         </div>
         <div className='filter-option'>
           <p className='filter-title'>StarTrack</p>
-          <CustomRadioButton name='startrack' />
+          <CustomRadioButton
+            name='startrack'
+            defaultSelected={starTrack}
+            onChange={setStarTrack}
+          />
         </div>
         <PriceRanger
-          key={`float-${resetKey}`} // Add key to force re-render
+          key={`float-${resetKey}`}
           maxValue={maxFloat}
           minValue={minFloat}
           icons={false}

@@ -1,19 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./style.scss";
 
 interface CustomCheckboxProps {
   name: string;
   defaultChecked?: boolean;
+  onChange?: (checked: boolean) => void;
 }
 
 const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
   name,
   defaultChecked = false,
+  onChange,
 }) => {
   const [checked, setChecked] = useState(defaultChecked);
 
+  useEffect(() => {
+    setChecked(defaultChecked);
+  }, [defaultChecked]);
+
   const handleChange = () => {
-    setChecked((prevChecked) => !prevChecked);
+    setChecked((prevChecked) => {
+      const newChecked = !prevChecked;
+      if (onChange) {
+        onChange(newChecked);
+      }
+      return newChecked;
+    });
   };
 
   return (
