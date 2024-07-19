@@ -1,9 +1,12 @@
+// Default import
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 
+// Component import
 import ProgressBar from "@/src/components/ProgressBar";
-import iconObj from "@/public/icons/utils";
+import { TaskCard } from "@/src/components/Carts";
+import Skeleton from "@mui/material/Skeleton";
 
+// Style import
 import "./style.scss";
 
 interface Task {
@@ -18,13 +21,26 @@ interface Task {
 
 const TasksList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const completedTasks = 1; // Фиксированное значение для выполненных задач
 
   useEffect(() => {
-    fetch("/api/task_store")
-      .then((response) => response.json())
-      .then((data) => setTasks(data.taskStoreDataStructured))
-      .catch((error) => console.error("Error fetching tasks:", error));
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch("/api/task_store");
+        const data = await response.json();
+        setTasks(data.taskStoreDataStructured);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      } finally {
+        // Задержка перед отключением загрузки
+        setTimeout(() => {
+          setLoading(false);
+        }, 2000);
+      }
+    };
+
+    fetchTasks();
   }, []);
 
   return (
@@ -35,36 +51,21 @@ const TasksList: React.FC = () => {
         completed={completedTasks}
       />
       <div className='tasks-list'>
-        {tasks.map((task) => (
-          <a href={task.link_to_join} key={task.task_id} className='task-card'>
-            <div className='task-icon'>
-              <img src={task.social_icon} alt={task.platform_type} />
-            </div>
-            <div className='task-details'>
-              <h3 className='task-name'>{task.task_name}</h3>
-              <div className='reward-count-box'>
-                <p className='reward-count'>+ {task.reward}</p>
-                <div className='reward-type'>
-                  {task.reward_type === "yellow_coin" ? (
-                    <Image
-                      src={iconObj.yellowCoin}
-                      width={12}
-                      height={12}
-                      alt='Yellow coin'
-                    />
-                  ) : (
-                    <Image
-                      src={iconObj.purpleCoin}
-                      width={12}
-                      height={12}
-                      alt='Purple coin'
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
-          </a>
-        ))}
+        {loading
+          ? Array.from(new Array(5)).map((_, index) => (
+              <Skeleton
+                key={index}
+                variant='rounded'
+                height={84}
+                animation='wave'
+                sx={{
+                  bgcolor: "var(--color-surface)",
+                  marginBottom: "5px",
+                  width: "100%",
+                }}
+              />
+            ))
+          : tasks.map((task) => <TaskCard key={task.task_id} task={task} />)}
       </div>
     </>
   );

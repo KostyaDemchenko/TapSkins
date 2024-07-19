@@ -46,9 +46,9 @@
     height: 279px;
     width: 100%;
     transition: 0.3s;
+    user-select: none;
 
-    &:active,
-    &:active::before {
+    &:active {
       scale: 0.95;
     }
 
@@ -62,13 +62,10 @@
       margin-bottom: 50px;
       position: relative;
       cursor: pointer;
-      transition: 0.3s;
       transform-origin: center;
     }
 
-    &::after {
-      content: "";
-      transform-origin: center;
+    .clicker-button-border {
       position: absolute;
       top: -1px;
       left: -1px;
@@ -77,13 +74,14 @@
       border-radius: 100%;
       background: var(--main-grad);
       box-shadow: 0 0 40px -27px var(--color-system-yellow);
-      z-index: -1;
-      transition: 0.3s;
     }
   }
 
   .stamina-info {
     width: calc(100% - 28px * 2);
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
 
     p span:first-child {
       @include p-montserrat-12-125-regular;

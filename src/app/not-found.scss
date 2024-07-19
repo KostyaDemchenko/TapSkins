@@ -1,0 +1,57 @@
+@import "./shortSyles.scss";
+
+.page-not-found {
+  @include flex(center, center);
+  @include f-direction(column);
+  width: 100%;
+  height: calc(100vh - 57px);
+  gap: 35px;
+
+  .description-container {
+    @include flex(center, center);
+    @include f-direction(column);
+    gap: 15px;
+
+    .title {
+      @include h1-montserrat-42-125-bold;
+      text-align: center;
+      color: var(--color-text-primary);
+    }
+
+    .description {
+      @include p-montserrat-18-125-regular;
+      text-align: center;
+      color: var(--color-text-primary);
+    }
+  }
+  .btn-secondary-35 {
+    @include flex(center, center);
+    @include f-direction(row);
+    @include p-montserrat-14-125-medium;
+
+    width: fit-content;
+    height: 35px;
+    padding: 5px 20px;
+    border-radius: 3px;
+
+    gap: 10px;
+
+    color: var(--color-buttons-text-white);
+    background: var(--color-buttons-secondary-fill);
+
+    .icon {
+      display: block;
+      color: var(--color-buttons-text-white);
+      font-size: 18px;
+    }
+
+    .icon-img {
+      width: 20px;
+      height: 20px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+    }
+  }
+}

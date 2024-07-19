@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
+import Modal from "@/src/components/Modal";
+import { SkinCard } from "@/src/components/Carts";
+import SkinBackground from "@/src/components/SkinBackground";
+import iconObj from "@/public/icons/utils";
 import Button from "@/src/components/Button";
 import Rare from "@/src/components/Rare";
-import SkinBackground from "@/src/components/SkinBackground";
 import Float from "@/src/components/Float";
-import Modal from "@/src/components/Modal";
-import iconObj from "@/public/icons/utils";
+
+import { truncateName, truncateFloat } from "@/src/utils/functions";
 
 import "./style.scss";
 
@@ -21,14 +24,6 @@ interface Skin {
   weapon_type: string;
   startrack: string;
 }
-
-const truncateName = (str: string, maxLength: number) => {
-  return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
-};
-
-const truncateFloat = (num: number, precision: number) => {
-  return num.toFixed(precision);
-};
 
 const SkinStore: React.FC = () => {
   const [skins, setSkins] = useState<Skin[]>([]);
@@ -53,57 +48,8 @@ const SkinStore: React.FC = () => {
         <Modal
           key={skin.item_id}
           modalTitle=''
-          height='80dvh'
-          trigger={
-            <div className='skin-card'>
-              <SkinBackground
-                imageSrc={skin.image_src}
-                rarity={skin.rarity}
-                size='small'
-              />
-              <div className='skin-info'>
-                <div className='top-box'>
-                  <div className='skin-name-box '>
-                    <h3 className='skin-name'>
-                      {truncateName(skin.skin_name, 35)}{" "}
-                      {skin.startrack && (
-                        <span className='startrack'>{skin.startrack}</span>
-                      )}
-                    </h3>
-                  </div>
-                  <div className='price-float-box'>
-                    <div className='price'>
-                      <p className='price-value'>{skin.price}</p>
-                      <Image
-                        src={iconObj.purpleCoin}
-                        width={12}
-                        height={12}
-                        alt='Purple coin'
-                      />
-                    </div>
-                    <p className='float'>
-                      Float {truncateFloat(skin.float, 6)}
-                    </p>
-                  </div>
-                </div>
-
-                <div className='bottom-box'>
-                  <Button
-                    label={`Buy`}
-                    className='btn-primary-25'
-                    icon=''
-                    onClick={() => {}}
-                  />
-                  <Button
-                    label={`Add to cart`}
-                    className='btn-tertiary-white-25'
-                    icon=''
-                    onClick={() => {}}
-                  />
-                </div>
-              </div>
-            </div>
-          }
+          height='77dvh'
+          trigger={<SkinCard skin={skin} />}
         >
           <div className='skin-full-details'>
             <SkinBackground

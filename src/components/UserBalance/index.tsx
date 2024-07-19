@@ -8,13 +8,14 @@ import ExchangeCurrency from "../ExchangeCurrency";
 import ProgressBar from "../ProgressBar";
 
 interface UserBalanceProps {
-  user: User;
-  wss: WebSocket
+  user?: User;
+  wss?: WebSocket
 }
 
 const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
-  const staminaDelay = user.staminaDelay; // период добавления стамины
-  const [userStamina, setUserStamina] = React.useState<number>(user.stamina);
+  //const staminaDelay = user.staminaDelay; // период добавления стамины
+  const staminaDelay = 1000;
+  const [userStamina, setUserStamina] = React.useState<number>(0);
   const staminaIntervals = React.useRef<{ timeOutId: any; intervalId: any }>({
     timeOutId: null,
     intervalId: null
@@ -23,34 +24,34 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
 
   const increaseStamina = () => {
     staminaIntervals.current.intervalId = setInterval(() => {
-      user.increaseStamina();
-      setUserStamina(user.stamina);
+      // user.increaseStamina();
+      // setUserStamina(user.stamina);
     }, staminaDelay);
   }
 
   React.useEffect(() => {
 
-    wss.onopen = () => {
-      wssConnection.current = true;
-      increaseStamina();
-      user.addPassiveStamina();
-      setUserStamina(user.stamina);
-    }
+    // wss.onopen = () => {
+    //   wssConnection.current = true;
+    //   increaseStamina();
+    //   user.addPassiveStamina();
+    //   setUserStamina(user.stamina);
+    // }
 
-    wss.onerror = () => {
-      wssConnection.current = false;
-    }
+    // wss.onerror = () => {
+    //   wssConnection.current = false;
+    // }
   }, []);
 
   React.useEffect(() => {
     if (!wssConnection.current) return;
 
-    wss.send(JSON.stringify({
-      user_id: user.user_id,
-      last_click: Date.now(),
-      stamina: userStamina,
-      balance_common: user.balance_common
-    }));
+    // wss.send(JSON.stringify({
+    //   user_id: user.user_id,
+    //   last_click: Date.now(),
+    //   stamina: userStamina,
+    //   balance_common: user.balance_common
+    // }));
   }, [userStamina]);
 
   const clickerButtonHandler = () => {
@@ -62,8 +63,8 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     if (staminaIntervals.current.timeOutId) clearTimeout(staminaIntervals.current.timeOutId);
     if (staminaIntervals.current.intervalId) clearInterval(staminaIntervals.current.intervalId);
     // user.increaseBallance(wss);
-    user.dereaseStamina();
-    user.balance_common += 1;
+    // user.dereaseStamina();
+    // user.balance_common += 1;
     setUserStamina(user.stamina);
 
     staminaIntervals.current.timeOutId = setTimeout(increaseStamina, 300);
@@ -73,7 +74,8 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     <div className="user-balance-container">
       <div className="user-balance">
         <p>Balance</p>
-        <h1>{user.balance_common.toLocaleString('ru-RU')}<Image
+        {/* <h1>{user.balance_common.toLocaleString('ru-RU')} */}
+        <h1>{(123123123).toLocaleString("ru-RU")}<Image
           src={iconObj.yellowCoin}
           width={16}
           height={16}
@@ -81,7 +83,8 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
         /></h1>
         <ExchangeCurrency />
         <h3>
-          {user.ballance_purple.toLocaleString('ru-RU')}
+          {/* {user.ballance_purple.toLocaleString('ru-RU')} */}
+          {(123123123).toLocaleString("ru-RU")}
           <Image
             src={iconObj.purpleCoin}
             width={16}
@@ -90,13 +93,16 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
           /></h3>
       </div>
       <div className="clicker-button-container">
+        <div className="clicker-button-border"></div>
         <div className="clicker-button" onClick={clickerButtonHandler}>
           <img src={chicken.src} alt="Picture" />
         </div>
       </div>
       <div className="stamina-info">
-        <p><span>Limit</span> <span>{user.stamina}/{user.max_stamina}</span></p>
-        <ProgressBar titleVisible={false} total={user.max_stamina} completed={user.stamina} />
+        {/* <p><span>Limit</span> <span>{user.stamina}/{user.max_stamina}</span></p> */}
+        <p><span>Limit</span> <span>1000/1000</span></p>
+        {/* <ProgressBar titleVisible={false} total={user.max_stamina} completed={user.stamina} /> */}
+        <ProgressBar titleVisible={false} total={1000} completed={500} />
       </div>
     </div>
   </>

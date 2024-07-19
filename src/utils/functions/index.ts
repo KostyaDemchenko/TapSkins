@@ -11,3 +11,13 @@ const logs = (obj: object) => {
 };
 
 export { logs };
+
+const truncateName = (str: string, maxLength: number) => {
+  return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
+};
+
+const truncateFloat = (num: number, precision: number) => {
+  return num.toFixed(precision);
+};
+
+export { truncateName, truncateFloat };

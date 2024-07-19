@@ -20,6 +20,7 @@ export default function Home() {
   const [userSubscribed, setUserSubscribed] = React.useState<
     boolean | null | undefined
   >(undefined);
+  const wss = React.useRef<null | WebSocket>(null);
 
   React.useEffect(() => {
     if (!tg) return;
@@ -39,29 +40,37 @@ export default function Home() {
     })();
   }, [tg]);
 
-  const wss = new WebSocket(webSocketAddress);
 
-  const wssCallbacks = () => {
-    wss.onopen = () => {
-      if (!user) return;
-      // console.log("Connected!");
-    };
-
-    wss.onerror = (error) => {
-      console.log("Error", error);
-    };
-
-    wss.onclose = (event) => {
-      console.log(
-        `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
-      );
-    };
-  };
-  wssCallbacks();
+  try {
+    const ws = new WebSocket(webSocketAddress);
+    wss.current = ws;
+  }
+  catch(e) {
+    console.error(e);
+  }
 
   //? при отправке сообщения с бекенда по вебсокету
-  if (user) {
-    wss.onmessage = (e) => {
+  if (user && wss.current) {
+
+    const wssCallbacks = () => {
+      if (!wss.current) return;
+      wss.current.onopen = () => {
+        if (!user) return;
+        // console.log("Connected!");
+      };
+
+      wss.current.onerror = (error) => {
+        console.log("Error", error);
+      };
+
+      wss.current.onclose = (event) => {
+        console.log(
+          `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
+        );
+      };
+    };
+    wssCallbacks();
+    wss.current.onmessage = (e) => {
       const response = JSON.parse(e.data);
 
       if (response.success) {
@@ -81,10 +90,13 @@ export default function Home() {
       case userSubscribed === undefined:
         return "Check if you are subscribed";
       case userSubscribed === null:
+        console.log("error");
         return "Error :(";
       case userSubscribed:
+        console.log("yes");
         return "Yes, you are!";
       case !userSubscribed:
+        console.log("no");
         return "No, you aren't :(";
       default:
         return "Some error occured :(";
@@ -106,7 +118,8 @@ export default function Home() {
         alignItems: "center",
       }}
     >
-      {user && <UserBalance wss={wss} user={user} />}
+      <UserBalance/>
+      {/* {user && <UserBalance user={user} />} */}
     </main>
     <Nav />
   </>)

@@ -1,6 +1,9 @@
+// Default import
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import iconObj from "@/public/icons/utils";
+import { ReferalCard } from "@/src/components/Carts";
+import Skeleton from "@mui/material/Skeleton";
+
+// Style import
 import "./style.scss";
 
 interface Reward {
@@ -13,6 +16,7 @@ interface Reward {
 
 const ReferalList: React.FC = () => {
   const [rewards, setRewards] = useState<Reward[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchRewards = async () => {
@@ -25,6 +29,11 @@ const ReferalList: React.FC = () => {
         setRewards(sortedData);
       } catch (error) {
         console.error("Error fetching rewards:", error);
+      } finally {
+        // Задержка перед отключением загрузки
+        setTimeout(() => {
+          setLoading(false);
+        }, 2000);
       }
     };
 
@@ -33,36 +42,22 @@ const ReferalList: React.FC = () => {
 
   return (
     <div className='referal-list'>
-      {rewards.map((reward) => (
-        <div className='referal-card' key={reward.reward_id}>
-          <div className='referal-icon'>
-            <img src={reward.referal_icon} alt='referal icon' />
-          </div>
-          <div className='referal-details'>
-            <h3 className='referal-name'>{reward.reward_name}</h3>
-            <div className='reward-count-box'>
-              <p className='reward-count'>+ {reward.reward}</p>
-              <div className='reward-type'>
-                {reward.reward_type === "yellow_coin" ? (
-                  <Image
-                    src={iconObj.yellowCoin}
-                    width={12}
-                    height={12}
-                    alt='Yellow coin'
-                  />
-                ) : (
-                  <Image
-                    src={iconObj.purpleCoin}
-                    width={12}
-                    height={12}
-                    alt='Purple coin'
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
+      {loading
+        ? Array.from(new Array(5)).map((_, index) => (
+            <Skeleton
+              variant='rounded'
+              height={84}
+              animation='wave'
+              sx={{
+                bgcolor: "var(--color-surface)",
+                marginBottom: "5px",
+                width: "100%",
+              }}
+            />
+          ))
+        : rewards.map((reward) => (
+            <ReferalCard key={reward.reward_id} reward={reward} />
+          ))}
     </div>
   );
 };

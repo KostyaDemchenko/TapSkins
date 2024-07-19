@@ -9,6 +9,8 @@ import "./style.scss";
 const RewardCenter = () => {
   const [activeSection, setActiveSection] = useState("tasks");
 
+  const invitedReferals = 5; // Потом сделать запрос для получения этих данных
+
   const handleSectionChange = (section: React.SetStateAction<string>) => {
     setActiveSection(section);
   };
@@ -45,7 +47,10 @@ const RewardCenter = () => {
               activeSection === "referrals" ? "active" : ""
             }`}
           >
-            <div className='referal-count'></div>
+            <div className='referal-count'>
+              <p className='user-amount'>{invitedReferals}</p>
+              <p className='label'>user invited</p>
+            </div>
             <Button
               className='btn-primary-50'
               label='Send Invite'
