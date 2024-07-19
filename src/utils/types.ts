@@ -23,6 +23,8 @@ export class User {
 
   private backendAddress: string = process.env.NEXT_PUBLIC_BACKEND_ADDRESS!;
   private staminaStep = 3; // сколько стамины в периоде будет добавляться
+  private staminaDecrease = 5;
+  public staminaDelay = 1000; // период добавления стамины в секундах
 
   constructor(user_id: number) {
     this.user_id = user_id;
@@ -122,14 +124,15 @@ export class User {
   }
 
   increaseStamina() {
-    this.stamina += 3;
+    this.stamina += this.staminaStep;
     if (this.stamina > this.max_stamina) this.stamina = this.max_stamina;
   }
 
   dereaseStamina() {
-    if (this.stamina - 1 >= 0) {
-      this.stamina -= 1;
+    if (this.stamina - this.staminaDecrease >= 0) {
+      this.stamina -= this.staminaDecrease;
     }
+    else this.stamina = 0;
   }
 
   addPassiveStamina() {

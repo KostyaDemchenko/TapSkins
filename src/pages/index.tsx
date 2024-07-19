@@ -1,8 +1,6 @@
 import React from "react";
 import Script from "next/script";
 
-import Button from "@/src/components/Button";
-import Filters from "@/src/components/Filters";
 import Nav from "@/src/components/Nav";
 import { User } from "../utils/types";
 
@@ -105,51 +103,24 @@ export default function Home() {
     }
   };
 
-  return (
-    <>
-      <Script
-        src='https://telegram.org/js/telegram-web-app.js'
-        onLoad={() => {
-          setTg(global.window.Telegram.WebApp);
-        }}
-      />
-      <main
-        style={{
-          display: "flex",
-          gap: "15px",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Button
-          label={`Buy it now, ${tg?.initDataUnsafe?.user?.first_name}`}
-          className='btn-primary-50 '
-          onClick={() => console.log("test")}
-        />
-
-        {user && wss.current && <UserBalance wss={wss.current} user={user} />}
-
-        <Button
-          label={getSubsMsg()}
-          className='btn-primary-50 icon'
-          onClick={async () => {
-            if (!user) return;
-            // первый аргумент id канала
-            const subscribed = (await user.checkSubscription(
-              "@OutTestChanel"
-            )) as boolean | null;
-            setUserSubscribed(subscribed);
-          }}
-        />
-        <Button
-          label={`I know your id. ${tg?.initDataUnsafe?.user?.id}`}
-          className='btn-primary-50 '
-          icon='shopping_cart'
-          onClick={() => console.log("test")}
-        />
-        <Filters />
-      </main>
-      <Nav />
-    </>
-  );
+  return (<>
+    <Script
+      src='https://telegram.org/js/telegram-web-app.js'
+      onLoad={() => {
+        setTg(global.window.Telegram.WebApp);
+      }}
+    />
+    <main
+      style={{
+        display: "flex",
+        gap: "15px",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <UserBalance/>
+      {/* {user && <UserBalance user={user} />} */}
+    </main>
+    <Nav />
+  </>)
 }
