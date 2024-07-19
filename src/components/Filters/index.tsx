@@ -17,6 +17,7 @@ interface FiltersProps {
   maxPrice: number;
   minFloat: number;
   maxFloat: number;
+  skins: any[];
   onApply: (filters: any) => void;
 }
 
@@ -25,6 +26,7 @@ const Filters: React.FC<FiltersProps> = ({
   maxPrice,
   minFloat,
   maxFloat,
+  skins,
   onApply,
 }) => {
   const [priceRange, setPriceRange] = useState<[number, number]>([
@@ -35,24 +37,39 @@ const Filters: React.FC<FiltersProps> = ({
     minFloat,
     maxFloat,
   ]);
-  const [weaponType, setWeaponType] = useState<string | null>(null);
-  const [weapon, setWeapon] = useState<string | null>(null);
+  const [weaponType, setWeaponType] = useState<string[]>([]);
+  const [weapon, setWeapon] = useState<string[]>([]);
+  const [rarity, setRarity] = useState<string[]>([]);
   const [starTrack, setStarTrack] = useState<boolean>(false);
-  const [rarity, setRarity] = useState<string | null>(null);
   const [resetKey, setResetKey] = useState<number>(0);
+
+  const [uniqueWeaponTypes, setUniqueWeaponTypes] = useState<string[]>([]);
+  const [uniqueWeapons, setUniqueWeapons] = useState<string[]>([]);
+  const [uniqueRarities, setUniqueRarities] = useState<string[]>([]);
 
   useEffect(() => {
     setPriceRange([minPrice, maxPrice]);
     setFloatRange([minFloat, maxFloat]);
-  }, [minPrice, maxPrice, minFloat, maxFloat]);
+
+    // Get unique weapon types, weapons, and rarities
+    const weaponTypes = Array.from(
+      new Set(skins.map((skin) => skin.weapon_type))
+    );
+    const weapons = Array.from(new Set(skins.map((skin) => skin.weapon_name)));
+    const rarities = Array.from(new Set(skins.map((skin) => skin.rarity)));
+
+    setUniqueWeaponTypes(weaponTypes);
+    setUniqueWeapons(weapons);
+    setUniqueRarities(rarities);
+  }, [minPrice, maxPrice, minFloat, maxFloat, skins]);
 
   const handleReset = () => {
     setPriceRange([minPrice, maxPrice]);
     setFloatRange([minFloat, maxFloat]);
-    setWeaponType(null);
-    setWeapon(null);
+    setWeaponType([]);
+    setWeapon([]);
     setStarTrack(false);
-    setRarity(null);
+    setRarity([]);
     setResetKey((prevKey) => prevKey + 1);
   };
 
@@ -95,14 +112,95 @@ const Filters: React.FC<FiltersProps> = ({
           onChange={setPriceRange}
           step={1}
         />
-        <div className='filter-option'>
-          <p className='filter-title'>Weapon type</p>
-          <span className='material-symbols-outlined'>arrow_right_alt</span>
-        </div>
-        <div className='filter-option'>
-          <p className='filter-title'>Weapon</p>
-          <span className='material-symbols-outlined'>arrow_right_alt</span>
-        </div>
+
+        <Modal
+          modalTitle='Weapon type'
+          trigger={
+            <div className='filter-option'>
+              <p className='filter-title'>Weapon type</p>
+              <span className='material-symbols-outlined'>arrow_right_alt</span>
+            </div>
+          }
+          fade={false}
+          subModal={true}
+          height='60dvh'
+          closeElement={
+            <Button
+              label='Apply'
+              className='btn-primary-50 icon'
+              onClick={() => {
+                handleApply();
+              }}
+            />
+          }
+          className='sub-filter-modal'
+        >
+          <div className='content weapon-type'>
+            {uniqueWeaponTypes.map((type) => (
+              <div className='filter-option' key={type}>
+                <p className='filter-title'>{type}</p>
+                <CustomCheckbox
+                  name={type}
+                  defaultChecked={weaponType.includes(type)}
+                  onChange={(checked) => {
+                    if (checked) {
+                      setWeaponType((prev) => [...prev, type]);
+                    } else {
+                      setWeaponType((prev) =>
+                        prev.filter((item) => item !== type)
+                      );
+                    }
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </Modal>
+
+        <Modal
+          modalTitle='Weapon'
+          trigger={
+            <div className='filter-option'>
+              <p className='filter-title'>Weapon</p>
+              <span className='material-symbols-outlined'>arrow_right_alt</span>
+            </div>
+          }
+          fade={false}
+          subModal={true}
+          height='60dvh'
+          closeElement={
+            <Button
+              label='Apply'
+              className='btn-primary-50 icon'
+              onClick={() => {
+                handleApply();
+              }}
+            />
+          }
+          className='sub-filter-modal'
+        >
+          <div className='content weapon'>
+            {uniqueWeapons.map((weaponName) => (
+              <div className='filter-option' key={weaponName}>
+                <p className='filter-title'>{weaponName}</p>
+                <CustomCheckbox
+                  name={weaponName}
+                  defaultChecked={weapon.includes(weaponName)}
+                  onChange={(checked) => {
+                    if (checked) {
+                      setWeapon((prev) => [...prev, weaponName]);
+                    } else {
+                      setWeapon((prev) =>
+                        prev.filter((item) => item !== weaponName)
+                      );
+                    }
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </Modal>
+
         <div className='filter-option'>
           <p className='filter-title'>StarTrack</p>
           <CustomRadioButton
@@ -111,6 +209,7 @@ const Filters: React.FC<FiltersProps> = ({
             onChange={setStarTrack}
           />
         </div>
+
         <PriceRanger
           key={`float-${resetKey}`}
           maxValue={maxFloat}
@@ -120,10 +219,50 @@ const Filters: React.FC<FiltersProps> = ({
           onChange={setFloatRange}
           step={0.0001}
         />
-        <div className='filter-option'>
-          <p className='filter-title'>Rarity</p>
-          <span className='material-symbols-outlined'>arrow_right_alt</span>
-        </div>
+
+        <Modal
+          modalTitle='Rarity'
+          trigger={
+            <div className='filter-option'>
+              <p className='filter-title'>Rarity</p>
+              <span className='material-symbols-outlined'>arrow_right_alt</span>
+            </div>
+          }
+          fade={false}
+          subModal={true}
+          height='60dvh'
+          closeElement={
+            <Button
+              label='Apply'
+              className='btn-primary-50 icon'
+              onClick={() => {
+                handleApply();
+              }}
+            />
+          }
+          className='sub-filter-modal'
+        >
+          <div className='content rarity'>
+            {uniqueRarities.map((rarityName) => (
+              <div className='filter-option' key={rarityName}>
+                <p className='filter-title'>{rarityName}</p>
+                <CustomCheckbox
+                  name={rarityName}
+                  defaultChecked={rarity.includes(rarityName)}
+                  onChange={(checked) => {
+                    if (checked) {
+                      setRarity((prev) => [...prev, rarityName]);
+                    } else {
+                      setRarity((prev) =>
+                        prev.filter((item) => item !== rarityName)
+                      );
+                    }
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </Modal>
 
         <Button
           label='Reset'

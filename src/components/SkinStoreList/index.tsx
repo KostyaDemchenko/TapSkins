@@ -31,7 +31,7 @@ interface SkinStoreProps {
   searchTerm: string;
   skins: Skin[];
   isLoading: boolean;
-  filters: any; // Add filters prop
+  filters: any;
 }
 
 const SkinStore: React.FC<SkinStoreProps> = ({
@@ -48,6 +48,40 @@ const SkinStore: React.FC<SkinStoreProps> = ({
     if (searchTerm) {
       filtered = filtered.filter((skin) =>
         skin.skin_name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (filters.priceRange) {
+      filtered = filtered.filter(
+        (skin) =>
+          skin.price >= filters.priceRange[0] &&
+          skin.price <= filters.priceRange[1]
+      );
+    }
+
+    if (filters.floatRange) {
+      filtered = filtered.filter(
+        (skin) =>
+          skin.float >= filters.floatRange[0] &&
+          skin.float <= filters.floatRange[1]
+      );
+    }
+
+    if (filters.weaponType && filters.weaponType.length > 0) {
+      filtered = filtered.filter((skin) =>
+        filters.weaponType.includes(skin.weapon_type)
+      );
+    }
+
+    if (filters.weapon && filters.weapon.length > 0) {
+      filtered = filtered.filter((skin) =>
+        filters.weapon.includes(skin.weapon_name)
+      );
+    }
+
+    if (filters.rarity && filters.rarity.length > 0) {
+      filtered = filtered.filter((skin) =>
+        filters.rarity.includes(skin.rarity)
       );
     }
 

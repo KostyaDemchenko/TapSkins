@@ -79,13 +79,29 @@ body.no-scroll {
       width: 100%;
       padding: 33px 20px 15px 20px;
       height: 100%;
+      gap: 30px;
 
-      .modal-title {
-        font-family: "Montserrat", sans-serif;
-        font-size: 18px;
-        font-weight: bold;
-        line-height: 1.25;
-        color: var(--color-text-primary);
+      .header-box {
+        @include flex(center, center);
+        @include f-direction(row);
+
+        width: 100%;
+        gap: 10px;
+
+        .modal-title {
+          @include p-montserrat-18-125-bold;
+          color: var(--color-text-primary);
+        }
+
+        .back-btn {
+          width: 24px;
+          height: 24px;
+
+          .icon {
+            font-size: 24px;
+            color: var(--color-text-primary);
+          }
+        }
       }
 
       .content {
@@ -99,6 +115,10 @@ body.no-scroll {
 
         &::-webkit-scrollbar {
           width: 0px;
+        }
+
+        .modal-trigger {
+          width: 100%;
         }
       }
 
