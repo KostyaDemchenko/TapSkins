@@ -7,6 +7,7 @@ interface ModalProps {
   btnTriggerIcon?: string;
   height?: string;
   className?: string;
+  modalBg?: string;
   fade?: boolean;
   subModal?: boolean;
   trigger: React.ReactNode;
@@ -25,6 +26,7 @@ const Modal: React.FC<ModalProps> = ({
   fade = true,
   subModal = false,
   closeElement,
+  modalBg = "var(--color-surface)",
 }) => {
   const [visible, setVisible] = useState(false);
   const [top, setTop] = useState("100dvh");
@@ -110,7 +112,7 @@ const Modal: React.FC<ModalProps> = ({
         <div
           ref={modalRef}
           className={className + " modal-dialog"}
-          style={{ top, height }}
+          style={{ top, height, backgroundColor: modalBg }}
         >
           <div
             className='drag-zone'

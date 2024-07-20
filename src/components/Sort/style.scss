@@ -1,0 +1,46 @@
+@import "@/src/app/shortSyles.scss";
+
+.sort-modal-triger {
+  .modal-trigger {
+    @include flex(center, center);
+
+    width: 24px;
+    height: 24px;
+
+    .material-symbols-outlined {
+      color: var(--color-text-primary);
+      font-variation-settings: "FILL" 0, "wght" 200, "GRAD" 0, "opsz" 18;
+    }
+  }
+}
+
+.sort {
+  .price-box,
+  .rarity-box {
+    @include flex(center, flex-start);
+    @include f-direction(column);
+
+    width: 100%;
+    gap: 15px;
+
+    .title {
+      @include p-montserrat-16-125-bold;
+      color: var(--color-text-primary);
+    }
+
+    .options {
+      @include flex(center, flex-start);
+      @include f-direction(column);
+      gap: 15px;
+
+      .option {
+        @include p-montserrat-14-125-medium;
+        color: var(--color-text-primary);
+
+        &.active {
+          color: var(--color-buttons-content-purple);
+        }
+      }
+    }
+  }
+}

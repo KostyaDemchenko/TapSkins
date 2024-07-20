@@ -21,5 +21,13 @@
 
     gap: 20px;
     width: 100%;
+
+    .bottom-box {
+      @include flex(flex-start, center);
+      @include f-direction(row);
+
+      gap: 20px;
+      width: 100%;
+    }
   }
 }

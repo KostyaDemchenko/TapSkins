@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Script from "next/script";
 
 import Nav from "@/src/components/Nav";
+import FastFilters from "@/src/components/FastFilters";
 import SkinStore from "@/src/components/SkinStoreList";
 import Filters from "@/src/components/Filters";
 import Search from "@/src/components/Search";
@@ -12,18 +13,31 @@ import "./style.scss";
 
 const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
 
+type Skin = {
+  item_id: number;
+  skin_name: string;
+  weapon_name: string;
+  image_src: string;
+  price: number;
+  float: number;
+  rarity: string;
+  weapon_type: string;
+  startrack: string;
+};
+
 export default function SkinStorePage() {
   const [tg, setTg] = useState<WebApp | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [skins, setSkins] = useState([]);
-  const [filteredSkins, setFilteredSkins] = useState([]);
+  const [skins, setSkins] = useState<Skin[]>([]);
+  const [filteredSkins, setFilteredSkins] = useState<Skin[]>([]);
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [minFloat, setMinFloat] = useState<number | null>(null);
   const [maxFloat, setMaxFloat] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [filters, setFilters] = useState<any>({});
+  const [weaponTypes, setWeaponTypes] = useState<string[]>([]);
 
   useEffect(() => {
     if (!tg) return;
@@ -50,13 +64,21 @@ export default function SkinStorePage() {
         setSkins(data.storeDataStructured);
         setFilteredSkins(data.storeDataStructured);
 
-        const prices = data.storeDataStructured.map((skin: any) => skin.price);
+        const prices = data.storeDataStructured.map((skin: Skin) => skin.price);
         setMinPrice(Math.min(...prices));
         setMaxPrice(Math.max(...prices));
 
-        const floats = data.storeDataStructured.map((skin: any) => skin.float);
+        const floats = data.storeDataStructured.map((skin: Skin) => skin.float);
         setMinFloat(Math.min(...floats));
         setMaxFloat(Math.max(...floats));
+
+        // Extract unique weapon types
+        const uniqueWeaponTypes: string[] = Array.from(
+          new Set(
+            data.storeDataStructured.map((skin: Skin) => skin.weapon_type)
+          )
+        );
+        setWeaponTypes(uniqueWeaponTypes);
       } catch (error) {
         console.error("Error fetching the skin store data:", error);
       } finally {
@@ -68,7 +90,45 @@ export default function SkinStorePage() {
   }, []);
 
   const applyFilters = (filters: any) => {
+    const filtered = skins.filter((skin: Skin) => {
+      return (
+        (filters.priceRange[0] === null ||
+          skin.price >= filters.priceRange[0]) &&
+        (filters.priceRange[1] === null ||
+          skin.price <= filters.priceRange[1]) &&
+        (filters.floatRange[0] === null ||
+          skin.float >= filters.floatRange[0]) &&
+        (filters.floatRange[1] === null ||
+          skin.float <= filters.floatRange[1]) &&
+        (filters.weapon.length === 0 ||
+          filters.weapon.includes(skin.weapon_name)) &&
+        (!filters.starTrack || skin.startrack === "Startrack") &&
+        (filters.rarity.length === 0 || filters.rarity.includes(skin.rarity))
+      );
+    });
+    setFilteredSkins(filtered);
     setFilters(filters);
+  };
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    const filtered = skins.filter(
+      (skin: Skin) =>
+        skin.skin_name.toLowerCase().includes(term.toLowerCase()) ||
+        skin.weapon_name.toLowerCase().includes(term.toLowerCase())
+    );
+    setFilteredSkins(filtered);
+  };
+
+  const handleWeaponTypeFilter = (weaponType: string) => {
+    if (weaponType === "All") {
+      setFilteredSkins(skins);
+    } else {
+      const filtered = skins.filter(
+        (skin: Skin) => skin.weapon_type === weaponType
+      );
+      setFilteredSkins(filtered);
+    }
   };
 
   return (
@@ -87,18 +147,21 @@ export default function SkinStorePage() {
           </div>
           <div className='middle-box'>
             <div className='top-box'>
-              <Search onSearch={setSearchTerm} />
+              <Search onSearch={handleSearch} />
               <Filters
                 minPrice={minPrice ?? 0}
                 maxPrice={maxPrice ?? 100}
                 minFloat={minFloat ?? 0}
                 maxFloat={maxFloat ?? 1}
-                skins={skins} // Pass skins to Filters
+                skins={skins}
                 onApply={applyFilters}
               />
             </div>
             <div className='bottom-box'>
-              <div className='selected-categories-box'></div>
+              <FastFilters
+                weaponTypes={weaponTypes}
+                onFilterSelect={handleWeaponTypeFilter}
+              />
               <div className='sort-modal-triger'></div>
             </div>
           </div>

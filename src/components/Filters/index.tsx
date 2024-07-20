@@ -37,13 +37,11 @@ const Filters: React.FC<FiltersProps> = ({
     minFloat,
     maxFloat,
   ]);
-  const [weaponType, setWeaponType] = useState<string[]>([]);
   const [weapon, setWeapon] = useState<string[]>([]);
   const [rarity, setRarity] = useState<string[]>([]);
   const [starTrack, setStarTrack] = useState<boolean>(false);
   const [resetKey, setResetKey] = useState<number>(0);
 
-  const [uniqueWeaponTypes, setUniqueWeaponTypes] = useState<string[]>([]);
   const [uniqueWeapons, setUniqueWeapons] = useState<string[]>([]);
   const [uniqueRarities, setUniqueRarities] = useState<string[]>([]);
 
@@ -51,14 +49,10 @@ const Filters: React.FC<FiltersProps> = ({
     setPriceRange([minPrice, maxPrice]);
     setFloatRange([minFloat, maxFloat]);
 
-    // Get unique weapon types, weapons, and rarities
-    const weaponTypes = Array.from(
-      new Set(skins.map((skin) => skin.weapon_type))
-    );
+    // Get unique weapons and rarities
     const weapons = Array.from(new Set(skins.map((skin) => skin.weapon_name)));
     const rarities = Array.from(new Set(skins.map((skin) => skin.rarity)));
 
-    setUniqueWeaponTypes(weaponTypes);
     setUniqueWeapons(weapons);
     setUniqueRarities(rarities);
   }, [minPrice, maxPrice, minFloat, maxFloat, skins]);
@@ -66,7 +60,6 @@ const Filters: React.FC<FiltersProps> = ({
   const handleReset = () => {
     setPriceRange([minPrice, maxPrice]);
     setFloatRange([minFloat, maxFloat]);
-    setWeaponType([]);
     setWeapon([]);
     setStarTrack(false);
     setRarity([]);
@@ -77,7 +70,6 @@ const Filters: React.FC<FiltersProps> = ({
     const filters = {
       priceRange,
       floatRange,
-      weaponType,
       weapon,
       starTrack,
       rarity,
@@ -96,11 +88,10 @@ const Filters: React.FC<FiltersProps> = ({
         <Button
           label='Apply'
           className='btn-primary-50 icon'
-          onClick={() => {
-            handleApply();
-          }}
+          onClick={handleApply}
         />
       }
+      modalBg='var(--color-background-secondary)'
     >
       <div className='content filter-box'>
         <PriceRanger
@@ -112,50 +103,6 @@ const Filters: React.FC<FiltersProps> = ({
           onChange={setPriceRange}
           step={1}
         />
-
-        <Modal
-          modalTitle='Weapon type'
-          trigger={
-            <div className='filter-option'>
-              <p className='filter-title'>Weapon type</p>
-              <span className='material-symbols-outlined'>arrow_right_alt</span>
-            </div>
-          }
-          fade={false}
-          subModal={true}
-          height='60dvh'
-          closeElement={
-            <Button
-              label='Apply'
-              className='btn-primary-50 icon'
-              onClick={() => {
-                handleApply();
-              }}
-            />
-          }
-          className='sub-filter-modal'
-        >
-          <div className='content weapon-type'>
-            {uniqueWeaponTypes.map((type) => (
-              <div className='filter-option' key={type}>
-                <p className='filter-title'>{type}</p>
-                <CustomCheckbox
-                  name={type}
-                  defaultChecked={weaponType.includes(type)}
-                  onChange={(checked) => {
-                    if (checked) {
-                      setWeaponType((prev) => [...prev, type]);
-                    } else {
-                      setWeaponType((prev) =>
-                        prev.filter((item) => item !== type)
-                      );
-                    }
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-        </Modal>
 
         <Modal
           modalTitle='Weapon'
@@ -172,12 +119,11 @@ const Filters: React.FC<FiltersProps> = ({
             <Button
               label='Apply'
               className='btn-primary-50 icon'
-              onClick={() => {
-                handleApply();
-              }}
+              onClick={handleApply}
             />
           }
           className='sub-filter-modal'
+          modalBg='var(--color-background-secondary)'
         >
           <div className='content weapon'>
             {uniqueWeapons.map((weaponName) => (
@@ -235,12 +181,11 @@ const Filters: React.FC<FiltersProps> = ({
             <Button
               label='Apply'
               className='btn-primary-50 icon'
-              onClick={() => {
-                handleApply();
-              }}
+              onClick={handleApply}
             />
           }
           className='sub-filter-modal'
+          modalBg='var(--color-background-secondary)'
         >
           <div className='content rarity'>
             {uniqueRarities.map((rarityName) => (
