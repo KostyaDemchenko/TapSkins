@@ -1,9 +1,18 @@
 @import "@/src/app/shortSyles.scss";
 
 .custom-checkbox {
-  display: inline-block;
+  @include flex(space-between, center);
+  @include f-direction(row);
+
+  width: 100%;
+
   cursor: pointer;
   position: relative;
+
+  .checkbox-label {
+    @include p-montserrat-14-125-regular;
+    color: var(--color-text-primary);
+  }
 
   input {
     display: none;

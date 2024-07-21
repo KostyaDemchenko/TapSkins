@@ -128,8 +128,8 @@ const Filters: React.FC<FiltersProps> = ({
           <div className='content weapon'>
             {uniqueWeapons.map((weaponName) => (
               <div className='filter-option' key={weaponName}>
-                <p className='filter-title'>{weaponName}</p>
                 <CustomCheckbox
+                  label={weaponName}
                   name={weaponName}
                   defaultChecked={weapon.includes(weaponName)}
                   onChange={(checked) => {
@@ -148,8 +148,8 @@ const Filters: React.FC<FiltersProps> = ({
         </Modal>
 
         <div className='filter-option'>
-          <p className='filter-title'>StarTrack</p>
           <CustomRadioButton
+            label={"StarTrack"}
             name='startrack'
             defaultSelected={starTrack}
             onChange={setStarTrack}
@@ -190,8 +190,8 @@ const Filters: React.FC<FiltersProps> = ({
           <div className='content rarity'>
             {uniqueRarities.map((rarityName) => (
               <div className='filter-option' key={rarityName}>
-                <p className='filter-title'>{rarityName}</p>
                 <CustomCheckbox
+                  label={rarityName}
                   name={rarityName}
                   defaultChecked={rarity.includes(rarityName)}
                   onChange={(checked) => {

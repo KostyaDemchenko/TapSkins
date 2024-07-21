@@ -3,12 +3,14 @@ import "./style.scss";
 
 interface CustomRadioButtonProps {
   name: string;
+  label: string;
   defaultSelected?: boolean;
   onChange?: (checked: boolean) => void;
 }
 
 const CustomRadioButton: React.FC<CustomRadioButtonProps> = ({
   name,
+  label,
   defaultSelected = false,
   onChange,
 }) => {
@@ -36,6 +38,7 @@ const CustomRadioButton: React.FC<CustomRadioButtonProps> = ({
         onChange={handleChange}
         name={name}
       />
+      <span className='radio-label'>{label}</span>
       <div className={`radio-button ${selected ? "selected" : ""}`}>
         <div className='inner-circle'></div>
       </div>
