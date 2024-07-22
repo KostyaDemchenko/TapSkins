@@ -46,6 +46,7 @@ const TasksList: React.FC = () => {
   return (
     <>
       <ProgressBar
+        titleVisible={true}
         title='Tasks'
         total={tasks.length}
         completed={completedTasks}
