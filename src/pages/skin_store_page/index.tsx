@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import Script from "next/script";
+
+import { User } from "@/src/utils/types";
+
 import Nav from "@/src/components/Nav";
 import FastFilters from "@/src/components/FastFilters";
 import SkinStore from "@/src/components/SkinStoreList";
 import Filters from "@/src/components/Filters";
 import Search from "@/src/components/Search";
 import Sort from "@/src/components/Sort";
-import { User } from "@/src/utils/types";
+
 import "@/src/app/globals.scss";
 import "./style.scss";
-
-const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
 
 type Skin = {
   item_id: number;

@@ -49,7 +49,6 @@ const Filters: React.FC<FiltersProps> = ({
     setPriceRange([minPrice, maxPrice]);
     setFloatRange([minFloat, maxFloat]);
 
-    // Get unique weapons and rarities
     const weapons = Array.from(new Set(skins.map((skin) => skin.weapon_name)));
     const rarities = Array.from(new Set(skins.map((skin) => skin.rarity)));
 
