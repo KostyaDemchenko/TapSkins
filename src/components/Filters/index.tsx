@@ -192,6 +192,7 @@ const Filters: React.FC<FiltersProps> = ({
                 <CustomCheckbox
                   label={rarityName}
                   name={rarityName}
+                  colorBlock={true}
                   defaultChecked={rarity.includes(rarityName)}
                   onChange={(checked) => {
                     if (checked) {

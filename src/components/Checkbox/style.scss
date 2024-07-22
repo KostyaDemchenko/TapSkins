@@ -9,9 +9,21 @@
   cursor: pointer;
   position: relative;
 
-  .checkbox-label {
-    @include p-montserrat-14-125-regular;
-    color: var(--color-text-primary);
+  .left-site {
+    @include flex(flex-start, center);
+    gap: 10px;
+    width: fit-content;
+
+    .color-block {
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+    }
+
+    .checkbox-label {
+      @include p-montserrat-14-125-regular;
+      color: var(--color-text-primary);
+    }
   }
 
   input {
