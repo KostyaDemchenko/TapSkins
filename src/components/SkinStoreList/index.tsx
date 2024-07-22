@@ -4,12 +4,14 @@ import Image from "next/image";
 import Modal from "@/src/components/Modal";
 import { SkinCard } from "@/src/components/Carts";
 import SkinBackground from "@/src/components/SkinBackground";
-import iconObj from "@/public/icons/utils";
 import Button from "@/src/components/Button";
 import Rare from "@/src/components/Rare";
 import Float from "@/src/components/Float";
+import Skeleton from "@mui/material/Skeleton";
 
-import { truncateName, truncateFloat } from "@/src/utils/functions";
+import iconObj from "@/public/icons/utils";
+
+import { truncateName } from "@/src/utils/functions";
 
 import "./style.scss";
 
@@ -25,31 +27,106 @@ interface Skin {
   startrack: string;
 }
 
-const SkinStore: React.FC = () => {
-  const [skins, setSkins] = useState<Skin[]>([]);
+interface SkinStoreProps {
+  searchTerm: string;
+  skins: Skin[];
+  isLoading: boolean;
+  filters: any;
+}
+
+const SkinStore: React.FC<SkinStoreProps> = ({
+  searchTerm,
+  skins,
+  isLoading,
+  filters,
+}) => {
+  const [filteredSkins, setFilteredSkins] = useState<Skin[]>(skins);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/skin_store");
-        const data = await response.json();
-        setSkins(data.storeDataStructured);
-      } catch (error) {
-        console.error("Error fetching the skin store data:", error);
-      }
-    };
+    let filtered = skins;
 
-    fetchData();
-  }, []);
+    if (searchTerm) {
+      filtered = filtered.filter((skin) =>
+        skin.skin_name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (filters.priceRange) {
+      filtered = filtered.filter(
+        (skin) =>
+          skin.price >= filters.priceRange[0] &&
+          skin.price <= filters.priceRange[1]
+      );
+    }
+
+    if (filters.floatRange) {
+      filtered = filtered.filter(
+        (skin) =>
+          skin.float >= filters.floatRange[0] &&
+          skin.float <= filters.floatRange[1]
+      );
+    }
+
+    if (filters.weaponType && filters.weaponType.length > 0) {
+      filtered = filtered.filter((skin) =>
+        filters.weaponType.includes(skin.weapon_type)
+      );
+    }
+
+    if (filters.weapon && filters.weapon.length > 0) {
+      filtered = filtered.filter((skin) =>
+        filters.weapon.includes(skin.weapon_name)
+      );
+    }
+
+    if (filters.rarity && filters.rarity.length > 0) {
+      filtered = filtered.filter((skin) =>
+        filters.rarity.includes(skin.rarity)
+      );
+    }
+
+    if (filters.starTrack) {
+      filtered = filtered.filter((skin) => skin.startrack === "Startrack");
+    }
+
+    setFilteredSkins(filtered);
+  }, [searchTerm, skins, filters]);
+
+  if (isLoading) {
+    return (
+      <div className='skin-store-container'>
+        {Array.from(new Array(8)).map((_, index) => (
+          <Skeleton
+            key={index}
+            variant='rounded'
+            height={261}
+            animation='wave'
+            sx={{
+              bgcolor: "var(--color-surface)",
+              width: "48%",
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className='skin-store-container'>
-      {skins.map((skin) => (
+      {filteredSkins.map((skin) => (
         <Modal
           key={skin.item_id}
           modalTitle=''
           height='77dvh'
           trigger={<SkinCard skin={skin} />}
+          closeElement={
+            <Button
+              label={`Buy Now`}
+              className='btn-primary-50'
+              icon=''
+              onClick={() => {}}
+            />
+          }
         >
           <div className='skin-full-details'>
             <SkinBackground
@@ -57,7 +134,6 @@ const SkinStore: React.FC = () => {
               rarity={skin.rarity}
               size='large'
             />
-
             <div className='skin-name-box'>
               <h3 className='skin-name'>
                 {truncateName(skin.skin_name, 35)}{" "}
@@ -67,7 +143,7 @@ const SkinStore: React.FC = () => {
               </h3>
               <div className='available-box'>
                 <p className='available'>Available:</p>
-                <p className='available-user-value'>Samle</p>
+                <p className='available-user-value'>Sample</p>
                 <Image
                   src={iconObj.purpleCoin}
                   width={12}
@@ -76,7 +152,6 @@ const SkinStore: React.FC = () => {
                 />
               </div>
             </div>
-
             <Float floatValue={skin.float} />
             <Rare rarity={skin.rarity} />
             <div className='price-box'>
@@ -91,12 +166,6 @@ const SkinStore: React.FC = () => {
                 />
               </div>
             </div>
-            <Button
-              label={`Buy Now`}
-              className='btn-primary-50'
-              icon=''
-              onClick={() => {}}
-            />
           </div>
         </Modal>
       ))}

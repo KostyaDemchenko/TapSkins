@@ -40,18 +40,15 @@ export default function Home() {
     })();
   }, [tg]);
 
-
   try {
     const ws = new WebSocket(webSocketAddress);
     wss.current = ws;
-  }
-  catch(e) {
+  } catch (e) {
     console.error(e);
   }
 
   //? при отправке сообщения с бекенда по вебсокету
   if (user && wss.current) {
-
     const wssCallbacks = () => {
       if (!wss.current) return;
       wss.current.onopen = () => {
@@ -103,24 +100,26 @@ export default function Home() {
     }
   };
 
-  return (<>
-    <Script
-      src='https://telegram.org/js/telegram-web-app.js'
-      onLoad={() => {
-        setTg(global.window.Telegram.WebApp);
-      }}
-    />
-    <main
-      style={{
-        display: "flex",
-        gap: "15px",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <UserBalance/>
-      {/* {user && <UserBalance user={user} />} */}
-    </main>
-    <Nav />
-  </>)
+  return (
+    <>
+      <Script
+        src='https://telegram.org/js/telegram-web-app.js'
+        onLoad={() => {
+          setTg(global.window.Telegram.WebApp);
+        }}
+      />
+      <main
+        style={{
+          display: "flex",
+          gap: "15px",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <UserBalance />
+        {/* {user && <UserBalance user={user} />} */}
+      </main>
+      <Nav />
+    </>
+  );
 }

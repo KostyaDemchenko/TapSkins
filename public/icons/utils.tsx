@@ -15,11 +15,13 @@ import cartPageActive from "./page_icons_active/cart_page.svg";
 import referalPageActive from "./page_icons_active/referal_page.svg";
 
 import filters from "./filters.svg";
+import search from "./search.svg";
 
 const obj: { [key: string]: string } = {
   purpleCoin: purpleCoin,
   yellowCoin: yellowCoin,
   filters: filters,
+  search: search,
 
   //page icons inactive
   mainPage: mainPage,

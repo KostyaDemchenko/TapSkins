@@ -1,0 +1,47 @@
+@import "@/src/app/shortSyles.scss";
+
+.fast-filters-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  .gradient-overlay {
+    position: absolute;
+    top: 0;
+    right: -1px;
+    height: 100%;
+    width: 50px;
+    background: linear-gradient(270deg, #080918 0%, rgba(8, 9, 24, 0) 100%);
+    pointer-events: none;
+  }
+}
+
+.fast-filters-box {
+  @include flex(flex-start, center);
+  @include f-direction(row);
+
+  gap: 15px;
+  width: 100%;
+  overflow-x: auto;
+  text-wrap: nowrap;
+  padding-right: 20px;
+
+  &::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+  }
+
+  .fast-filter-item {
+    @include p-montserrat-12-125-regular;
+    color: var(--color-text-secondary);
+
+    transition: 0.3s;
+
+    &.active {
+      @include p-montserrat-12-125-medium;
+      color: var(--color-text-primary);
+
+      transition: 0.3s;
+    }
+  }
+}

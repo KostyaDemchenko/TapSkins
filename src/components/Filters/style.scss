@@ -1,1 +1,30 @@
 @import "@/src/app/shortSyles.scss";
+
+.filter-box {
+  .filter-option {
+    @include flex(space-between, center);
+    @include f-direction(row);
+    width: 100%;
+
+    .material-symbols-outlined,
+    .material-symbols-rounded {
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--color-text-primary);
+    }
+
+    .filter-title {
+      @include p-montserrat-14-125-regular;
+      color: var(--color-text-primary);
+    }
+  }
+
+  .btn-tertiary-white-35 {
+    .material-symbols-outlined,
+    .material-symbols-rounded {
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--color-text-primary);
+    }
+  }
+}

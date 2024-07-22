@@ -1,13 +1,15 @@
 @import "@/src/app/shortSyles.scss";
 
 .skin-store-container {
-  @include flex(center, flex-start);
+  @include flex(flex-start, flex-start);
   @include f-direction(row);
 
   flex-wrap: wrap;
 
   width: 100%;
   gap: 5px 5px;
+
+  padding: 60px 0;
 }
 
 .modal-box {
