@@ -83,13 +83,14 @@ interface TaskCardProps {
     social_icon: string;
   };
   className?: string;
+  onClick: () => void; // Добавляем пропс для обработки клика
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, className }) => (
-  <a
-    href={task.link_to_join}
-    key={task.task_id}
+const TaskCard: React.FC<TaskCardProps> = ({ task, className, onClick }) => (
+  <div
+    onClick={onClick}
     className={`task-card ${className}`}
+    style={{ cursor: "pointer" }} // Добавляем указатель, чтобы обозначить кликабельность
   >
     <div className='task-icon'>
       <img src={task.social_icon} alt={task.platform_type} />
@@ -117,7 +118,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, className }) => (
         </div>
       </div>
     </div>
-  </a>
+  </div>
 );
 
 // ReferalCard
