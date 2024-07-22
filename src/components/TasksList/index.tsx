@@ -22,7 +22,7 @@ interface Task {
 const TasksList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const completedTasks = 1; // Фиксированное значение для выполненных задач
+  const completedTasks = 1;
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -33,15 +33,24 @@ const TasksList: React.FC = () => {
       } catch (error) {
         console.error("Error fetching tasks:", error);
       } finally {
-        // Задержка перед отключением загрузки
         setTimeout(() => {
           setLoading(false);
-        }, 2000);
+        }, 1000);
       }
     };
 
     fetchTasks();
   }, []);
+
+  const handleTaskClick = (link: string, platformType: string) => {
+    if (platformType === "Telegram") {
+      const formattedLink = link.replace("https://t.me/", "@");
+      console.log(`Join Telegram channel: ${formattedLink}`);
+      // Здесь можно добавить любую другую логику, необходимую для обработки клика
+    } else {
+      window.location.href = link;
+    }
+  };
 
   return (
     <>
@@ -66,7 +75,15 @@ const TasksList: React.FC = () => {
                 }}
               />
             ))
-          : tasks.map((task) => <TaskCard key={task.task_id} task={task} />)}
+          : tasks.map((task) => (
+              <TaskCard
+                key={task.task_id}
+                task={task}
+                onClick={() =>
+                  handleTaskClick(task.link_to_join, task.platform_type)
+                }
+              />
+            ))}
       </div>
     </>
   );
