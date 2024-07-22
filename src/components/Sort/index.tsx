@@ -1,35 +1,17 @@
-// давай реализуем сортировку
-// Вот компонент сортироки и давай я объясню что значит "From low to high" по редкости
-// 1) Common (тоесть самое простое)
-// 2) Uncommon
-// 3) Rare
-// 4) Mythical
-// 5) Legendary
-// 6) Ancient
-// 7) ExcedinglyRare (тоесть самое лучшее)
-
-// эти параметры передаються в объекте скина в парматре "rarity"
-
 import React, { useState } from "react";
-
 import Button from "@/src/components/Button";
 import Modal from "@/src/components/Modal";
-
 import "./style.scss";
 
 interface SortProps {
-  onSort: (sortType: string, option: string, order: string) => void;
+  onSort: (sortOption: string) => void;
 }
 
 const Sort: React.FC<SortProps> = ({ onSort }) => {
-  const [sortOptionPrice, setSortOptionPrice] = useState<string>("relevant");
-  const [sortOrderPrice, setSortOrderPrice] = useState<string>("asc");
-  const [sortOptionRarity, setSortOptionRarity] = useState<string>("relevant");
-  const [sortOrderRarity, setSortOrderRarity] = useState<string>("asc");
+  const [sortOption, setSortOption] = useState("relevant");
 
   const handleApply = () => {
-    onSort("price", sortOptionPrice, sortOrderPrice);
-    onSort("rarity", sortOptionRarity, sortOrderRarity);
+    onSort(sortOption);
   };
 
   return (
@@ -53,36 +35,24 @@ const Sort: React.FC<SortProps> = ({ onSort }) => {
           <p className='title'>Price</p>
           <div className='options'>
             <p
-              className={`option ${
-                sortOptionPrice === "relevant" ? "active" : ""
-              }`}
-              onClick={() => setSortOptionPrice("relevant")}
+              className={`option ${sortOption === "relevant" ? "active" : ""}`}
+              onClick={() => setSortOption("relevant")}
             >
               Relevant
             </p>
             <p
               className={`option ${
-                sortOptionPrice === "price" && sortOrderPrice === "desc"
-                  ? "active"
-                  : ""
+                sortOption === "price_low_to_high" ? "active" : ""
               }`}
-              onClick={() => {
-                setSortOptionPrice("price");
-                setSortOrderPrice("desc");
-              }}
+              onClick={() => setSortOption("price_low_to_high")}
             >
               From low to high
             </p>
             <p
               className={`option ${
-                sortOptionPrice === "price" && sortOrderPrice === "asc"
-                  ? "active"
-                  : ""
+                sortOption === "price_high_to_low" ? "active" : ""
               }`}
-              onClick={() => {
-                setSortOptionPrice("price");
-                setSortOrderPrice("asc");
-              }}
+              onClick={() => setSortOption("price_high_to_low")}
             >
               From high to low
             </p>
@@ -92,36 +62,24 @@ const Sort: React.FC<SortProps> = ({ onSort }) => {
           <p className='title'>Rarity</p>
           <div className='options'>
             <p
-              className={`option ${
-                sortOptionRarity === "relevant" ? "active" : ""
-              }`}
-              onClick={() => setSortOptionRarity("relevant")}
+              className={`option ${sortOption === "relevant" ? "active" : ""}`}
+              onClick={() => setSortOption("relevant")}
             >
               Relevant
             </p>
             <p
               className={`option ${
-                sortOptionRarity === "rarity" && sortOrderRarity === "desc"
-                  ? "active"
-                  : ""
+                sortOption === "rarity_low_to_high" ? "active" : ""
               }`}
-              onClick={() => {
-                setSortOptionRarity("rarity");
-                setSortOrderRarity("desc");
-              }}
+              onClick={() => setSortOption("rarity_low_to_high")}
             >
               From low to high
             </p>
             <p
               className={`option ${
-                sortOptionRarity === "rarity" && sortOrderRarity === "asc"
-                  ? "active"
-                  : ""
+                sortOption === "rarity_high_to_low" ? "active" : ""
               }`}
-              onClick={() => {
-                setSortOptionRarity("rarity");
-                setSortOrderRarity("asc");
-              }}
+              onClick={() => setSortOption("rarity_high_to_low")}
             >
               From high to low
             </p>
@@ -131,12 +89,7 @@ const Sort: React.FC<SortProps> = ({ onSort }) => {
           label='Reset'
           className='btn-tertiary-white-35'
           icon='refresh'
-          onClick={() => {
-            setSortOptionPrice("relevant");
-            setSortOrderPrice("asc");
-            setSortOptionRarity("relevant");
-            setSortOrderRarity("asc");
-          }}
+          onClick={() => setSortOption("relevant")}
         />
       </div>
     </Modal>

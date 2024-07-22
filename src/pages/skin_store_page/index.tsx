@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Script from "next/script";
-
 import Nav from "@/src/components/Nav";
 import FastFilters from "@/src/components/FastFilters";
 import SkinStore from "@/src/components/SkinStoreList";
 import Filters from "@/src/components/Filters";
 import Search from "@/src/components/Search";
+import Sort from "@/src/components/Sort";
 import { User } from "@/src/utils/types";
-
 import "@/src/app/globals.scss";
 import "./style.scss";
 
@@ -25,6 +24,16 @@ type Skin = {
   startrack: string;
 };
 
+const rarityOrder = [
+  "Common",
+  "Uncommon",
+  "Rare",
+  "Mythical",
+  "Legendary",
+  "Ancient",
+  "ExcedinglyRare",
+];
+
 export default function SkinStorePage() {
   const [tg, setTg] = useState<WebApp | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -38,6 +47,7 @@ export default function SkinStorePage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [filters, setFilters] = useState<any>({});
   const [weaponTypes, setWeaponTypes] = useState<string[]>([]);
+  const [sortOption, setSortOption] = useState<string>("relevant");
 
   useEffect(() => {
     if (!tg) return;
@@ -72,7 +82,6 @@ export default function SkinStorePage() {
         setMinFloat(Math.min(...floats));
         setMaxFloat(Math.max(...floats));
 
-        // Extract unique weapon types
         const uniqueWeaponTypes: string[] = Array.from(
           new Set(
             data.storeDataStructured.map((skin: Skin) => skin.weapon_type)
@@ -131,6 +140,39 @@ export default function SkinStorePage() {
     }
   };
 
+  const handleSort = (sortOption: string) => {
+    setSortOption(sortOption);
+  };
+
+  const getSortedSkins = () => {
+    let sortedSkins = [...filteredSkins];
+
+    switch (sortOption) {
+      case "price_low_to_high":
+        sortedSkins.sort((a, b) => a.price - b.price);
+        break;
+      case "price_high_to_low":
+        sortedSkins.sort((a, b) => b.price - a.price);
+        break;
+      case "rarity_low_to_high":
+        sortedSkins.sort(
+          (a, b) =>
+            rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity)
+        );
+        break;
+      case "rarity_high_to_low":
+        sortedSkins.sort(
+          (a, b) =>
+            rarityOrder.indexOf(b.rarity) - rarityOrder.indexOf(a.rarity)
+        );
+        break;
+      default:
+        break;
+    }
+
+    return sortedSkins;
+  };
+
   return (
     <>
       <Script
@@ -162,12 +204,12 @@ export default function SkinStorePage() {
                 weaponTypes={weaponTypes}
                 onFilterSelect={handleWeaponTypeFilter}
               />
-              <div className='sort-modal-triger'></div>
+              <Sort onSort={handleSort} />
             </div>
           </div>
           <SkinStore
             searchTerm={searchTerm}
-            skins={filteredSkins}
+            skins={getSortedSkins()}
             isLoading={isLoading}
             filters={filters}
           />
