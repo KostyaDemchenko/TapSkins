@@ -1,18 +1,36 @@
 import React, { useState } from "react";
+
+import Skeleton from "@mui/material/Skeleton";
 import Button from "@/src/components/Button";
 import Modal from "@/src/components/Modal";
+
 import "./style.scss";
 
 interface SortProps {
+  isLoading: boolean;
   onSort: (sortOption: string) => void;
 }
 
-const Sort: React.FC<SortProps> = ({ onSort }) => {
+const Sort: React.FC<SortProps> = ({ isLoading, onSort }) => {
   const [sortOption, setSortOption] = useState("relevant");
 
   const handleApply = () => {
     onSort(sortOption);
   };
+
+  if (isLoading) {
+    return (
+      <div className='sort-skeleton'>
+        <Skeleton
+          variant='rounded'
+          width={24}
+          height={24}
+          animation='wave'
+          sx={{ bgcolor: "var(--color-surface)" }}
+        />
+      </div>
+    );
+  }
 
   return (
     <Modal

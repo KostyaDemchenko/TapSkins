@@ -203,9 +203,10 @@ export default function SkinStorePage() {
             <div className='bottom-box'>
               <FastFilters
                 weaponTypes={weaponTypes}
+                isLoading={isLoading}
                 onFilterSelect={handleWeaponTypeFilter}
               />
-              <Sort onSort={handleSort} />
+              <Sort isLoading={isLoading} onSort={handleSort} />
             </div>
           </div>
           <SkinStore
