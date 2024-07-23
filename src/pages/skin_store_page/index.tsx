@@ -4,6 +4,7 @@ import Script from "next/script";
 import { User } from "@/src/utils/types";
 
 import Nav from "@/src/components/Nav";
+import UserBalanceStore from "@/src/components/UserBalanceStore";
 import FastFilters from "@/src/components/FastFilters";
 import SkinStore from "@/src/components/SkinStoreList";
 import Filters from "@/src/components/Filters";
@@ -184,11 +185,9 @@ export default function SkinStorePage() {
       />
       <main>
         <div className='container'>
-          <div className='top-box'>
-            <div className='user-balance'></div>
-            <div className='modal-trigger-convert'></div>
-          </div>
           <div className='middle-box'>
+            <UserBalanceStore userBalanceStore={1500} />
+            {/* ^^^^set user balanse here^^^^ */}
             <div className='top-box'>
               <Search onSearch={handleSearch} />
               <Filters

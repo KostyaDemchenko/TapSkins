@@ -1,0 +1,32 @@
+@import "@/src/app/shortSyles.scss";
+
+.user-balance {
+  @include flex(space-between, flex-end);
+  @include f-direction(row);
+
+  width: 100%;
+
+  .balance-box {
+    @include flex(center, flex-start);
+    @include f-direction(column);
+
+    gap: 3px;
+
+    .title {
+      @include p-montserrat-14-125-regular;
+      color: var(--color-text-secondary);
+    }
+
+    .amount {
+      @include flex(flex-start, center);
+      @include f-direction(row);
+
+      gap: 5px;
+
+      .balance {
+        @include h3-montserrat-24-125-bold;
+        color: var(--color-text-primary);
+      }
+    }
+  }
+}
