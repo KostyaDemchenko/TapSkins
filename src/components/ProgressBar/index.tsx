@@ -1,4 +1,7 @@
 import React from "react";
+
+import Skeleton from "@mui/material/Skeleton";
+
 import "./style.scss";
 
 interface ProgressBarProps {
@@ -6,27 +9,54 @@ interface ProgressBarProps {
   total: number;
   title?: string;
   titleVisible: boolean;
+  isLoading: boolean;
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({
   completed,
   total,
   title,
-  titleVisible = true
+  titleVisible = true,
+  isLoading,
 }) => {
   const percentage = (completed / total) * 100;
 
   return (
     <div className='progress-bar-container'>
-      {titleVisible && 
+      {titleVisible && (
         <div className='progress-bar-info'>
           <div className='progress-bar-count'>
-            <p>{completed}</p>
-            <p>/{total} </p>
+            {isLoading ? (
+              <>
+                <Skeleton
+                  variant='text'
+                  width={80}
+                  sx={{
+                    bgcolor: "var(--color-surface)",
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                <p>{completed}</p>
+                <p>/{total}</p>
+              </>
+            )}
           </div>
-          {title && <h3 className='progress-bar-title'> {title}</h3>}
-        </div>}
-
+          {title &&
+            (isLoading ? (
+              <Skeleton
+                variant='text'
+                width={80}
+                sx={{
+                  bgcolor: "var(--color-surface)",
+                }}
+              />
+            ) : (
+              <h3 className='progress-bar-title'>{title}</h3>
+            ))}
+        </div>
+      )}
       <div className='progress-bar'>
         <div
           className='progress-bar__fill'

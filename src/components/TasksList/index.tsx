@@ -59,6 +59,7 @@ const TasksList: React.FC = () => {
         title='Tasks'
         total={tasks.length}
         completed={completedTasks}
+        isLoading={loading} // Передаем состояние загрузки
       />
       <div className='tasks-list'>
         {loading
