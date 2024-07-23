@@ -7,7 +7,6 @@ import { User, UserObj } from "@/src/utils/types";
 
 import "@/src/app/globals.scss";
 import "./style.scss";
-const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
 
 export default function rewards_page() {
   const [tg, setTg] = React.useState<WebApp | null>();
