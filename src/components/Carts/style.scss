@@ -163,3 +163,31 @@
     }
   }
 }
+
+// Skin order card (rewriting of skin card)
+.skin-order-card {
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  padding-right: 20px;
+  position: relative;
+
+  .skin-order-card-trash {
+    position: absolute;
+    font-size: 16px;
+    top: 6px;
+    right: 6px;
+    color: var(--color-base-light-gray);
+    cursor: pointer;
+  }
+  
+  .img-box {
+    margin: 0 25px;
+    width: 158px;
+  }
+  
+  .skin-info .top-box {
+    width: 153px;
+    padding: 0;
+  }
+}

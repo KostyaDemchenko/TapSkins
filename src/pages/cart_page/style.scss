@@ -1,0 +1,44 @@
+@import "@/src/app/shortSyles.scss";
+
+.top-box {
+  padding-top: 20px;
+  @include flex(space-between);
+  width: 100%;
+
+  .items-amnt {
+    @include h3-montserrat-24-125-bold;
+  }
+
+  a {
+    @include p-montserrat-10-125-semibold;
+    @include flex(center, center);
+    padding: 6px 12px;
+    background-color: var(--color-buttons-secondary-fill);
+    border-radius: 3px;
+  }
+}
+
+.total-price-box {
+  @include flex(space-between);
+  width: 100%;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-base-dark-low-purple);
+
+  p {
+    @include p-montserrat-14-125-regular;
+  }
+
+  h4 {
+    @include h4-montserrat-20-125-bold;
+  }
+}
+
+main .purchase-buying {
+  min-height: 50px;
+  @include p-montserrat-16-125-semibold;
+  color: var(--color-buttons-text-black);
+}
+
+main {
+  padding-bottom: 57px;
+}

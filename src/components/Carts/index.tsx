@@ -5,25 +5,23 @@ import SkinBackground from "@/src/components/SkinBackground";
 import iconObj from "@/public/icons/utils";
 import { truncateName, truncateFloat } from "@/src/utils/functions";
 import "./style.scss";
+import { Cart, Skin } from "@/src/utils/types";
 
 // SkinCard
 interface SkinCardProps {
-  skin: {
-    item_id: number;
-    skin_name: string;
-    weapon_name: string;
-    image_src: string;
-    price: number;
-    float: number;
-    rarity: string;
-    weapon_type: string;
-    startrack: string;
-  };
+  skin: Skin;
   className?: string;
+  Cart: Cart;
 }
 
-const SkinCard: React.FC<SkinCardProps> = ({ skin, className }) => (
-  <div className={`skin-card ${className}`}>
+const SkinCard: React.FC<SkinCardProps> = ({ skin, className, Cart }) => {
+
+  const addToCartHandle = () => {
+    console.log(Cart.addToCart(skin));
+  }
+
+
+  return <div className={`skin-card ${className}`}>
     <SkinBackground
       imageSrc={skin.image_src}
       rarity={skin.rarity}
@@ -58,18 +56,59 @@ const SkinCard: React.FC<SkinCardProps> = ({ skin, className }) => (
           label={`Buy`}
           className='btn-primary-25'
           icon=''
-          onClick={() => {}}
+          onClick={() => { }}
         />
         <Button
           label={`Add to cart`}
           className='btn-tertiary-white-25'
           icon=''
-          onClick={() => {}}
+          onClick={addToCartHandle}
         />
       </div>
     </div>
   </div>
-);
+};
+
+interface SkinOrderCardProps {
+  skin: Skin;
+  deleteHandle: () => void;
+}
+
+const SkinOrderCard: React.FC<SkinOrderCardProps> = ({ skin, deleteHandle }) => {
+
+  return <div className="skin-card skin-order-card">
+    <div className="skin-order-card-trash material-symbols-outlined" onClick={deleteHandle}>delete</div>
+    <SkinBackground
+      imageSrc={skin.image_src}
+      rarity={skin.rarity}
+      size="small"
+    />
+    <div className='skin-info'>
+      <div className='top-box'>
+        <div className='skin-name-box '>
+          <h3 className='skin-name'>
+            {truncateName(skin.skin_name, 35)}{" "}
+            {skin.startrack && (
+              <span className='startrack'>{skin.startrack}</span>
+            )}
+          </h3>
+        </div>
+        <div className='price-float-box'>
+          <div className='price'>
+            <p className='price-value'>{skin.price}</p>
+            <Image
+              src={iconObj.purpleCoin}
+              width={12}
+              height={12}
+              alt='Purple coin'
+            />
+          </div>
+          <p className='float'>Float {truncateFloat(skin.float, 6)}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+}
 
 // TaskCard
 interface TaskCardProps {
@@ -164,4 +203,4 @@ const ReferalCard: React.FC<ReferalCardProps> = ({ reward, className }) => (
   </div>
 );
 
-export { SkinCard, TaskCard, ReferalCard };
+export { SkinCard, TaskCard, ReferalCard, SkinOrderCard };

@@ -12,26 +12,17 @@ import Skeleton from "@mui/material/Skeleton";
 import iconObj from "@/public/icons/utils";
 
 import { truncateName } from "@/src/utils/functions";
+import { Cart, Skin } from "@/src/utils/types";
 
 import "./style.scss";
 
-interface Skin {
-  item_id: number;
-  skin_name: string;
-  weapon_name: string;
-  image_src: string;
-  price: number;
-  float: number;
-  rarity: string;
-  weapon_type: string;
-  startrack: string;
-}
 
 interface SkinStoreProps {
   searchTerm: string;
   skins: Skin[];
   isLoading: boolean;
   filters: any;
+  userBalance: number;
 }
 
 const SkinStore: React.FC<SkinStoreProps> = ({
@@ -39,6 +30,7 @@ const SkinStore: React.FC<SkinStoreProps> = ({
   skins,
   isLoading,
   filters,
+  userBalance
 }) => {
   const [filteredSkins, setFilteredSkins] = useState<Skin[]>(skins);
 
@@ -118,7 +110,7 @@ const SkinStore: React.FC<SkinStoreProps> = ({
           key={skin.item_id}
           modalTitle=''
           height='77dvh'
-          trigger={<SkinCard skin={skin} />}
+          trigger={<SkinCard Cart={new Cart(userBalance)} skin={skin} />}
           closeElement={
             <Button
               label={`Buy Now`}
