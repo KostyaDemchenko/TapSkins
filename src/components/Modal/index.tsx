@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+
 import { createPortal } from "react-dom";
 import "rodal/lib/rodal.css";
 import "./style.scss";

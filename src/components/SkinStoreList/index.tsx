@@ -1,21 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 
-import Modal from "@/src/components/Modal";
-import { SkinCard } from "@/src/components/Carts";
-import SkinBackground from "@/src/components/SkinBackground";
-import Button from "@/src/components/Button";
-import Rare from "@/src/components/Rare";
-import Float from "@/src/components/Float";
 import Skeleton from "@mui/material/Skeleton";
-
-import iconObj from "@/public/icons/utils";
-
-import { truncateName } from "@/src/utils/functions";
-import { Cart, Skin } from "@/src/utils/types";
+import { SkinCard } from "@/src/components/Carts";
 import { ToastContainer, toast, ToastOptions } from "react-toastify";
 
-import { SuccessDisplay } from "@/src/utils/types";
+import { Cart, Skin, SuccessDisplay } from "@/src/utils/types";
 
 import "./style.scss";
 
@@ -35,7 +24,6 @@ const SkinStore: React.FC<SkinStoreProps> = ({
   userBalance,
 }) => {
   const [filteredSkins, setFilteredSkins] = useState<Skin[]>(skins);
-
   const userCart = useRef<Cart | null>(null);
 
   useEffect(() => {
@@ -132,7 +120,7 @@ const SkinStore: React.FC<SkinStoreProps> = ({
           <SkinCard
             addToCartHandle={addToCartHandle}
             skin={skin}
-            key={skin.id}
+            key={skin.item_id}
           />
         ))}
       </div>

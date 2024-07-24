@@ -33,84 +33,94 @@ const Sort: React.FC<SortProps> = ({ isLoading, onSort }) => {
   }
 
   return (
-    <Modal
-      modalTitle='Sort'
-      trigger={<span className='material-symbols-outlined'>swap_vert</span>}
-      fade={true}
-      subModal={false}
-      height='60dvh'
-      closeElement={
-        <Button
-          label='Apply'
-          className='btn-primary-50 icon'
-          onClick={handleApply}
-        />
-      }
-      className='sub-filter-modal'
-    >
-      <div className='content sort'>
-        <div className='price-box'>
-          <p className='title'>Price</p>
-          <div className='options'>
-            <p
-              className={`option ${sortOption === "relevant" ? "active" : ""}`}
-              onClick={() => setSortOption("relevant")}
-            >
-              Relevant
-            </p>
-            <p
-              className={`option ${
-                sortOption === "price_low_to_high" ? "active" : ""
-              }`}
-              onClick={() => setSortOption("price_low_to_high")}
-            >
-              From low to high
-            </p>
-            <p
-              className={`option ${
-                sortOption === "price_high_to_low" ? "active" : ""
-              }`}
-              onClick={() => setSortOption("price_high_to_low")}
-            >
-              From high to low
-            </p>
+    <>
+      <span className='material-symbols-rounded modal-icon-trigger' id='sort'>
+        swap_vert
+      </span>
+
+      <Modal
+        modalTitle='Sort'
+        triggerId='sort'
+        fade={true}
+        subModal={false}
+        height='60dvh'
+        closeElement={
+          <Button
+            label='Apply'
+            className='btn-primary-50 icon'
+            onClick={handleApply}
+          />
+        }
+        className='sub-filter-modal'
+      >
+        <div className='content sort'>
+          <div className='price-box'>
+            <p className='title'>Price</p>
+            <div className='options'>
+              <p
+                className={`option ${
+                  sortOption === "relevant" ? "active" : ""
+                }`}
+                onClick={() => setSortOption("relevant")}
+              >
+                Relevant
+              </p>
+              <p
+                className={`option ${
+                  sortOption === "price_low_to_high" ? "active" : ""
+                }`}
+                onClick={() => setSortOption("price_low_to_high")}
+              >
+                From low to high
+              </p>
+              <p
+                className={`option ${
+                  sortOption === "price_high_to_low" ? "active" : ""
+                }`}
+                onClick={() => setSortOption("price_high_to_low")}
+              >
+                From high to low
+              </p>
+            </div>
           </div>
-        </div>
-        <div className='rarity-box'>
-          <p className='title'>Rarity</p>
-          <div className='options'>
-            <p
-              className={`option ${sortOption === "relevant" ? "active" : ""}`}
-              onClick={() => setSortOption("relevant")}
-            >
-              Relevant
-            </p>
-            <p
-              className={`option ${
-                sortOption === "rarity_low_to_high" ? "active" : ""
-              }`}
-              onClick={() => setSortOption("rarity_low_to_high")}
-            >
-              From low to high
-            </p>
-            <p
-              className={`option ${
-                sortOption === "rarity_high_to_low" ? "active" : ""
-              }`}
-              onClick={() => setSortOption("rarity_high_to_low")}
-            >
-              From high to low
-            </p>
+          <div className='rarity-box'>
+            <p className='title'>Rarity</p>
+            <div className='options'>
+              <p
+                className={`option ${
+                  sortOption === "relevant" ? "active" : ""
+                }`}
+                onClick={() => setSortOption("relevant")}
+              >
+                Relevant
+              </p>
+              <p
+                className={`option ${
+                  sortOption === "rarity_low_to_high" ? "active" : ""
+                }`}
+                onClick={() => setSortOption("rarity_low_to_high")}
+              >
+                From low to high
+              </p>
+              <p
+                className={`option ${
+                  sortOption === "rarity_high_to_low" ? "active" : ""
+                }`}
+                onClick={() => setSortOption("rarity_high_to_low")}
+              >
+                From high to low
+              </p>
+            </div>
           </div>
+          <Button
+            label='Reset'
+            className='btn-tertiary-white-35'
+            icon='refresh'
+            onClick={() => setSortOption("relevant")}
+          />
         </div>
-        <Button
-          label='Reset'
-          className='btn-tertiary-white-35'
-          icon='refresh'
-          onClick={() => setSortOption("relevant")}
-        />
-      </div>
-    </Modal>
+      </Modal>
+    </>
   );
 };
 

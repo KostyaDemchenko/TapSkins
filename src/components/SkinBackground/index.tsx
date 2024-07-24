@@ -7,7 +7,7 @@ import "./style.scss";
 interface SkinBackgroundProps {
   imageSrc: string;
   rarity: string;
-  id?: string | number;
+  id?: string;
   size: "small" | "large"; // to handle different sizes for card and modal
 }
 
@@ -23,7 +23,11 @@ const SkinBackground: React.FC<SkinBackgroundProps> = ({
   const circleSize = size === "small" ? 95 : 190;
 
   return (
-    <div className='img-box' style={{ width: boxSize, height: boxSize * 0.77 }}>
+    <div
+      className='img-box'
+      style={{ width: boxSize, height: boxSize * 0.77 }}
+      id={id}
+    >
       <img src={imageSrc} alt={rarity} className='skin-image' />
       <style jsx>{`
         .img-box::after {

@@ -8,6 +8,7 @@ interface ButtonProps {
   disabled?: boolean;
   className?: string;
   icon?: string;
+  id?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -16,9 +17,10 @@ const Button: React.FC<ButtonProps> = ({
   disabled,
   className,
   icon,
+  id,
 }) => {
   return (
-    <button onClick={onClick} disabled={disabled} className={className}>
+    <button id={id} onClick={onClick} disabled={disabled} className={className}>
       {icon && <span className='material-symbols-rounded'>{icon}</span>}
       {label}
     </button>
