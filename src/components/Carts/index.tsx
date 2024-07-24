@@ -20,7 +20,7 @@ interface SkinCardProps {
 
 const SkinCard: React.FC<SkinCardProps> = ({
   skin,
-  className,
+  className = "",
   addToCartHandle,
 }) => {
   return (
