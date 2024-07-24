@@ -13,12 +13,11 @@ import iconObj from "@/public/icons/utils";
 
 import { truncateName } from "@/src/utils/functions";
 import { Cart, Skin } from "@/src/utils/types";
-import { ToastContainer, toast, ToastOptions } from 'react-toastify';
+import { ToastContainer, toast, ToastOptions } from "react-toastify";
 
 import { SuccessDisplay } from "@/src/utils/types";
 
 import "./style.scss";
-
 
 interface SkinStoreProps {
   searchTerm: string;
@@ -33,7 +32,7 @@ const SkinStore: React.FC<SkinStoreProps> = ({
   skins,
   isLoading,
   filters,
-  userBalance
+  userBalance,
 }) => {
   const [filteredSkins, setFilteredSkins] = useState<Skin[]>(skins);
 
@@ -120,71 +119,73 @@ const SkinStore: React.FC<SkinStoreProps> = ({
       draggable: true,
       progress: undefined,
       theme: "dark",
-    }
+    };
     if (status.success) toast.success(status.message, toastSettings);
     else toast.error(status.message, toastSettings);
-  }
+  };
 
   return (
-    <div className='skin-store-container'>
+    <>
       <ToastContainer />
-      {filteredSkins.map((skin) => (
-        <Modal
-          key={skin.item_id}
-          modalTitle=''
-          height='77dvh'
-          trigger={<SkinCard addToCartHandle={addToCartHandle} skin={skin} />}
-          closeElement={
-            <Button
-              label={`Buy Now`}
-              className='btn-primary-50'
-              icon=''
-              onClick={() => { }}
-            />
-          }
-        >
-          <div className='skin-full-details'>
-            <SkinBackground
-              imageSrc={skin.image_src}
-              rarity={skin.rarity}
-              size='large'
-            />
-            <div className='skin-name-box'>
-              <h3 className='skin-name'>
-                {truncateName(skin.skin_name, 35)}{" "}
-                {skin.startrack && (
-                  <span className='startrack'>{skin.startrack}</span>
-                )}
-              </h3>
-              <div className='available-box'>
-                <p className='available'>Available:</p>
-                <p className='available-user-value'>Sample</p>
-                <Image
-                  src={iconObj.purpleCoin}
-                  width={12}
-                  height={12}
-                  alt='Purple coin'
-                />
+      <div className='skin-store-container'>
+        {filteredSkins.map((skin) => (
+          <Modal
+            key={skin.item_id}
+            modalTitle=''
+            height='77dvh'
+            trigger={<SkinCard addToCartHandle={addToCartHandle} skin={skin} />}
+            closeElement={
+              <Button
+                label={`Buy Now`}
+                className='btn-primary-50'
+                icon=''
+                onClick={() => {}}
+              />
+            }
+          >
+            <div className='skin-full-details'>
+              <SkinBackground
+                imageSrc={skin.image_src}
+                rarity={skin.rarity}
+                size='large'
+              />
+              <div className='skin-name-box'>
+                <h3 className='skin-name'>
+                  {truncateName(skin.skin_name, 35)}{" "}
+                  {skin.startrack && (
+                    <span className='startrack'>{skin.startrack}</span>
+                  )}
+                </h3>
+                <div className='available-box'>
+                  <p className='available'>Available:</p>
+                  <p className='available-user-value'>Sample</p>
+                  <Image
+                    src={iconObj.purpleCoin}
+                    width={12}
+                    height={12}
+                    alt='Purple coin'
+                  />
+                </div>
+              </div>
+              <Float floatValue={skin.float} />
+              <Rare rarity={skin.rarity} />
+              <div className='price-box'>
+                <p className='price-label'>Price</p>
+                <div className='price'>
+                  <p className='price-value'>{skin.price}</p>
+                  <Image
+                    src={iconObj.purpleCoin}
+                    width={12}
+                    height={12}
+                    alt='Purple coin'
+                  />
+                </div>
               </div>
             </div>
-            <Float floatValue={skin.float} />
-            <Rare rarity={skin.rarity} />
-            <div className='price-box'>
-              <p className='price-label'>Price</p>
-              <div className='price'>
-                <p className='price-value'>{skin.price}</p>
-                <Image
-                  src={iconObj.purpleCoin}
-                  width={12}
-                  height={12}
-                  alt='Purple coin'
-                />
-              </div>
-            </div>
-          </div>
-        </Modal>
-      ))}
-    </div>
+          </Modal>
+        ))}
+      </div>
+    </>
   );
 };
 
