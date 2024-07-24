@@ -31,11 +31,6 @@ const Modal: React.FC<ModalProps> = ({
   const [visible, setVisible] = useState(false);
   const [top, setTop] = useState("100dvh");
   const modalRef = useRef<HTMLDivElement>(null);
-  const positionRef = useRef({
-    startY: 0,
-    currentTop: 0,
-    isDragging: false,
-  });
 
   useEffect(() => {
     if (visible) {
@@ -60,38 +55,6 @@ const Modal: React.FC<ModalProps> = ({
     if (onClose) onClose();
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const element = e.currentTarget.closest(".modal-dialog") as HTMLDivElement;
-    const initialTop = element.getBoundingClientRect().top;
-
-    positionRef.current = {
-      startY: e.touches[0].clientY,
-      currentTop: initialTop,
-      isDragging: true,
-    };
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!positionRef.current.isDragging) return;
-
-    const { clientY } = e.touches[0];
-    const deltaY = clientY - positionRef.current.startY;
-
-    if (deltaY < 0) return;
-
-    setTop(`${positionRef.current.currentTop + deltaY}px`);
-  };
-
-  const handleTouchEnd = () => {
-    positionRef.current.isDragging = false;
-
-    if (parseInt(top) > window.innerHeight * 0.5) {
-      hide();
-    } else {
-      setTop(`${100 - parseFloat(height)}dvh`);
-    }
-  };
-
   const handleClickOutside = (e: React.MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
       hide();
@@ -114,12 +77,7 @@ const Modal: React.FC<ModalProps> = ({
           className={className + " modal-dialog"}
           style={{ top, height, backgroundColor: modalBg }}
         >
-          <div
-            className='drag-zone'
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          ></div>
+          <div className='drag-zone'></div>
           <div className='modal-box'>
             <div className='header-box'>
               {subModal && (
