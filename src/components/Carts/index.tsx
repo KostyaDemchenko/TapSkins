@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
+
+import Modal from "@/src/components/Modal";
+import Rare from "@/src/components/Rare";
+import Float from "@/src/components/Float";
 import Button from "@/src/components/Button";
 import SkinBackground from "@/src/components/SkinBackground";
 import iconObj from "@/public/icons/utils";
+
 import { truncateName, truncateFloat } from "@/src/utils/functions";
-import "./style.scss";
 import { Cart, Skin } from "@/src/utils/types";
 
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
+import "./style.scss";
 
 // SkinCard
 interface SkinCardProps {
@@ -16,97 +21,172 @@ interface SkinCardProps {
   addToCartHandle: (skin: Skin) => void;
 }
 
-const SkinCard: React.FC<SkinCardProps> = ({ skin, className, addToCartHandle }) => {
+const SkinCard: React.FC<SkinCardProps> = ({
+  skin,
+  className = "",
+  addToCartHandle,
+}) => {
+  const [modalId] = useState(`cartTrigger-${skin.item_id}`);
 
+  return (
+    <>
+      <div className={`skin-card ${className}`}>
+        <SkinBackground
+          imageSrc={skin.image_src}
+          rarity={skin.rarity}
+          size='small'
+          id={modalId}
+        />
+        <div className='skin-info'>
+          <div className='top-box'>
+            <div className='skin-name-box '>
+              <h3 className='skin-name'>
+                {truncateName(skin.skin_name, 35)}{" "}
+                {skin.startrack && (
+                  <span className='startrack'>{skin.startrack}</span>
+                )}
+              </h3>
+            </div>
+            <div className='price-float-box'>
+              <div className='price'>
+                <p className='price-value'>{skin.price}</p>
+                <Image
+                  src={iconObj.purpleCoin}
+                  width={12}
+                  height={12}
+                  alt='Purple coin'
+                />
+              </div>
+              <p className='float'>Float {truncateFloat(skin.float, 6)}</p>
+            </div>
+          </div>
 
-  return <div className={`skin-card ${className}`}>
-    <SkinBackground
-      imageSrc={skin.image_src}
-      rarity={skin.rarity}
-      size='small'
-    />
-    <div className='skin-info'>
-      <div className='top-box'>
-        <div className='skin-name-box '>
-          <h3 className='skin-name'>
-            {truncateName(skin.skin_name, 35)}{" "}
-            {skin.startrack && (
-              <span className='startrack'>{skin.startrack}</span>
-            )}
-          </h3>
-        </div>
-        <div className='price-float-box'>
-          <div className='price'>
-            <p className='price-value'>{skin.price}</p>
-            <Image
-              src={iconObj.purpleCoin}
-              width={12}
-              height={12}
-              alt='Purple coin'
+          <div className='bottom-box'>
+            <Button
+              label={`Buy`}
+              className='btn-primary-25'
+              icon=''
+              onClick={() => {}}
+            />
+            <Button
+              label={`Add to cart`}
+              className='btn-tertiary-white-25'
+              icon=''
+              onClick={() => addToCartHandle(skin)}
             />
           </div>
-          <p className='float'>Float {truncateFloat(skin.float, 6)}</p>
         </div>
       </div>
 
-      <div className='bottom-box'>
-        <Button
-          label={`Buy`}
-          className='btn-primary-25'
-          icon=''
-          onClick={() => { }}
-        />
-        <Button
-          label={`Add to cart`}
-          className='btn-tertiary-white-25'
-          icon=''
-          onClick={() => addToCartHandle(skin)}
-        />
-      </div>
-    </div>
-  </div>
+      <Modal
+        modalTitle=''
+        height='77dvh'
+        triggerId={modalId}
+        closeElement={
+          <Button
+            label={`Buy Now`}
+            className='btn-primary-50'
+            icon=''
+            onClick={() => {}}
+          />
+        }
+      >
+        <div className='skin-full-details'>
+          <SkinBackground
+            imageSrc={skin.image_src}
+            rarity={skin.rarity}
+            size='large'
+          />
+          <div className='skin-name-box'>
+            <h3 className='skin-name'>
+              {truncateName(skin.skin_name, 35)}{" "}
+              {skin.startrack && (
+                <span className='startrack'>{skin.startrack}</span>
+              )}
+            </h3>
+            <div className='available-box'>
+              <p className='available'>Available:</p>
+              <p className='available-user-value'>Sample</p>
+              <Image
+                src={iconObj.purpleCoin}
+                width={12}
+                height={12}
+                alt='Purple coin'
+              />
+            </div>
+          </div>
+          <Float floatValue={skin.float} />
+          <Rare rarity={skin.rarity} />
+          <div className='price-box'>
+            <p className='price-label'>Price</p>
+            <div className='price'>
+              <p className='price-value'>{skin.price}</p>
+              <Image
+                src={iconObj.purpleCoin}
+                width={12}
+                height={12}
+                alt='Purple coin'
+              />
+            </div>
+          </div>
+        </div>
+      </Modal>
+    </>
+  );
 };
 
+// SkinOrderCard
 interface SkinOrderCardProps {
   skin: Skin;
   deleteHandle: () => void;
 }
 
-const SkinOrderCard: React.FC<SkinOrderCardProps> = ({ skin, deleteHandle }) => {
-
-  return <div className="skin-card skin-order-card">
-    <div className="skin-order-card-trash material-symbols-outlined" onClick={deleteHandle}>delete</div>
-    <SkinBackground
-      imageSrc={skin.image_src}
-      rarity={skin.rarity}
-      size="small"
-    />
-    <div className='skin-info'>
-      <div className='top-box'>
-        <div className='skin-name-box '>
-          <h3 className='skin-name'>
-            {truncateName(skin.skin_name, 35)}{" "}
-            {skin.startrack && (
-              <span className='startrack'>{skin.startrack}</span>
-            )}
-          </h3>
-        </div>
-        <div className='price-float-box'>
-          <div className='price'>
-            <p className='price-value'>{skin.price}</p>
-            <Image
-              src={iconObj.purpleCoin}
-              width={12}
-              height={12}
-              alt='Purple coin'
-            />
+const SkinOrderCard: React.FC<SkinOrderCardProps> = ({
+  skin,
+  deleteHandle,
+}) => {
+  return (
+    <div className='skin-card skin-order-card'>
+      <div
+        className='skin-order-card-trash material-symbols-outlined'
+        onClick={deleteHandle}
+      >
+        delete
+      </div>
+      <div className='img-case'>
+        <SkinBackground
+          imageSrc={skin.image_src}
+          rarity={skin.rarity}
+          size='medium'
+        />
+      </div>
+      <div className='skin-info'>
+        <div className='top-box'>
+          <div className='skin-name-box '>
+            <h3 className='skin-name'>
+              {truncateName(skin.skin_name, 35)}{" "}
+              {skin.startrack && (
+                <span className='startrack'>{skin.startrack}</span>
+              )}
+            </h3>
           </div>
-          <p className='float'>Float {truncateFloat(skin.float, 6)}</p>
+          <div className='price-float-box'>
+            <div className='price'>
+              <p className='price-value'>{skin.price}</p>
+              <Image
+                src={iconObj.purpleCoin}
+                width={12}
+                height={12}
+                alt='Purple coin'
+              />
+            </div>
+            <p className='float'>Float {truncateFloat(skin.float, 6)}</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-}
+  );
+};
 
 // TaskCard
 interface TaskCardProps {

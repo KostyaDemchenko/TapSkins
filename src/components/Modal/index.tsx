@@ -1,16 +1,17 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+
+import { createPortal } from "react-dom";
 import "rodal/lib/rodal.css";
 import "./style.scss";
 
 interface ModalProps {
   modalTitle: string;
-  btnTriggerIcon?: string;
+  triggerId: string;
   height?: string;
   className?: string;
   modalBg?: string;
   fade?: boolean;
   subModal?: boolean;
-  trigger: React.ReactNode;
   children: React.ReactNode;
   closeElement?: React.ReactNode;
   onClose?: () => void;
@@ -18,7 +19,7 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({
   modalTitle,
-  trigger,
+  triggerId,
   children,
   className = "",
   height = "70dvh",
@@ -31,11 +32,22 @@ const Modal: React.FC<ModalProps> = ({
   const [visible, setVisible] = useState(false);
   const [top, setTop] = useState("100dvh");
   const modalRef = useRef<HTMLDivElement>(null);
-  const positionRef = useRef({
-    startY: 0,
-    currentTop: 0,
-    isDragging: false,
-  });
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const triggerElement = document.getElementById(triggerId);
+    if (triggerElement) {
+      triggerElement.addEventListener("click", show);
+    }
+
+    return () => {
+      setMounted(false);
+      if (triggerElement) {
+        triggerElement.removeEventListener("click", show);
+      }
+    };
+  }, [triggerId]);
 
   useEffect(() => {
     if (visible) {
@@ -60,86 +72,47 @@ const Modal: React.FC<ModalProps> = ({
     if (onClose) onClose();
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const element = e.currentTarget.closest(".modal-dialog") as HTMLDivElement;
-    const initialTop = element.getBoundingClientRect().top;
-
-    positionRef.current = {
-      startY: e.touches[0].clientY,
-      currentTop: initialTop,
-      isDragging: true,
-    };
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!positionRef.current.isDragging) return;
-
-    const { clientY } = e.touches[0];
-    const deltaY = clientY - positionRef.current.startY;
-
-    if (deltaY < 0) return;
-
-    setTop(`${positionRef.current.currentTop + deltaY}px`);
-  };
-
-  const handleTouchEnd = () => {
-    positionRef.current.isDragging = false;
-
-    if (parseInt(top) > window.innerHeight * 0.5) {
-      hide();
-    } else {
-      setTop(`${100 - parseFloat(height)}dvh`);
-    }
-  };
-
   const handleClickOutside = (e: React.MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
       hide();
     }
   };
 
-  return (
-    <>
-      <div className='modal-trigger' onClick={show}>
-        {trigger}
-      </div>
-
+  const modalContent = (
+    <div
+      className={`modal-background ${visible ? "show" : ""}`}
+      onClick={handleClickOutside}
+    >
+      {fade && <div className='modal-fade' onClick={hide}></div>}
       <div
-        className={`modal-background ${visible ? "show" : ""}`}
-        onClick={handleClickOutside}
+        ref={modalRef}
+        className={className + " modal-dialog"}
+        style={{ top, height, backgroundColor: modalBg }}
       >
-        {fade && <div className='modal-fade' onClick={hide}></div>}
-        <div
-          ref={modalRef}
-          className={className + " modal-dialog"}
-          style={{ top, height, backgroundColor: modalBg }}
-        >
-          <div
-            className='drag-zone'
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          ></div>
-          <div className='modal-box'>
-            <div className='header-box'>
-              {subModal && (
-                <div className='back-btn' onClick={hide}>
-                  <span className='material-symbols-outlined icon'>
-                    keyboard_arrow_left
-                  </span>
-                </div>
-              )}
-              <h2 className='modal-title'>{modalTitle}</h2>
-            </div>
-            <div className='content'>{children}</div>
-            <div className='modal-close' onClick={hide}>
-              {closeElement}
-            </div>
+        <div className='drag-zone'></div>
+        <div className='modal-box'>
+          <div className='header-box'>
+            {subModal && (
+              <div className='back-btn' onClick={hide}>
+                <span className='material-symbols-outlined icon'>
+                  keyboard_arrow_left
+                </span>
+              </div>
+            )}
+            <h2 className='modal-title'>{modalTitle}</h2>
+          </div>
+          <div className='content'>{children}</div>
+          <div className='modal-close' onClick={hide}>
+            {closeElement}
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
+
+  if (!mounted) return null;
+
+  return createPortal(modalContent, document.body);
 };
 
 export default Modal;

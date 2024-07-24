@@ -9,7 +9,7 @@ interface ProgressBarProps {
   total: number;
   title?: string;
   titleVisible: boolean;
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({

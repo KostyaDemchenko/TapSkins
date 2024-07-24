@@ -56,6 +56,9 @@
     #ffc167 54.5%,
     #ff9d0e 100%
   );
+
+  //TOASTIFY
+  --toastify-font-family: "Montserrat", sans-serif !important;
 }
 
 ::-webkit-scrollbar {
@@ -157,7 +160,7 @@ main {
   --toastify-color-progress-dark: var(--color-checkbox-checked);
 
   .Toastify__toast-container--top-right {
-    top: 6px;
+    top: 0;
     right: 20px;
   }
 
@@ -168,5 +171,34 @@ main {
 
   .Toastify__progress-bar {
     opacity: 1;
+  }
+
+  .Toastify__toast-theme--dark {
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+
+    .Toastify__progress-bar--error {
+      background: var(--color-inputs-validation-failure);
+    }
+
+    .Toastify__progress-bar--success {
+      background: var(--color-inputs-validation-success);
+    }
+  }
+
+  .Toastify__toast--success {
+    .Toastify--animate-icon {
+      svg {
+        fill: var(--color-inputs-validation-success);
+      }
+    }
+  }
+
+  .Toastify__toast--error {
+    .Toastify--animate-icon {
+      svg {
+        fill: var(--color-inputs-validation-failure);
+      }
+    }
   }
 }
