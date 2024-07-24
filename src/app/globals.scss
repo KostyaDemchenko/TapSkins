@@ -150,3 +150,23 @@ main {
     );
   }
 }
+
+// toaster
+.Toastify {
+  --toastify-color-dark: var(--color-buttons-secondary-fill);
+  --toastify-color-progress-dark: var(--color-checkbox-checked);
+
+  .Toastify__toast-container--top-right {
+    top: 6px;
+    right: 20px;
+  }
+
+  .Toastify__toast-body {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .Toastify__progress-bar {
+    opacity: 1;
+  }
+}

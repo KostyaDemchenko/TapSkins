@@ -7,18 +7,16 @@ import { truncateName, truncateFloat } from "@/src/utils/functions";
 import "./style.scss";
 import { Cart, Skin } from "@/src/utils/types";
 
+import 'react-toastify/dist/ReactToastify.css';
+
 // SkinCard
 interface SkinCardProps {
   skin: Skin;
   className?: string;
-  Cart: Cart;
+  addToCartHandle: (skin: Skin) => void;
 }
 
-const SkinCard: React.FC<SkinCardProps> = ({ skin, className, Cart }) => {
-
-  const addToCartHandle = () => {
-    console.log(Cart.addToCart(skin));
-  }
+const SkinCard: React.FC<SkinCardProps> = ({ skin, className, addToCartHandle }) => {
 
 
   return <div className={`skin-card ${className}`}>
@@ -62,7 +60,7 @@ const SkinCard: React.FC<SkinCardProps> = ({ skin, className, Cart }) => {
           label={`Add to cart`}
           className='btn-tertiary-white-25'
           icon=''
-          onClick={addToCartHandle}
+          onClick={() => addToCartHandle(skin)}
         />
       </div>
     </div>

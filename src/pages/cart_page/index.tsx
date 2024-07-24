@@ -6,13 +6,13 @@ import { User } from "@/src/utils/types";
 import Nav from "@/src/components/Nav";
 import Image from "next/image";
 import Button from "@/src/components/Button";
+import { ToastContainer, ToastOptions, toast } from 'react-toastify';
 
 import "@/src/app/globals.scss";
 import "./style.scss";
 import { Skin, Cart } from "@/src/utils/types";
 import { SkinOrderCard } from "@/src/components/Carts";
 import iconObj from "@/public/icons/utils";
-
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<Skin[]>([]);
@@ -22,9 +22,20 @@ export default function CartPage() {
   const userCart = useRef<null | Cart>(null);
 
   const deleteHandle = (el: Skin) => {
-    const result = userCart.current!.deleteFromCart(el);
+    const status = userCart.current!.deleteFromCart(el);
 
-    if (!result.success) return;
+    const toastSettings: ToastOptions = {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    }
+    if (status.success) toast.success(status.message, toastSettings);
+    else toast.error(status.message, toastSettings);
 
     setCartItems(userCart.current!.getItems());
   }
@@ -61,6 +72,7 @@ export default function CartPage() {
           setTg(global.window.Telegram.WebApp);
         }}
       />
+      <ToastContainer/>
       <main>
         <div className='container'>
           <div className='top-box'>

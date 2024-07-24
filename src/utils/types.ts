@@ -302,3 +302,8 @@ export class Task {
   completeTask() {}
   getReward() {}
 }
+
+export type SuccessDisplay = {
+  success: boolean,
+  message: string
+}
