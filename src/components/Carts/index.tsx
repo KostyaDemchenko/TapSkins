@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 
+import Modal from "@/src/components/Modal";
 import Button from "@/src/components/Button";
 import SkinBackground from "@/src/components/SkinBackground";
 import iconObj from "@/public/icons/utils";
@@ -24,52 +25,69 @@ const SkinCard: React.FC<SkinCardProps> = ({
   addToCartHandle,
 }) => {
   return (
-    <div className={`skin-card ${className}`}>
-      <SkinBackground
-        imageSrc={skin.image_src}
-        rarity={skin.rarity}
-        size='small'
-      />
-      <div className='skin-info'>
-        <div className='top-box'>
-          <div className='skin-name-box '>
-            <h3 className='skin-name'>
-              {truncateName(skin.skin_name, 35)}{" "}
-              {skin.startrack && (
-                <span className='startrack'>{skin.startrack}</span>
-              )}
-            </h3>
-          </div>
-          <div className='price-float-box'>
-            <div className='price'>
-              <p className='price-value'>{skin.price}</p>
-              <Image
-                src={iconObj.purpleCoin}
-                width={12}
-                height={12}
-                alt='Purple coin'
-              />
+    <>
+      <div className={`skin-card ${className}`}>
+        <SkinBackground
+          imageSrc={skin.image_src}
+          rarity={skin.rarity}
+          size='small'
+          id='cartTrigger'
+        />
+        <div className='skin-info'>
+          <div className='top-box'>
+            <div className='skin-name-box '>
+              <h3 className='skin-name'>
+                {truncateName(skin.skin_name, 35)}{" "}
+                {skin.startrack && (
+                  <span className='startrack'>{skin.startrack}</span>
+                )}
+              </h3>
             </div>
-            <p className='float'>Float {truncateFloat(skin.float, 6)}</p>
+            <div className='price-float-box'>
+              <div className='price'>
+                <p className='price-value'>{skin.price}</p>
+                <Image
+                  src={iconObj.purpleCoin}
+                  width={12}
+                  height={12}
+                  alt='Purple coin'
+                />
+              </div>
+              <p className='float'>Float {truncateFloat(skin.float, 6)}</p>
+            </div>
+          </div>
+
+          <div className='bottom-box'>
+            <Button
+              label={`Buy`}
+              className='btn-primary-25'
+              icon=''
+              onClick={() => {}}
+            />
+            <Button
+              label={`Add to cart`}
+              className='btn-tertiary-white-25'
+              icon=''
+              onClick={() => addToCartHandle(skin)}
+            />
           </div>
         </div>
+      </div>
 
-        <div className='bottom-box'>
+      <Modal
+        modalTitle=''
+        height='77dvh'
+        triggerId='cartTrigger'
+        closeElement={
           <Button
-            label={`Buy`}
-            className='btn-primary-25'
+            label={`Buy Now`}
+            className='btn-primary-50'
             icon=''
             onClick={() => {}}
           />
-          <Button
-            label={`Add to cart`}
-            className='btn-tertiary-white-25'
-            icon=''
-            onClick={() => addToCartHandle(skin)}
-          />
-        </div>
-      </div>
-    </div>
+        }
+      />
+    </>
   );
 };
 

@@ -129,60 +129,11 @@ const SkinStore: React.FC<SkinStoreProps> = ({
       <ToastContainer />
       <div className='skin-store-container'>
         {filteredSkins.map((skin) => (
-          <Modal
-            key={skin.item_id}
-            modalTitle=''
-            height='77dvh'
-            trigger={<SkinCard addToCartHandle={addToCartHandle} skin={skin} />}
-            closeElement={
-              <Button
-                label={`Buy Now`}
-                className='btn-primary-50'
-                icon=''
-                onClick={() => {}}
-              />
-            }
-          >
-            <div className='skin-full-details'>
-              <SkinBackground
-                imageSrc={skin.image_src}
-                rarity={skin.rarity}
-                size='large'
-              />
-              <div className='skin-name-box'>
-                <h3 className='skin-name'>
-                  {truncateName(skin.skin_name, 35)}{" "}
-                  {skin.startrack && (
-                    <span className='startrack'>{skin.startrack}</span>
-                  )}
-                </h3>
-                <div className='available-box'>
-                  <p className='available'>Available:</p>
-                  <p className='available-user-value'>Sample</p>
-                  <Image
-                    src={iconObj.purpleCoin}
-                    width={12}
-                    height={12}
-                    alt='Purple coin'
-                  />
-                </div>
-              </div>
-              <Float floatValue={skin.float} />
-              <Rare rarity={skin.rarity} />
-              <div className='price-box'>
-                <p className='price-label'>Price</p>
-                <div className='price'>
-                  <p className='price-value'>{skin.price}</p>
-                  <Image
-                    src={iconObj.purpleCoin}
-                    width={12}
-                    height={12}
-                    alt='Purple coin'
-                  />
-                </div>
-              </div>
-            </div>
-          </Modal>
+          <SkinCard
+            addToCartHandle={addToCartHandle}
+            skin={skin}
+            key={skin.id}
+          />
         ))}
       </div>
     </>

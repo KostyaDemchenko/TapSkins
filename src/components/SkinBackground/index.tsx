@@ -7,6 +7,7 @@ import "./style.scss";
 interface SkinBackgroundProps {
   imageSrc: string;
   rarity: string;
+  id?: string | number;
   size: "small" | "large"; // to handle different sizes for card and modal
 }
 
@@ -14,6 +15,7 @@ const SkinBackground: React.FC<SkinBackgroundProps> = ({
   imageSrc,
   rarity,
   size,
+  id = "default",
 }) => {
   const { color, shadow } = colorMap[rarity];
 
