@@ -135,6 +135,7 @@ const SkinCard: React.FC<SkinCardProps> = ({
   );
 };
 
+// SkinOrderCard
 interface SkinOrderCardProps {
   skin: Skin;
   deleteHandle: () => void;
@@ -152,11 +153,13 @@ const SkinOrderCard: React.FC<SkinOrderCardProps> = ({
       >
         delete
       </div>
-      <SkinBackground
-        imageSrc={skin.image_src}
-        rarity={skin.rarity}
-        size='small'
-      />
+      <div className='img-case'>
+        <SkinBackground
+          imageSrc={skin.image_src}
+          rarity={skin.rarity}
+          size='medium'
+        />
+      </div>
       <div className='skin-info'>
         <div className='top-box'>
           <div className='skin-name-box '>

@@ -1,14 +1,12 @@
 import React from "react";
-
 import { colorMap } from "@/src/utils/functions";
-
 import "./style.scss";
 
 interface SkinBackgroundProps {
   imageSrc: string;
   rarity: string;
   id?: string;
-  size: "small" | "large"; // to handle different sizes for card and modal
+  size: "small" | "medium" | "large"; // добавлен новый размер "medium"
 }
 
 const SkinBackground: React.FC<SkinBackgroundProps> = ({
@@ -19,13 +17,31 @@ const SkinBackground: React.FC<SkinBackgroundProps> = ({
 }) => {
   const { color, shadow } = colorMap[rarity];
 
-  const boxSize = size === "small" ? 158 : 320;
-  const circleSize = size === "small" ? 95 : 190;
+  let boxSize, circleSize;
+
+  switch (size) {
+    case "small":
+      boxSize = { width: 158, height: 105 };
+      circleSize = 95;
+      break;
+    case "medium":
+      boxSize = { width: 158, height: 105 };
+      circleSize = 95;
+      break;
+    case "large":
+      boxSize = { width: 320, height: 320 * 0.77 };
+      circleSize = 190;
+      break;
+    default:
+      boxSize = { width: 158, height: 105 };
+      circleSize = 95;
+      break;
+  }
 
   return (
     <div
       className='img-box'
-      style={{ width: boxSize, height: boxSize * 0.77 }}
+      style={{ width: boxSize.width, height: boxSize.height }}
       id={id}
     >
       <img src={imageSrc} alt={rarity} className='skin-image' />
