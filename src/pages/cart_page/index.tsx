@@ -72,16 +72,19 @@ export default function CartPage() {
           setTg(global.window.Telegram.WebApp);
         }}
       />
-      <ToastContainer/>
+      <ToastContainer />
       <main>
         <div className='container'>
           <div className='top-box'>
             <h3 className="items-amnt">Items ({cartItems.length})</h3>
-            <a href="#">History</a>
+            <a className="btn-secondary-35" href="/history_page">History</a>
           </div>
           {userCart.current &&
             <>
-              {!cartItems.length && <>Cart is empty</>}
+              {!cartItems.length && <div className="empty-cart">
+                <p>No items in the cart!</p>
+              <a className="btn-secondary-35" href="/skin_store_page"><span className="material-symbols-outlined">shopping_cart</span> To store</a>
+              </div>}
               {!!cartItems.length && <>
                 {cartItems.map((el) => {
                   return <SkinOrderCard key={el.item_id} deleteHandle={() => {

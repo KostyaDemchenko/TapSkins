@@ -8,14 +8,6 @@
   .items-amnt {
     @include h3-montserrat-24-125-bold;
   }
-
-  a {
-    @include p-montserrat-10-125-semibold;
-    @include flex(center, center);
-    padding: 6px 12px;
-    background-color: var(--color-buttons-secondary-fill);
-    border-radius: 3px;
-  }
 }
 
 .total-price-box {
@@ -41,4 +33,18 @@ main .purchase-buying {
 
 main {
   padding-bottom: 57px;
+}
+
+.empty-cart {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  @include flex(center, center);
+  @include f-direction(column);
+  gap: 35px;
+
+  p {
+    @include p-montserrat-18-125-regular;
+  }
 }
