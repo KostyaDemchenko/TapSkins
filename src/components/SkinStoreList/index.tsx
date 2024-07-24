@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
 import Modal from "@/src/components/Modal";
@@ -12,26 +12,20 @@ import Skeleton from "@mui/material/Skeleton";
 import iconObj from "@/public/icons/utils";
 
 import { truncateName } from "@/src/utils/functions";
+import { Cart, Skin } from "@/src/utils/types";
+import { ToastContainer, toast, ToastOptions } from 'react-toastify';
+
+import { SuccessDisplay } from "@/src/utils/types";
 
 import "./style.scss";
 
-interface Skin {
-  item_id: number;
-  skin_name: string;
-  weapon_name: string;
-  image_src: string;
-  price: number;
-  float: number;
-  rarity: string;
-  weapon_type: string;
-  startrack: string;
-}
 
 interface SkinStoreProps {
   searchTerm: string;
   skins: Skin[];
   isLoading: boolean;
   filters: any;
+  userBalance: number;
 }
 
 const SkinStore: React.FC<SkinStoreProps> = ({
@@ -39,10 +33,14 @@ const SkinStore: React.FC<SkinStoreProps> = ({
   skins,
   isLoading,
   filters,
+  userBalance
 }) => {
   const [filteredSkins, setFilteredSkins] = useState<Skin[]>(skins);
 
+  const userCart = useRef<Cart | null>(null);
+
   useEffect(() => {
+    userCart.current = new Cart(userBalance);
     let filtered = skins;
 
     if (searchTerm) {
@@ -111,20 +109,37 @@ const SkinStore: React.FC<SkinStoreProps> = ({
     );
   }
 
+  const addToCartHandle = (skin: Skin) => {
+    const status = userCart.current!.addToCart(skin) as SuccessDisplay;
+    const toastSettings: ToastOptions = {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    }
+    if (status.success) toast.success(status.message, toastSettings);
+    else toast.error(status.message, toastSettings);
+  }
+
   return (
     <div className='skin-store-container'>
+      <ToastContainer />
       {filteredSkins.map((skin) => (
         <Modal
           key={skin.item_id}
           modalTitle=''
           height='77dvh'
-          trigger={<SkinCard skin={skin} />}
+          trigger={<SkinCard addToCartHandle={addToCartHandle} skin={skin} />}
           closeElement={
             <Button
               label={`Buy Now`}
               className='btn-primary-50'
               icon=''
-              onClick={() => {}}
+              onClick={() => { }}
             />
           }
         >

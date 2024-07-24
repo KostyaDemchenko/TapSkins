@@ -13,18 +13,7 @@ import Sort from "@/src/components/Sort";
 
 import "@/src/app/globals.scss";
 import "./style.scss";
-
-type Skin = {
-  item_id: number;
-  skin_name: string;
-  weapon_name: string;
-  image_src: string;
-  price: number;
-  float: number;
-  rarity: string;
-  weapon_type: string;
-  startrack: string;
-};
+import { Skin } from "@/src/utils/types";
 
 const rarityOrder = [
   "Common",
@@ -37,6 +26,9 @@ const rarityOrder = [
 ];
 
 export default function SkinStorePage() {
+  const userBalance = 1000000;
+
+
   const [tg, setTg] = useState<WebApp | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -209,6 +201,7 @@ export default function SkinStorePage() {
             </div>
           </div>
           <SkinStore
+            userBalance={userBalance}
             searchTerm={searchTerm}
             skins={getSortedSkins()}
             isLoading={isLoading}

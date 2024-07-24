@@ -1,5 +1,3 @@
-import { logs } from "./functions";
-
 export type UserObj = {
   user_id: number;
   balance_common: number;
@@ -131,8 +129,7 @@ export class User {
   dereaseStamina() {
     if (this.stamina - this.staminaDecrease >= 0) {
       this.stamina -= this.staminaDecrease;
-    }
-    else this.stamina = 0;
+    } else this.stamina = 0;
   }
 
   addPassiveStamina() {
@@ -146,19 +143,113 @@ export class User {
   }
 }
 
-export type Weapon = {
-  item_id: string;
-  name: string;
-  rarity: string;
+export type Skin = {
+  item_id: number;
+  skin_name: string;
+  weapon_name: string;
+  image_src: string;
   price: number;
   float: number;
+  rarity: string;
   weapon_type: string;
-  weapon_name: string;
-  startrack: boolean;
-  image_src: string;
+  startrack: string;
 };
 
-export type HistoryItem = Weapon & {
+//! Функционал:
+// - добавление одного элемента в корзину, то есть запись в localStorage,
+// пока нету бекенда, проверка на актуальность товара выполнена не будет
+// - получение элементов из локального хранилища
+// - удаление элементов из локального хранилища
+export class Cart {
+  private skins: Skin[] | null = null;
+  public userBalance: number = 0;
+  private storage;
+  private storageKey = "skins-cart";
+
+  // передаем баланс юзера сюда
+  constructor(userBalance: number = 0) {
+    this.storage = global.window.localStorage;
+    this.userBalance = userBalance;
+    this.checkLocalStorage();
+  }
+
+  // берем все что в localStorage хранится и записываем себе
+  private checkLocalStorage() {
+    if (this.storage.getItem("skins-cart")) {
+      this.skins = JSON.parse(this.storage.getItem(this.storageKey)!) as Skin[];
+    } else {
+      this.skins = [];
+    }
+  }
+
+  // Возвращает объект:
+  // {
+  //   success: booolean, сообщает об успехе добавления
+  //   message: string текст сообщения, (недостаточно денег, товар занят, успешное добавление и тд)
+  // }
+  addToCart(skin: Skin) {
+    this.checkLocalStorage();
+
+    const totalCartPrice = this.getTotalPrice() + skin.price;
+
+    if (this.userBalance - totalCartPrice < 0)
+      return { success: false, message: "Not enough money on balance!" };
+
+    const skinDuplicat = this.skins!.find((el) => el.item_id === skin.item_id);
+
+    if (skinDuplicat) {
+      return {
+        success: false,
+        message: "Item is already in the cart!",
+      };
+    }
+
+    this.skins!.push(skin);
+    this.storage.setItem(this.storageKey, JSON.stringify(this.skins));
+
+    return {
+      success: true,
+      message: "Successfully added to cart",
+    };
+  }
+
+  // так же возвращает:
+  // {
+  //   success: booolean, сообщает об успехе удаления
+  //   message: string текст сообщения
+  // }
+  deleteFromCart(skin: Skin) {
+    this.checkLocalStorage();
+
+    const searchingId = this.skins!.findIndex((el) => el.item_id === skin.item_id);
+
+    if (searchingId === -1) return {
+      success: false,
+      message: "Strange...there is no such element"
+    }
+
+    this.skins!.splice(searchingId, 1);
+    this.storage.setItem(this.storageKey, JSON.stringify(this.skins));
+    return {
+      success: true,
+      message: "Deleted successfully!"
+    }
+  }
+
+  getTotalPrice() {
+    this.checkLocalStorage();
+    return this.skins!.reduce((accum, currVal) => {
+      return accum + currVal.price;
+    }, 0);
+  }
+
+  getItems() {
+    this.checkLocalStorage();
+    return this.skins!;
+  }
+}
+
+export type HistoryItem = Skin & {
   status: string;
   link_to_trade: string;
 };
@@ -210,4 +301,9 @@ export class Task {
 
   completeTask() {}
   getReward() {}
+}
+
+export type SuccessDisplay = {
+  success: boolean,
+  message: string
 }
