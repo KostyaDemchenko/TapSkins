@@ -23,12 +23,16 @@ export class User {
   private staminaStep = 3; // сколько стамины в периоде будет добавляться
   private staminaDecrease = 5;
   public staminaDelay = 1000; // период добавления стамины в секундах
+  private exchangeCoeff = 10000; // сколько золотых монеток нужно чтобы получить 1 фиолетовую
 
   constructor(user_id: number) {
     this.user_id = user_id;
   }
 
-  exchangeBallance() {}
+  exchangeBallance() {
+    const purpleAmnt = Math.floor(this.balance_common / this.exchangeCoeff);
+    return purpleAmnt;
+  }
   // loginning user into tap skins
   // will return true if everything is okay, and false is everything is bad
   async authUser(tg: WebApp) {
@@ -62,28 +66,6 @@ export class User {
 
     return true;
   }
-
-  // async increaseBallance(wss: WebSocket) {
-  //   if (!wss) {
-  //     console.log("There is no connection!");
-  //     return false;
-  //   }
-
-  //   try {
-  //     this.dereaseStamina();
-  //     wss.send(
-  //       JSON.stringify({
-  //         user_id: this.user_id,
-  //         last_click: Date.now(),
-  //         stamina: this.stamina,
-  //       })
-  //     );
-  //     return true;
-  //   } catch (e) {
-  //     console.log(e);
-  //     return false;
-  //   }
-  // }
 
   checkSubscription(channelId: `@${string}`) {
     const { user_id } = this;

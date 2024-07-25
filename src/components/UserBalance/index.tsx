@@ -77,7 +77,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss, wsIsConnected = fa
           height={16}
           alt='Purple coin'
         /></h1>
-        <ExchangeCurrency />
+        <ExchangeCurrency User={user} />
         <h3>
           {user ? <>{user.balance_purple.toLocaleString('ru-RU')}</>
             :
