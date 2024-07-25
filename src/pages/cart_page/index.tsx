@@ -6,13 +6,15 @@ import { User } from "@/src/utils/types";
 import Nav from "@/src/components/Nav";
 import Image from "next/image";
 import Button from "@/src/components/Button";
-import { ToastContainer, ToastOptions, toast } from 'react-toastify';
+import ValidationModal from "@/src/components/ValidationModal";
+import { ToastContainer, ToastOptions, toast } from "react-toastify";
+import iconObj from "@/public/icons/utils";
+
+import { Skin, Cart } from "@/src/utils/types";
+import { SkinOrderCard } from "@/src/components/Carts";
 
 import "@/src/app/globals.scss";
 import "./style.scss";
-import { Skin, Cart } from "@/src/utils/types";
-import { SkinOrderCard } from "@/src/components/Carts";
-import iconObj from "@/public/icons/utils";
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<Skin[]>([]);
@@ -33,12 +35,12 @@ export default function CartPage() {
       draggable: true,
       progress: undefined,
       theme: "dark",
-    }
+    };
     if (status.success) toast.success(status.message, toastSettings);
     else toast.error(status.message, toastSettings);
 
     setCartItems(userCart.current!.getItems());
-  }
+  };
 
   useEffect(() => {
     // это потом удалить
@@ -58,7 +60,7 @@ export default function CartPage() {
 
       if (response) {
         const userBalance = 1000;
-        setCartItems((new Cart(userBalance)).getItems());
+        setCartItems(new Cart(userBalance).getItems());
         setUser(userClass);
       }
     })();
@@ -76,39 +78,61 @@ export default function CartPage() {
       <main>
         <div className='container'>
           <div className='top-box'>
-            <h3 className="items-amnt">Items ({cartItems.length})</h3>
-            <a className="btn-secondary-35" href="/history_page">History</a>
+            <h3 className='items-amnt'>Items ({cartItems.length})</h3>
+            <a className='btn-secondary-35' href='/history_page'>
+              History
+            </a>
           </div>
-          {userCart.current &&
+          {userCart.current && (
             <>
-              {!cartItems.length && <div className="empty-cart">
-                <p>No items in the cart!</p>
-              <a className="btn-secondary-35" href="/skin_store_page"><span className="material-symbols-outlined">shopping_cart</span> To store</a>
-              </div>}
-              {!!cartItems.length && <>
-                {cartItems.map((el) => {
-                  return <SkinOrderCard key={el.item_id} deleteHandle={() => {
-                    deleteHandle(el);
-                  }} skin={el} />;
-                })}
-                <div className="total-price-box">
-                  <p>Total</p>
-                  <h4>{userCart.current.getTotalPrice().toLocaleString("RU-ru")} <Image
-                    src={iconObj.purpleCoin}
-                    width={12}
-                    height={12}
-                    alt='Purple coin'
-                  /></h4>
+              {!cartItems.length && (
+                <div className='empty-cart'>
+                  <p>No items in the cart!</p>
+                  <a className='btn-secondary-35' href='/skin_store_page'>
+                    <span className='material-symbols-outlined'>
+                      shopping_cart
+                    </span>{" "}
+                    To store
+                  </a>
                 </div>
-                <Button
-                  label={`Buy`}
-                  className='btn-primary-25 purchase-buying'
-                  icon=''
-                  onClick={() => { }}
-                />
-              </>}
+              )}
+              {!!cartItems.length && (
+                <>
+                  {cartItems.map((el) => {
+                    return (
+                      <SkinOrderCard
+                        key={el.item_id}
+                        deleteHandle={() => {
+                          deleteHandle(el);
+                        }}
+                        skin={el}
+                      />
+                    );
+                  })}
+                  <div className='total-price-box'>
+                    <p>Total</p>
+                    <h4>
+                      {userCart.current.getTotalPrice().toLocaleString("RU-ru")}{" "}
+                      <Image
+                        src={iconObj.purpleCoin}
+                        width={12}
+                        height={12}
+                        alt='Purple coin'
+                      />
+                    </h4>
+                  </div>
+                  <Button
+                    label={`Buy`}
+                    className='btn-primary-25 purchase-buying'
+                    icon=''
+                    id='tradeLinkValidation'
+                    onClick={() => {}}
+                  />
+                </>
+              )}
+              <ValidationModal triggerId='tradeLinkValidation' />
             </>
-          }
+          )}
         </div>
       </main>
       <Nav />

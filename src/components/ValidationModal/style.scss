@@ -1,0 +1,105 @@
+@import "@/src/app/shortSyles.scss";
+
+.modal-background .modal-dialog {
+  &.validation-modal {
+    .content {
+      gap: 55px;
+
+      .description {
+        @include p-montserrat-14-125-regular;
+        color: var(--color-text-secondary);
+        text-align: center;
+
+        .link {
+          color: var(--color-buttons-content-purple);
+        }
+      }
+
+      .input-container {
+        @include flex(center, flex-start);
+        @include f-direction(column);
+
+        position: relative;
+        gap: 10px;
+        width: 100%;
+        transition: border-color 0.3s ease-in-out;
+
+        &.input-error .input-validation {
+          transition: 0.3s ease-in-out;
+          border-color: var(--color-inputs-validation-failure);
+        }
+
+        &.input-success .input-validation {
+          transition: 0.3s ease-in-out;
+          border-color: var(--color-inputs-validation-success);
+        }
+
+        .input-validation {
+          @include p-montserrat-14-125-regular;
+
+          width: 100%;
+          padding: 14px 40px 14px 12px;
+          border: 1px solid var(--color-inputs-fill);
+          border-radius: 3px;
+          color: var(--color-text-primary);
+          background-color: var(--color-inputs-fill);
+          transition: border-color 0.3s, box-shadow 0.3s;
+          cursor: pointer;
+
+          &:focus {
+            box-shadow: none;
+            outline: none;
+          }
+
+          &:disabled {
+            color: var(--color-text-secondary);
+            border-color: none;
+            cursor: not-allowed;
+          }
+
+          &::placeholder {
+            @include p-montserrat-14-125-regular;
+            color: var(--color-text-secondary);
+          }
+        }
+
+        .icon-container {
+          position: absolute;
+          top: 26px;
+          right: 12px;
+          transform: translateY(-50%);
+          opacity: 0;
+          transition: opacity 0.3s ease-in-out;
+
+          .red {
+            transition: 0.3s ease-in-out;
+            color: var(--color-inputs-validation-failure);
+          }
+
+          .green {
+            transition: 0.3s ease-in-out;
+            color: var(--color-inputs-validation-success);
+          }
+        }
+
+        &.input-success .icon-container,
+        &.input-error .icon-container {
+          opacity: 1;
+        }
+
+        .error-message {
+          @include p-montserrat-12-125-regular;
+          color: var(--color-inputs-validation-failure);
+          height: 14px;
+          opacity: 0;
+          transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out;
+
+          &.show {
+            opacity: 1;
+            height: auto;
+          }
+        }
+      }
+    }
+  }
+}
