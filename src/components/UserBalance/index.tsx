@@ -38,7 +38,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss, wsIsConnected = fa
   }, []);
 
   React.useEffect(() => {
-    if (!wss || !user || !wsIsConnected) return;
+    if (!wss || !user || !wsIsConnected || wss.readyState !== 1) return;
     wss.send(JSON.stringify({
       user_id: user.user_id,
       last_click: Date.now(),
