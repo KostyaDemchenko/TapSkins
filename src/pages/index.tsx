@@ -21,7 +21,6 @@ export default function Home() {
     boolean | null | undefined
   >(undefined);
   const wss = React.useRef<null | WebSocket>(null);
-  const [isWsConnected, setIsWsConnected] = useState<boolean>(false);
 
   React.useEffect(() => {
     if (!tg) return;
@@ -48,7 +47,7 @@ export default function Home() {
       wss.current = ws;
       ws.onopen = () => {
         console.log("Connected");
-        setIsWsConnected(true);
+        // setIsWsConnected(true);
       }
     } catch (e) {
       console.error(e);
@@ -112,7 +111,7 @@ export default function Home() {
         }}
       >
         {!user && <UserBalance />}
-        {user && wss.current && isWsConnected && <UserBalance wsIsConnected={isWsConnected} user={user} wss={wss.current} />}
+        {user && wss.current && <UserBalance user={user} wss={wss.current} />}
       </main>
       <Nav />
     </>

@@ -30,15 +30,17 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss, wsIsConnected = fa
     }, staminaDelay);
   }
 
-  React.useEffect(() => {
-    if (!wss || !user || !wsIsConnected) return;
-    increaseStamina();
-    user.addPassiveStamina();
-    setUserStamina(user.stamina);
-  }, []);
+  if (wss) {
+    React.useEffect(() => {
+      if (!wss || !user) return;
+      increaseStamina();
+      user.addPassiveStamina();
+      setUserStamina(user.stamina);
+    }, [wss.readyState]);
+  }
 
   React.useEffect(() => {
-    if (!wss || !user || !wsIsConnected || wss.readyState !== 1) return;
+    if (!wss || !user || wss.readyState !== 1) return;
     wss.send(JSON.stringify({
       user_id: user.user_id,
       last_click: Date.now(),
