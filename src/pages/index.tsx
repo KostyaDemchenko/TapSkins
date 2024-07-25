@@ -76,7 +76,6 @@ export default function Home() {
       };
     }
   }, [wss.current]);
-  
 
   const getSubsMsg = () => {
     switch (true) {
@@ -113,7 +112,7 @@ export default function Home() {
         }}
       >
         {!user && <UserBalance />}
-        {user && wss.current && <UserBalance wsIsConnected={isWsConnected} user={user} wss={wss.current} />}
+        {user && wss.current && isWsConnected && <UserBalance wsIsConnected={isWsConnected} user={user} wss={wss.current} />}
       </main>
       <Nav />
     </>
