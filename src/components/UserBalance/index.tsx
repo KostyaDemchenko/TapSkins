@@ -30,11 +30,9 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   }
 
   React.useEffect(() => {
-    if (!wss || !user) return;
-    if (wss.CONNECTING) {
-      increaseStamina();
-      user.addPassiveStamina();
-    }
+    if (!wss || !user || !wss.CONNECTING) return;
+    increaseStamina();
+    user.addPassiveStamina();
     wss.onopen = () => {
       increaseStamina();
       user.addPassiveStamina();
@@ -50,7 +48,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
       stamina: userStamina,
       balance_common: user.balance_common
     }));
-  }, [userStamina, wss?.CONNECTING]);
+  }, [userStamina]);
 
   const clickerButtonHandler = () => {
     // func will return false if there is some error with balance increase
