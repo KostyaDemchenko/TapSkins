@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Script from "next/script";
 
 import Nav from "@/src/components/Nav";
@@ -21,6 +21,7 @@ export default function Home() {
     boolean | null | undefined
   >(undefined);
   const wss = React.useRef<null | WebSocket>(null);
+  const [isWsConnected, setIsWsConnected] = useState<boolean>(false);
 
   React.useEffect(() => {
     if (!tg) return;
@@ -42,8 +43,13 @@ export default function Home() {
 
   React.useEffect(() => {
     try {
+      console.log("Connecting...");
       const ws = new WebSocket(webSocketAddress);
       wss.current = ws;
+      ws.onopen = () => {
+        console.log("Connected");
+        setIsWsConnected(true);
+      }
     } catch (e) {
       console.error(e);
     }
@@ -107,7 +113,7 @@ export default function Home() {
         }}
       >
         {!user && <UserBalance />}
-        {user && wss.current && <UserBalance user={user} wss={wss.current} />}
+        {user && wss.current && <UserBalance wsIsConnected={isWsConnected} user={user} wss={wss.current} />}
       </main>
       <Nav />
     </>

@@ -9,12 +9,13 @@ import ProgressBar from "../ProgressBar";
 
 interface UserBalanceProps {
   user?: User;
-  wss?: WebSocket
+  wss?: WebSocket;
+  wsIsConnected?: boolean;
 }
 
-const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
-  //const staminaDelay = user.staminaDelay; // период добавления стамины
-  const staminaDelay = 1000;
+const UserBalance: React.FC<UserBalanceProps> = ({ user, wss, wsIsConnected = false }) => {
+  // const staminaDelay = user.staminaDelay; // период добавления стамины
+  const staminaDelay = user ? user.staminaDelay : 1000;
   const [userStamina, setUserStamina] = React.useState<number>(0);
   const staminaIntervals = React.useRef<{ timeOutId: any; intervalId: any }>({
     timeOutId: null,
@@ -30,18 +31,14 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   }
 
   React.useEffect(() => {
-    if (!wss || !user || !wss.readyState) return;
+    if (!wss || !user || !wsIsConnected) return;
     increaseStamina();
     user.addPassiveStamina();
-    wss.onopen = () => {
-      increaseStamina();
-      user.addPassiveStamina();
-      setUserStamina(user.stamina);
-    }
-  }, [wss?.readyState]);
+    setUserStamina(user.stamina);
+  }, []);
 
   React.useEffect(() => {
-    if (!wss || !user || !wss.readyState) return;
+    if (!wss || !user || !wsIsConnected) return;
     wss.send(JSON.stringify({
       user_id: user.user_id,
       last_click: Date.now(),
@@ -72,7 +69,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     <div className="user-balance-container">
       <div className="user-balance">
         <p>Balance</p>
-
         <h1>{user ? <>{user.balance_common.toLocaleString('ru-RU')}</> : <>{(123123123).toLocaleString("ru-RU")}</>}<Image
           src={iconObj.yellowCoin}
           width={16}
@@ -105,7 +101,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
           :
           <>
             <p><span>Limit</span> <span>1000/1000</span></p>
-            <ProgressBar titleVisible={false} total={1000} completed={500} />
+            <ProgressBar titleVisible={false} total={1000} completed={1000} />
           </>
         }
       </div>
