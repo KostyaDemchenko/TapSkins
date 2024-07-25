@@ -43,14 +43,14 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   }, [wss?.CONNECTING]);
 
   React.useEffect(() => {
-    if (!wss || !user) return;
+    if (!wss || !user || !wss.CONNECTING) return;
     wss.send(JSON.stringify({
       user_id: user.user_id,
       last_click: Date.now(),
       stamina: userStamina,
       balance_common: user.balance_common
     }));
-  }, [userStamina]);
+  }, [userStamina, wss?.CONNECTING]);
 
   const clickerButtonHandler = () => {
     // func will return false if there is some error with balance increase
