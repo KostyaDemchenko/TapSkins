@@ -1,7 +1,7 @@
 export type UserObj = {
   user_id: number;
   balance_common: number;
-  ballance_purple: number;
+  balance_purple: number;
   last_daily_bonus_time_clicked: number;
   invited_users: number;
   last_click: number;
@@ -12,7 +12,7 @@ export type UserObj = {
 export class User {
   public user_id: number;
   public balance_common: number = 0;
-  public ballance_purple: number = 0;
+  public balance_purple: number = 0;
   public last_daily_bonus_time_clicked: number = 0;
   public invited_users: number = 0;
   public max_stamina: number = 1000;
@@ -112,7 +112,7 @@ export class User {
 
   setUser(obj: UserObj | User) {
     this.user_id = obj.user_id;
-    this.ballance_purple = obj.ballance_purple;
+    this.balance_purple = obj.balance_purple;
     this.balance_common = obj.balance_common;
     this.last_daily_bonus_time_clicked = obj.last_daily_bonus_time_clicked;
     this.invited_users = obj.invited_users;

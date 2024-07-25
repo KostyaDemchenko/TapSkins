@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Script from "next/script";
 
 import Nav from "@/src/components/Nav";
@@ -40,47 +40,41 @@ export default function Home() {
     })();
   }, [tg]);
 
-  try {
-    const ws = new WebSocket(webSocketAddress);
-    wss.current = ws;
-  } catch (e) {
-    console.error(e);
-  }
-
-  //? при отправке сообщения с бекенда по вебсокету
-  if (user && wss.current) {
-    const wssCallbacks = () => {
-      if (!wss.current) return;
-      wss.current.onopen = () => {
-        if (!user) return;
-        // console.log("Connected!");
-      };
-
-      wss.current.onerror = (error) => {
-        console.log("Error", error);
-      };
-
+  React.useEffect(() => {
+    try {
+      console.log("Connecting...");
+      const ws = new WebSocket(webSocketAddress);
+      wss.current = ws;
+      ws.onopen = () => {
+        console.log("Connected");
+        // setIsWsConnected(true);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  
+    //? при отправке сообщения с бекенда по вебсокету
+    if (user && wss.current) {
       wss.current.onclose = (event) => {
         console.log(
           `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
         );
       };
-    };
-    wssCallbacks();
-    wss.current.onmessage = (e) => {
-      const response = JSON.parse(e.data);
-
-      if (response.success) {
-        const updatedUser = new User(response.newUser.id);
-        updatedUser.max_stamina = user.max_stamina;
-        updatedUser.setUser(response.newUser);
-
-        setUser(updatedUser);
-      } else {
-        console.log("Money has not increased");
-      }
-    };
-  }
+      wss.current.onmessage = (e) => {
+        const response = JSON.parse(e.data);
+  
+        if (response.success) {
+          const updatedUser = new User(tg!.initDataUnsafe.user!.id);
+          updatedUser.max_stamina = user.max_stamina;
+          updatedUser.setUser(response.newUser);
+  
+          setUser(updatedUser);
+        } else {
+          console.log("Money has not increased");
+        }
+      };
+    }
+  }, [wss.current]);
 
   const getSubsMsg = () => {
     switch (true) {
@@ -116,8 +110,8 @@ export default function Home() {
           alignItems: "center",
         }}
       >
-        <UserBalance />
-        {/* {user && <UserBalance user={user} />} */}
+        {!user && <UserBalance />}
+        {user && wss.current && <UserBalance user={user} wss={wss.current} />}
       </main>
       <Nav />
     </>
