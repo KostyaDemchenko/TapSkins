@@ -210,7 +210,8 @@ const TaskCard: React.FC<TaskCardProps> = ({
   onClick,
   id,
 }) => (
-  <div
+  <a
+    target='_blank'
     id={id}
     onClick={onClick}
     className={`task-card ${className}`}
@@ -242,7 +243,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
         </div>
       </div>
     </div>
-  </div>
+  </a>
 );
 
 // ReferalCard
@@ -258,7 +259,11 @@ interface ReferalCardProps {
 }
 
 const ReferalCard: React.FC<ReferalCardProps> = ({ reward, className }) => (
-  <div className={`referal-card ${className}`} key={reward.reward_id}>
+  <a
+    target='_blank'
+    className={`referal-card ${className}`}
+    key={reward.reward_id}
+  >
     <div className='referal-icon'>
       <img src={reward.referal_icon} alt='referal icon' />
     </div>
@@ -285,7 +290,7 @@ const ReferalCard: React.FC<ReferalCardProps> = ({ reward, className }) => (
         </div>
       </div>
     </div>
-  </div>
+  </a>
 );
 
 export { SkinCard, TaskCard, ReferalCard, SkinOrderCard };
