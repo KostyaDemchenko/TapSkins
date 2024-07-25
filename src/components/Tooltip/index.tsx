@@ -15,7 +15,7 @@ const MyTooltip: React.FC<MyTooltipProps> = ({ tooltipId, tooltipContent }) => {
       id={tooltipId}
       className='my-tooltip'
       place='top'
-      offset={1}
+      data-tooltip-offset={1}
       content={tooltipContent}
     />
   );

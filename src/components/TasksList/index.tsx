@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import ProgressBar from "@/src/components/ProgressBar";
 import { TaskCard } from "@/src/components/Carts";
 import Skeleton from "@mui/material/Skeleton";
+import RewardModal from "@/src/components/RevardModal";
 
 // Style import
 import "./style.scss";
@@ -13,7 +14,7 @@ interface Task {
   task_id: number;
   task_name: string;
   platform_type: string;
-  reward_type: string;
+  reward_type: "purple_coin" | "yellow_coin"; // Уточняем типы
   reward: number;
   link_to_join: string;
   social_icon: string;
@@ -22,7 +23,7 @@ interface Task {
 const TasksList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const completedTasks = 1;
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -42,14 +43,16 @@ const TasksList: React.FC = () => {
     fetchTasks();
   }, []);
 
-  const handleTaskClick = (link: string, platformType: string) => {
-    if (platformType === "Telegram") {
-      const formattedLink = link.replace("https://t.me/", "@");
+  const handleTaskClick = (task: Task) => {
+    if (task.platform_type === "Telegram") {
+      const formattedLink = task.link_to_join.replace("https://t.me/", "@");
       console.log(`Join Telegram channel: ${formattedLink}`);
       // Здесь можно добавить любую другую логику, необходимую для обработки клика
     } else {
-      window.location.href = link;
+      window.location.href = task.link_to_join;
     }
+
+    setSelectedTask(task);
   };
 
   return (
@@ -58,7 +61,7 @@ const TasksList: React.FC = () => {
         titleVisible={true}
         title='Tasks'
         total={tasks.length}
-        completed={completedTasks}
+        completed={1} // Можно заменить на переменную, которая считает завершенные задачи
         isLoading={loading} // Передаем состояние загрузки
       />
       <div className='tasks-list'>
@@ -80,12 +83,19 @@ const TasksList: React.FC = () => {
               <TaskCard
                 key={task.task_id}
                 task={task}
-                onClick={() =>
-                  handleTaskClick(task.link_to_join, task.platform_type)
-                }
+                onClick={() => handleTaskClick(task)}
+                id={`rewardTrigger-${task.task_id}`}
               />
             ))}
       </div>
+      {selectedTask && (
+        <RewardModal
+          triggerId={`rewardTrigger-${selectedTask.task_id}`}
+          rewardAmount={selectedTask.reward}
+          rewardName={selectedTask.task_name}
+          rewardType={selectedTask.reward_type}
+        />
+      )}
     </>
   );
 };

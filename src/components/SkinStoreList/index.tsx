@@ -88,7 +88,7 @@ const SkinStore: React.FC<SkinStoreProps> = ({
             animation='wave'
             sx={{
               bgcolor: "var(--color-surface)",
-              width: "48%",
+              width: "calc(50dvw - 22.5px)",
             }}
           />
         ))}
