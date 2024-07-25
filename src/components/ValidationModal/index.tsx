@@ -3,7 +3,6 @@ import { z } from "zod";
 
 import Modal from "@/src/components/Modal";
 import Button from "@/src/components/Button";
-import iconObj from "@/public/icons/utils";
 
 import "./style.scss";
 
