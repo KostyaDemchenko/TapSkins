@@ -31,14 +31,16 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
 
   React.useEffect(() => {
     if (!wss || !user) return;
-    increaseStamina();
-    user.addPassiveStamina();
+    if (wss.CONNECTING) {
+      increaseStamina();
+      user.addPassiveStamina();
+    }
     wss.onopen = () => {
       increaseStamina();
       user.addPassiveStamina();
       setUserStamina(user.stamina);
     }
-  }, []);
+  }, [wss?.CONNECTING]);
 
   React.useEffect(() => {
     if (!wss || !user) return;
