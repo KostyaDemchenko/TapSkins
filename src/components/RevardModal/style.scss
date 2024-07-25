@@ -1,0 +1,73 @@
+@import "@/src/app/shortSyles.scss";
+
+.modal-background .modal-dialog {
+  &.reward-modal {
+    .content {
+      @include flex(center, center);
+      @include f-direction(column);
+
+      gap: 74px;
+
+      .reward-box {
+        @include flex(center, center);
+        @include f-direction(row);
+
+        gap: 5px;
+
+        width: 190px;
+        height: 190px;
+
+        position: relative;
+        border-radius: 3000px;
+        background: var(--main-grad);
+
+        &:before {
+          content: "";
+
+          position: absolute;
+          top: 50%;
+          left: 50%;
+
+          transform: translate(-50%, -50%);
+
+          width: calc(100% - 5px);
+          height: calc(100% - 5px);
+          border-radius: 3000px;
+          border: 2px solid transparent;
+          background: var(--color-surface);
+          z-index: -1;
+        }
+
+        filter: drop-shadow(4px 4px 20px rgba(112, 92, 215, 0.08))
+          drop-shadow(-4px -4px 20px rgba(239, 173, 76, 0.08));
+
+        .reward-amount {
+          @include h3-montserrat-24-125-bold;
+          position: relative;
+          z-index: 1;
+        }
+      }
+
+      .description-box {
+        @include flex(flex-start, center);
+        @include f-direction(column);
+
+        max-width: 300px;
+        width: 100%;
+        gap: 15px;
+
+        .title {
+          @include h3-montserrat-24-125-bold;
+          color: var(--color-text-primary);
+          text-align: center;
+        }
+
+        .description {
+          @include p-montserrat-14-125-regular;
+          color: var(--color-text-secondary);
+          text-align: center;
+        }
+      }
+    }
+  }
+}

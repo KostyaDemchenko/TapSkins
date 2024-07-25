@@ -200,11 +200,18 @@ interface TaskCardProps {
     social_icon: string;
   };
   className?: string;
+  id?: string;
   onClick: () => void; // Добавляем пропс для обработки клика
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, className, onClick }) => (
+const TaskCard: React.FC<TaskCardProps> = ({
+  task,
+  className,
+  onClick,
+  id,
+}) => (
   <div
+    id={id}
     onClick={onClick}
     className={`task-card ${className}`}
     style={{ cursor: "pointer" }} // Добавляем указатель, чтобы обозначить кликабельность
