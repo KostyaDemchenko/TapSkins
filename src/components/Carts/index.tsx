@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 
 import Modal from "@/src/components/Modal";
+import ContactUsModal from "@/src/components/ContactUsModal";
 import Rare from "@/src/components/Rare";
 import Float from "@/src/components/Float";
 import Button from "@/src/components/Button";
@@ -188,6 +189,81 @@ const SkinOrderCard: React.FC<SkinOrderCardProps> = ({
   );
 };
 
+// HistoryOrderCard
+interface HistoryOrderCardProps {
+  skin: Skin;
+  status: "In Progress" | "Done" | "Canceled";
+}
+
+const HistoryOrderCard: React.FC<HistoryOrderCardProps> = ({
+  skin,
+  status,
+}) => {
+  let statusColor;
+
+  switch (status) {
+    case "In Progress":
+      statusColor = "var(--color-system-yellow)";
+      break;
+    case "Done":
+      statusColor = "var(--color-system-green)";
+      break;
+    case "Canceled":
+      statusColor = "var(--color-system-red)";
+      break;
+    default:
+      statusColor = "black";
+      break;
+  }
+
+  return (
+    <>
+      <div className='skin-card history-order-card'>
+        <span
+          className='material-symbols-outlined get-info'
+          id='contactUsModal'
+        >
+          info
+        </span>
+        <div className='img-case'>
+          <SkinBackground
+            imageSrc={skin.image_src}
+            rarity={skin.rarity}
+            size='medium'
+          />
+        </div>
+        <div className='skin-info'>
+          <div className='top-box'>
+            <div className='status' style={{ color: statusColor }}>
+              {status}
+            </div>
+            <div className='skin-name-box '>
+              <h3 className='skin-name'>
+                {truncateName(skin.skin_name, 35)}{" "}
+                {skin.startrack && (
+                  <span className='startrack'>{skin.startrack}</span>
+                )}
+              </h3>
+            </div>
+            <div className='price-float-box'>
+              <div className='price'>
+                <p className='price-value'>{skin.price}</p>
+                <Image
+                  src={iconObj.purpleCoin}
+                  width={12}
+                  height={12}
+                  alt='Purple coin'
+                />
+              </div>
+              <p className='float'>Float {truncateFloat(skin.float, 6)}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
 // TaskCard
 interface TaskCardProps {
   task: {
@@ -293,4 +369,4 @@ const ReferalCard: React.FC<ReferalCardProps> = ({ reward, className }) => (
   </a>
 );
 
-export { SkinCard, TaskCard, ReferalCard, SkinOrderCard };
+export { SkinCard, TaskCard, ReferalCard, SkinOrderCard, HistoryOrderCard };

@@ -165,7 +165,8 @@
 }
 
 // Skin order card (rewriting of skin card)
-.skin-order-card {
+.skin-order-card,
+.history-order-card {
   @include flex(flex-start, center);
   @include f-direction(row);
 
@@ -176,13 +177,19 @@
 
   position: relative;
 
-  .skin-order-card-trash {
+  .skin-order-card-trash,
+  .get-info {
     position: absolute;
     font-size: 16px;
     top: 6px;
     right: 6px;
     color: var(--color-base-light-gray);
     cursor: pointer;
+  }
+
+  .status {
+    @include p-montserrat-10-125-medium;
+    color: var(--color-text-secondary);
   }
 
   .img-case {
@@ -198,6 +205,8 @@
     padding: 0;
 
     .top-box {
+      @include flex(flex-start, flex-start);
+
       width: 153px;
       padding: 0;
     }

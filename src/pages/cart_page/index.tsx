@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import Script from "next/script";
+import Image from "next/image";
 
 import { User } from "@/src/utils/types";
 
 import Nav from "@/src/components/Nav";
-import Image from "next/image";
 import Button from "@/src/components/Button";
 import ValidationModal from "@/src/components/ValidationModal";
 import ContactUsModal from "@/src/components/ContactUsModal";
@@ -12,7 +12,7 @@ import { ToastContainer, ToastOptions, toast } from "react-toastify";
 import iconObj from "@/public/icons/utils";
 
 import { Skin, Cart } from "@/src/utils/types";
-import { SkinOrderCard } from "@/src/components/Carts";
+import { SkinOrderCard, HistoryOrderCard } from "@/src/components/Carts";
 
 import "@/src/app/globals.scss";
 import "./style.scss";
@@ -82,8 +82,8 @@ export default function CartPage() {
             <h3 className='items-amnt'>Items ({cartItems.length})</h3>
             <a
               className='btn-secondary-35'
-              // href='/history_page'
-              id='contactUsModal'
+              href='/history_page'
+              // id='contactUsModal'
             >
               History
             </a>
@@ -135,6 +135,7 @@ export default function CartPage() {
                   />
                 </>
               )}
+              <HistoryOrderCard skin={cartItems[0]} status='Done' />
               <ValidationModal triggerId='tradeLinkValidation' />
               <ContactUsModal triggerId='contactUsModal' />
             </>
