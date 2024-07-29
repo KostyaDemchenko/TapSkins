@@ -10,22 +10,15 @@ import RewardModal from "@/src/components/RevardModal";
 // Style import
 import "./style.scss";
 
-interface Task {
-  task_id: number;
-  task_name: string;
-  platform_type: string;
-  reward_type: "purple_coin" | "yellow_coin"; // Уточняем типы
-  reward: number;
-  link_to_join: string;
-  social_icon: string;
-}
+import { TaskProps, User } from "@/src/utils/types";
 
-const TasksList: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+const TasksList: React.FC<{ user: User }> = ({ user }) => {
+  const [tasks, setTasks] = useState<TaskProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedTask, setSelectedTask] = useState<TaskProps | null>(null);
 
   useEffect(() => {
+    //! Получить отдельный класс для заданий!
     const fetchTasks = async () => {
       try {
         const response = await fetch("/api/task_store");
@@ -43,7 +36,7 @@ const TasksList: React.FC = () => {
     fetchTasks();
   }, []);
 
-  const handleTaskClick = (task: Task) => {
+  const handleTaskClick = (task: TaskProps) => {
     if (task.platform_type === "Telegram") {
       const formattedLink = task.link_to_join.replace("https://t.me/", "@");
       console.log(`Join Telegram channel: ${formattedLink}`);
@@ -67,26 +60,26 @@ const TasksList: React.FC = () => {
       <div className='tasks-list'>
         {loading
           ? Array.from(new Array(5)).map((_, index) => (
-              <Skeleton
-                key={index}
-                variant='rounded'
-                height={84}
-                animation='wave'
-                sx={{
-                  bgcolor: "var(--color-surface)",
-                  marginBottom: "5px",
-                  width: "100%",
-                }}
-              />
-            ))
+            <Skeleton
+              key={index}
+              variant='rounded'
+              height={84}
+              animation='wave'
+              sx={{
+                bgcolor: "var(--color-surface)",
+                marginBottom: "5px",
+                width: "100%",
+              }}
+            />
+          ))
           : tasks.map((task) => (
-              <TaskCard
-                key={task.task_id}
-                task={task}
-                onClick={() => handleTaskClick(task)}
-                id={`rewardTrigger-${task.task_id}`}
-              />
-            ))}
+            <TaskCard
+              key={task.task_id}
+              task={task}
+              onClick={() => handleTaskClick(task)}
+              id={`rewardTrigger-${task.task_id}`}
+            />
+          ))}
       </div>
       {selectedTask && (
         <RewardModal

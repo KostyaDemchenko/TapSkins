@@ -22,11 +22,13 @@ export default function rewards_page() {
       if (!tg.initDataUnsafe || !tg.initDataUnsafe.user) {
         return;
       }
-      const userClass = new User(tg.initDataUnsafe.user.id);
+      const userClass = new User(tg.initDataUnsafe.user.id, tg.initData);
       const response = await userClass.authUser(tg);
 
       // пока не будет это выполнено, никаких нахуй дальше действий
-      if (response) setUser(userClass);
+      if (response) {
+        setUser(userClass);
+      }
     })();
   }, [tg]);
 
@@ -41,7 +43,7 @@ export default function rewards_page() {
       <main>
         <h1 className='page-title'>Reward Center</h1>
 
-        <RewardCenter />
+        {user && <RewardCenter user={user} />}
       </main>
       <Nav />
     </>

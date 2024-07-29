@@ -56,7 +56,7 @@ export default function CartPage() {
       if (!tg.initDataUnsafe || !tg.initDataUnsafe.user) {
         return;
       }
-      const userClass = new User(tg.initDataUnsafe.user.id);
+      const userClass = new User(tg.initDataUnsafe.user.id, tg.initData);
       const response = await userClass.authUser(tg);
 
       if (response) {
@@ -83,7 +83,7 @@ export default function CartPage() {
             <a
               className='btn-secondary-35'
               href='/history_page'
-              // id='contactUsModal'
+            // id='contactUsModal'
             >
               History
             </a>
@@ -131,11 +131,11 @@ export default function CartPage() {
                     className='btn-primary-25 purchase-buying'
                     icon=''
                     id='tradeLinkValidation'
-                    onClick={() => {}}
+                    onClick={() => { }}
                   />
                 </>
               )}
-              <HistoryOrderCard skin={cartItems[0]} status='Done' />
+              {!!cartItems.length && <HistoryOrderCard skin={cartItems[0]} status='Done' />}
               <ValidationModal triggerId='tradeLinkValidation' />
               <ContactUsModal triggerId='contactUsModal' />
             </>

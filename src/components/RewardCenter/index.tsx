@@ -5,11 +5,10 @@ import ReferralsList from "@/src/components/Referal";
 import Button from "@/src/components/Button";
 
 import "./style.scss";
+import { User } from "@/src/utils/types";
 
-const RewardCenter = () => {
+const RewardCenter: React.FC<{ user: User }> = ({ user }) => {
   const [activeSection, setActiveSection] = useState("tasks");
-
-  const invitedReferals = 5; // Потом сделать запрос для получения этих данных
 
   const handleSectionChange = (section: React.SetStateAction<string>) => {
     setActiveSection(section);
@@ -26,9 +25,8 @@ const RewardCenter = () => {
             Tasks
           </a>
           <a
-            className={`page-link ${
-              activeSection === "referrals" ? "active" : ""
-            }`}
+            className={`page-link ${activeSection === "referrals" ? "active" : ""
+              }`}
             onClick={() => handleSectionChange("referrals")}
           >
             Referrals
@@ -36,26 +34,24 @@ const RewardCenter = () => {
         </div>
         <div className={`content ${activeSection}`}>
           <div
-            className={`task-container ${
-              activeSection === "tasks" ? "active" : ""
-            }`}
+            className={`task-container ${activeSection === "tasks" ? "active" : ""
+              }`}
           >
-            <TasksList />
+            <TasksList user={user} />
           </div>
           <div
-            className={`referal-container ${
-              activeSection === "referrals" ? "active" : ""
-            }`}
+            className={`referal-container ${activeSection === "referrals" ? "active" : ""
+              }`}
           >
             <div className='referal-count'>
-              <p className='user-amount'>{invitedReferals}</p>
+              <p className='user-amount'>{user.invited_users}</p>
               <p className='label'>user invited</p>
             </div>
             <Button
               className='btn-primary-50'
               label='Send Invite'
               icon=''
-              onClick={() => {}}
+              onClick={() => { }}
             />
             <ReferralsList />
           </div>
