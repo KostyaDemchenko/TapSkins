@@ -1,0 +1,33 @@
+@import "@/src/app/shortSyles.scss";
+
+.balance-display-container {
+  @include flex(center, center);
+  @include f-direction(column);
+  gap: 12px;
+}
+
+.modal-background .modal-dialog .modal-box .content {
+  align-items: center;
+  gap: 14px;
+
+  .user-balance-exchange {
+    background-color: var(--color-ui-bg);
+    padding: 6px;
+    border-radius: 5px;
+  }
+
+  h1 {
+    position: relative;
+    line-height: 85%;
+
+    img {
+      position: absolute;
+      left: calc(100% + 2px);
+      bottom: 0;
+    }
+  }
+
+  p {
+    @include p-montserrat-12-125-regular;
+  }
+}

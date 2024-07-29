@@ -1,4 +1,4 @@
-import { User } from "@/src/utils/types";
+import { SuccessDisplay, User } from "@/src/utils/types";
 import React from "react";
 import iconObj from "@/public/icons/utils";
 import Image from "next/image";
@@ -6,21 +6,25 @@ import "./style.scss";
 import chicken from "@/public/chicken.png";
 import ExchangeCurrency from "../ExchangeCurrency";
 import ProgressBar from "../ProgressBar";
+import { Id, ToastContainer, ToastOptions, toast } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 interface UserBalanceProps {
   user?: User;
   wss?: WebSocket;
-  wsIsConnected?: boolean;
 }
 
-const UserBalance: React.FC<UserBalanceProps> = ({ user, wss, wsIsConnected = false }) => {
+const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   // const staminaDelay = user.staminaDelay; // период добавления стамины
   const staminaDelay = user ? user.staminaDelay : 1000;
   const [userStamina, setUserStamina] = React.useState<number>(0);
   const staminaIntervals = React.useRef<{ timeOutId: any; intervalId: any }>({
     timeOutId: null,
     intervalId: null
-  })
+  });
+  const [exchangeStatus, setExchangeStatus] = React.useState<SuccessDisplay | null>();
+  const toastElement = React.useRef<Id>();
 
   const increaseStamina = () => {
     staminaIntervals.current.intervalId = setInterval(() => {
@@ -31,28 +35,73 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss, wsIsConnected = fa
   }
 
   if (wss) {
+    // при готовности соединения запускаем таймер на восстановление стамины
     React.useEffect(() => {
       if (!wss || !user) return;
       increaseStamina();
       user.addPassiveStamina();
       setUserStamina(user.stamina);
     }, [wss.readyState]);
+
+    wss.onmessage = (e) => {
+      const response = JSON.parse(e.data);
+      
+      if (!response.success) {
+        console.error("Money wasn't increased");
+      }
+      // if (response.success) {
+      //   user?.setUser(response.newUser);
+      //   setUserStamina(user!.stamina);
+      // }
+
+      // if (response.success) {
+      //   const updatedUser = new User(tg!.initDataUnsafe.user!.id, tg!.initData);
+      //   updatedUser.max_stamina = user.max_stamina;
+      //   updatedUser.setUser(response.newUser);
+
+      //   setUser(updatedUser);
+      // } else {
+      //   console.log("Money has not increased");
+      // }
+    };
   }
 
+  // при изменении стамины, оптравляем изменения на бекенд
   React.useEffect(() => {
     if (!wss || !user || wss.readyState !== 1) return;
     wss.send(JSON.stringify({
       user_id: user.user_id,
-      last_click: Date.now(),
-      stamina: userStamina,
+      stamina: user.stamina,
       balance_common: user.balance_common
     }));
   }, [userStamina]);
 
+  React.useEffect(() => {
+    const toastifyOptions: ToastOptions = {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      progress: undefined,
+      theme: "dark",
+    }
+    if (!exchangeStatus) return;
+
+    if (exchangeStatus.loading && !exchangeStatus.success) toastElement.current = toast.loading("Exchanging...", toastifyOptions);
+    else toast.update(toastElement.current!, {
+      render: exchangeStatus.message,
+      type: exchangeStatus.success ? "success" : "error",
+      isLoading: false,
+      autoClose: 3000,
+      pauseOnHover: false,
+      closeOnClick: true
+    });
+
+    
+  }, [exchangeStatus]);
+
   const clickerButtonHandler = () => {
-    // func will return false if there is some error with balance increase
-    // and true, if everything is okay
-    // функция возвр-ает true\false, в зависимости от того, успешно ли было повышение баланса
+    if (exchangeStatus?.loading) return;
     if (!user) return;
 
     if (staminaIntervals.current.timeOutId) clearTimeout(staminaIntervals.current.timeOutId);
@@ -60,7 +109,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss, wsIsConnected = fa
 
     if (user && wss) {
       user.dereaseStamina();
-      user.balance_common += 1;
+      user.increaseBalance();
       setUserStamina(user.stamina);
     }
 
@@ -68,6 +117,9 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss, wsIsConnected = fa
   }
 
   return <>
+    <div style={{ position: "absolute" }}>
+      <ToastContainer />
+    </div>
     <div className="user-balance-container">
       <div className="user-balance">
         <p>Balance</p>
@@ -77,7 +129,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss, wsIsConnected = fa
           height={16}
           alt='Purple coin'
         /></h1>
-        <ExchangeCurrency />
+        <ExchangeCurrency setExchangeStatus={setExchangeStatus} User={user} />
         <h3>
           {user ? <>{user.balance_purple.toLocaleString('ru-RU')}</>
             :
