@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 
 import Modal from "@/src/components/Modal";
-import ContactUsModal from "@/src/components/ContactUsModal";
 import Rare from "@/src/components/Rare";
 import Float from "@/src/components/Float";
 import Button from "@/src/components/Button";
@@ -50,7 +49,9 @@ const SkinCard: React.FC<SkinCardProps> = ({
             </div>
             <div className='price-float-box'>
               <div className='price'>
-                <p className='price-value'>{skin.price}</p>
+                <p className='price-value'>
+                  {skin.price.toLocaleString("RU-ru")}
+                </p>
                 <Image
                   src={iconObj.purpleCoin}
                   width={12}
@@ -121,7 +122,9 @@ const SkinCard: React.FC<SkinCardProps> = ({
           <div className='price-box'>
             <p className='price-label'>Price</p>
             <div className='price'>
-              <p className='price-value'>{skin.price}</p>
+              <p className='price-value'>
+                {skin.price.toLocaleString("RU-ru")}
+              </p>
               <Image
                 src={iconObj.purpleCoin}
                 width={12}
@@ -173,7 +176,9 @@ const SkinOrderCard: React.FC<SkinOrderCardProps> = ({
           </div>
           <div className='price-float-box'>
             <div className='price'>
-              <p className='price-value'>{skin.price}</p>
+              <p className='price-value'>
+                {skin.price.toLocaleString("RU-ru")}
+              </p>
               <Image
                 src={iconObj.purpleCoin}
                 width={12}
@@ -244,7 +249,9 @@ const HistoryOrderCard: React.FC<HistoryOrderCardProps> = ({
             </div>
             <div className='price-float-box'>
               <div className='price'>
-                <p className='price-value'>{skin.price}</p>
+                <p className='price-value'>
+                  {skin.price.toLocaleString("RU-ru")}
+                </p>
                 <Image
                   src={iconObj.purpleCoin}
                   width={12}
@@ -296,7 +303,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
     <div className='task-details'>
       <h3 className='task-name'>{task.task_name}</h3>
       <div className='reward-count-box'>
-        <p className='reward-count'>+ {task.reward}</p>
+        <p className='reward-count'>+ {task.reward.toLocaleString("RU-ru")}</p>
         <div className='reward-type'>
           {task.reward_type === "yellow_coin" ? (
             <Image
