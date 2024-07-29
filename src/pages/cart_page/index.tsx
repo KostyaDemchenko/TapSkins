@@ -7,7 +7,7 @@ import { User } from "@/src/utils/types";
 import Nav from "@/src/components/Nav";
 import Button from "@/src/components/Button";
 import ValidationModal from "@/src/components/ValidationModal";
-import ContactUsModal from "@/src/components/ContactUsModal";
+
 import { ToastContainer, ToastOptions, toast } from "react-toastify";
 import iconObj from "@/public/icons/utils";
 
@@ -80,11 +80,7 @@ export default function CartPage() {
         <div className='container'>
           <div className='top-box'>
             <h3 className='items-amnt'>Items ({cartItems.length})</h3>
-            <a
-              className='btn-secondary-35'
-              href='/history_page'
-            // id='contactUsModal'
-            >
+            <a className='btn-secondary-35' href='/order_history'>
               History
             </a>
           </div>
@@ -131,13 +127,12 @@ export default function CartPage() {
                     className='btn-primary-25 purchase-buying'
                     icon=''
                     id='tradeLinkValidation'
-                    onClick={() => { }}
+                    onClick={() => {}}
                   />
                 </>
               )}
-              {!!cartItems.length && <HistoryOrderCard skin={cartItems[0]} status='Done' />}
+
               <ValidationModal triggerId='tradeLinkValidation' />
-              <ContactUsModal triggerId='contactUsModal' />
             </>
           )}
         </div>

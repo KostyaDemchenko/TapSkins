@@ -1,0 +1,52 @@
+@import "@/src/app/shortSyles.scss";
+
+main {
+  @include flex(center, center);
+  @include f-direction(column);
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.title {
+  @include flex(flex-start, center);
+  @include f-direction(row);
+  gap: 10px;
+  width: 100%;
+  padding: 0 20px;
+}
+
+.no-history {
+  @include flex(center, center);
+  @include f-direction(column);
+
+  height: 65dvh;
+  width: 100%;
+  gap: 35px;
+  padding: 0 20px;
+
+  .description {
+    @include p-montserrat-18-125-regular;
+    text-align: center;
+    color: var(--color-text-primary);
+  }
+
+  .btn-secondary-35 {
+    @include flex(center, center);
+    @include f-direction(row);
+    @include p-montserrat-14-125-medium;
+
+    width: fit-content;
+    height: 35px;
+    padding: 5px 20px;
+    border-radius: 3px;
+
+    gap: 10px;
+
+    color: var(--color-buttons-text-white);
+    background: var(--color-buttons-secondary-fill);
+
+    .material-symbols-outlined {
+      font-size: 20px;
+    }
+  }
+}
