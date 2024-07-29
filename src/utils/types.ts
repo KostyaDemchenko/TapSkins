@@ -16,19 +16,59 @@ export class User {
   public last_daily_bonus_time_clicked: number = 0;
   public invited_users: number = 0;
   public max_stamina: number = 1000;
+  private balance_icnrease_amnt: number = 1000;
   public stamina: number = this.max_stamina;
   public last_click: number = 0;
+  public initData: string;
 
   private backendAddress: string = process.env.NEXT_PUBLIC_BACKEND_ADDRESS!;
   private staminaStep = 3; // сколько стамины в периоде будет добавляться
   private staminaDecrease = 5;
   public staminaDelay = 1000; // период добавления стамины в секундах
+  private exchangeCoeff = 10000; // сколько золотых монеток нужно чтобы получить 1 фиолетовую
 
-  constructor(user_id: number) {
+  constructor(user_id: number, initData: string) {
     this.user_id = user_id;
+    this.initData = initData;
   }
 
-  exchangeBallance() {}
+  getExchangeBallance() {
+    const purpleAmnt = Math.floor(this.balance_common / this.exchangeCoeff);
+    return purpleAmnt;
+  }
+  // возвращает SuccessDisplay
+  async exchangeBallance() {
+    const res = await fetch(`${this.backendAddress}/convert`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ initData: this.initData }),
+    });
+
+    if (!res.ok) {
+      return {
+        success: false,
+        message: "Error with converting!",
+        loading: false,
+      };
+    }
+
+    try {
+      const { success, result } = await res.json();
+      console.log(result);
+      this.balance_common = result.balance_common;
+      this.balance_purple = result.balance_purple;
+      return success as SuccessDisplay;
+    } catch (e) {
+      console.error(e);
+      return {
+        success: false,
+        message: "Something went wrong!",
+        loading: false,
+      };
+    }
+  }
   // loginning user into tap skins
   // will return true if everything is okay, and false is everything is bad
   async authUser(tg: WebApp) {
@@ -63,28 +103,6 @@ export class User {
     return true;
   }
 
-  // async increaseBallance(wss: WebSocket) {
-  //   if (!wss) {
-  //     console.log("There is no connection!");
-  //     return false;
-  //   }
-
-  //   try {
-  //     this.dereaseStamina();
-  //     wss.send(
-  //       JSON.stringify({
-  //         user_id: this.user_id,
-  //         last_click: Date.now(),
-  //         stamina: this.stamina,
-  //       })
-  //     );
-  //     return true;
-  //   } catch (e) {
-  //     console.log(e);
-  //     return false;
-  //   }
-  // }
-
   checkSubscription(channelId: `@${string}`) {
     const { user_id } = this;
     return new Promise(async (res, rej) => {
@@ -118,6 +136,7 @@ export class User {
     this.invited_users = obj.invited_users;
     this.last_click = obj.last_click;
     this.stamina = obj.stamina;
+
     if (obj.max_stamina) this.max_stamina = obj.max_stamina;
   }
 
@@ -127,9 +146,14 @@ export class User {
   }
 
   dereaseStamina() {
+    if (this.stamina - this.staminaDecrease < 0) return;
     if (this.stamina - this.staminaDecrease >= 0) {
       this.stamina -= this.staminaDecrease;
     } else this.stamina = 0;
+  }
+
+  increaseBalance() {
+    this.balance_common += this.balance_icnrease_amnt;
   }
 
   addPassiveStamina() {
@@ -221,19 +245,22 @@ export class Cart {
   deleteFromCart(skin: Skin) {
     this.checkLocalStorage();
 
-    const searchingId = this.skins!.findIndex((el) => el.item_id === skin.item_id);
+    const searchingId = this.skins!.findIndex(
+      (el) => el.item_id === skin.item_id
+    );
 
-    if (searchingId === -1) return {
-      success: false,
-      message: "Strange...there is no such element"
-    }
+    if (searchingId === -1)
+      return {
+        success: false,
+        message: "Strange...there is no such element",
+      };
 
     this.skins!.splice(searchingId, 1);
     this.storage.setItem(this.storageKey, JSON.stringify(this.skins));
     return {
       success: true,
-      message: "Deleted successfully!"
-    }
+      message: "Deleted successfully!",
+    };
   }
 
   getTotalPrice() {
@@ -304,6 +331,7 @@ export class Task {
 }
 
 export type SuccessDisplay = {
-  success: boolean,
-  message: string
-}
+  success: boolean;
+  message: string;
+  loading?: boolean;
+};

@@ -159,9 +159,14 @@ main {
   --toastify-color-dark: var(--color-buttons-secondary-fill);
   --toastify-color-progress-dark: var(--color-checkbox-checked);
 
+  .Toastify__toast-container {
+    width: 80dvw;
+  }
+
   .Toastify__toast-container--top-right {
     top: 0;
-    right: 20px;
+    right: 0px;
+    left: unset;
   }
 
   .Toastify__toast-body {

@@ -32,7 +32,7 @@ export default function Home() {
       if (!tg.initDataUnsafe || !tg.initDataUnsafe.user) {
         return;
       }
-      const userClass = new User(tg.initDataUnsafe.user.id);
+      const userClass = new User(tg.initDataUnsafe.user.id, tg.initData);
       const response = await userClass.authUser(tg);
 
       // пока не будет это выполнено, никаких нахуй дальше действий
@@ -53,25 +53,12 @@ export default function Home() {
       console.error(e);
     }
   
-    //? при отправке сообщения с бекенда по вебсокету
     if (user && wss.current) {
       wss.current.onclose = (event) => {
         console.log(
           `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
         );
-      };
-      wss.current.onmessage = (e) => {
-        const response = JSON.parse(e.data);
-  
-        if (response.success) {
-          const updatedUser = new User(tg!.initDataUnsafe.user!.id);
-          updatedUser.max_stamina = user.max_stamina;
-          updatedUser.setUser(response.newUser);
-  
-          setUser(updatedUser);
-        } else {
-          console.log("Money has not increased");
-        }
+        global.window.location.reload();
       };
     }
   }, [wss.current]);
