@@ -193,11 +193,13 @@ const SkinOrderCard: React.FC<SkinOrderCardProps> = ({
 interface HistoryOrderCardProps {
   skin: Skin;
   status: "In Progress" | "Done" | "Canceled";
+  id?: string;
 }
 
 const HistoryOrderCard: React.FC<HistoryOrderCardProps> = ({
   skin,
   status,
+  id,
 }) => {
   let statusColor;
 
@@ -218,13 +220,8 @@ const HistoryOrderCard: React.FC<HistoryOrderCardProps> = ({
 
   return (
     <>
-      <div className='skin-card history-order-card'>
-        <span
-          className='material-symbols-outlined get-info'
-          id='contactUsModal'
-        >
-          info
-        </span>
+      <div className='skin-card history-order-card' id={id}>
+        <span className='material-symbols-outlined get-info'>info</span>
         <div className='img-case'>
           <SkinBackground
             imageSrc={skin.image_src}
