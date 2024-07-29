@@ -4,15 +4,17 @@ import Modal from "@/src/components/Modal";
 import Button from "@/src/components/Button";
 import Image from "next/image";
 
-import { User } from "@/src/utils/types";
+import { SuccessDisplay, User } from "@/src/utils/types";
 import iconObj from "@/public/icons/utils";
 
 import "./style.scss";
 
-const ExchangeCurrency: React.FC<{ User: User | undefined }> = ({ User }) => {
-  console.log(User);
+interface ExchangeCurrencyProps {
+  User: User | undefined;
+  setExchangeStatus: (arg: SuccessDisplay) => void;
+}
 
-
+const ExchangeCurrency: React.FC<ExchangeCurrencyProps> = ({ User, setExchangeStatus }) => {
   return (
     <>
       <div id="balance_exchange" className="material-symbols-outlined user-balance-exchange">
@@ -23,9 +25,19 @@ const ExchangeCurrency: React.FC<{ User: User | undefined }> = ({ User }) => {
         triggerId="balance_exchange"
         closeElement={
           <Button
+            disabled={User && User.getExchangeBallance() > 0 ? false : true}
             label="Apply"
             className="btn-primary-50 icon"
-            onClick={() => console.log("test")} // there should be logic for currency transfer
+            onClick={async () => {
+              const progressStatus: SuccessDisplay = {
+                success: false,
+                message: "Exchanging...",
+                loading: true,
+              };
+              setExchangeStatus(progressStatus);
+
+              setExchangeStatus(await User?.exchangeBallance()!);
+            }}
           />
         }
       >
@@ -44,7 +56,7 @@ const ExchangeCurrency: React.FC<{ User: User | undefined }> = ({ User }) => {
 
 
         <p>To</p>
-        <h1>{User ? <>{User.exchangeBallance()}</> : <>{(12000).toLocaleString("RU-ru")}</>}
+        <h1>{User ? <>{User.getExchangeBallance()}</> : <>{(12000).toLocaleString("RU-ru")}</>}
 
           <Image
             src={iconObj.purpleCoin}
