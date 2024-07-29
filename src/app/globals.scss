@@ -143,8 +143,10 @@ main {
 }
 
 // Skeleton
-.MuiSkeleton-rounded {
-  &::after {
+.MuiSkeleton-rounded,
+.MuiSkeleton-text {
+  &::after,
+  &::before {
     background: linear-gradient(
       90deg,
       transparent,

@@ -31,6 +31,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
                 <Skeleton
                   variant='text'
                   width={80}
+                  animation='wave'
                   sx={{
                     bgcolor: "var(--color-surface)",
                   }}
@@ -48,6 +49,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
               <Skeleton
                 variant='text'
                 width={80}
+                animation='wave'
                 sx={{
                   bgcolor: "var(--color-surface)",
                 }}
