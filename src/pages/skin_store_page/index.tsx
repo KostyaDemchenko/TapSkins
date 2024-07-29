@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Script from "next/script";
 
 import { User } from "@/src/utils/types";
@@ -26,7 +26,6 @@ const rarityOrder = [
 ];
 
 export default function SkinStorePage() {
-  const userBalance = 1000000;
 
 
   const [tg, setTg] = useState<WebApp | null>(null);
@@ -42,6 +41,7 @@ export default function SkinStorePage() {
   const [filters, setFilters] = useState<any>({});
   const [weaponTypes, setWeaponTypes] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<string>("relevant");
+  const userBalance = useRef(0);
 
   useEffect(() => {
     if (!tg) return;
@@ -53,10 +53,13 @@ export default function SkinStorePage() {
       if (!tg.initDataUnsafe || !tg.initDataUnsafe.user) {
         return;
       }
-      const userClass = new User(tg.initDataUnsafe.user.id);
+      const userClass = new User(tg.initDataUnsafe.user.id, tg.initData);
       const response = await userClass.authUser(tg);
 
-      if (response) setUser(userClass);
+      if (response) {
+        userBalance.current = userClass.balance_purple;
+        setUser(userClass);
+      }
     })();
   }, [tg]);
 
@@ -178,8 +181,8 @@ export default function SkinStorePage() {
       <main>
         <div className='container'>
           <div className='middle-box'>
-            <UserBalanceStore userBalanceStore={1500} />
-            {/* ^^^^set user balanse here^^^^ */}
+            {user && <UserBalanceStore userBalanceStore={user.balance_purple} />}
+            {!user && <UserBalanceStore userBalanceStore={1500} />}
             <div className='top-box'>
               <Search onSearch={handleSearch} />
               <Filters
@@ -201,7 +204,7 @@ export default function SkinStorePage() {
             </div>
           </div>
           <SkinStore
-            userBalance={userBalance}
+            userBalance={userBalance.current}
             searchTerm={searchTerm}
             skins={getSortedSkins()}
             isLoading={isLoading}

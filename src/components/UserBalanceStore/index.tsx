@@ -18,7 +18,7 @@ const UserBalanceStore: React.FC<UserBalanceStoreProps> = ({
       <div className='balance-box'>
         <p className='title'>Balance</p>
         <div className='amount'>
-          <p className='balance'>{userBalanceStore}</p>
+          <p className='balance'>{userBalanceStore.toLocaleString("RU-ru")}</p>
           <Image src={iconObj.purpleCoin} alt='Purple Coin' />
         </div>
       </div>

@@ -295,35 +295,21 @@ export type completeTasks = {
   user_id: number;
 };
 
-export class Task {
-  public reward: number;
-  public name: string;
-  public icon: string;
-  public type: string;
-  public link_to_join: string;
-  public task_id: string;
+export type TaskProps = {
+  task_id: number;
+  task_name: string;
+  platform_type: string;
+  reward_type: "purple_coin" | "yellow_coin";
+  reward: number;
+  link_to_join: string;
+  social_icon: string;
+}
 
-  constructor({
-    reward,
-    name,
-    icon,
-    type,
-    link_to_join,
-    task_id,
-  }: {
-    reward: number;
-    name: string;
-    icon: string;
-    type: string;
-    link_to_join: string;
-    task_id: string;
-  }) {
-    this.reward = reward;
-    this.name = name;
-    this.icon = icon;
-    this.type = type;
-    this.link_to_join = link_to_join;
-    this.task_id = task_id;
+export class Task {
+  public taskField: TaskProps;
+
+  constructor(task: TaskProps) {
+    this.taskField = task;
   }
 
   completeTask() {}
