@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Script from "next/script";
+import Link from "next/link";
 
 import Nav from "@/src/components/Nav";
 import { User } from "../utils/types";
@@ -48,11 +49,11 @@ export default function Home() {
       ws.onopen = () => {
         console.log("Connected");
         // setIsWsConnected(true);
-      }
+      };
     } catch (e) {
       console.error(e);
     }
-  
+
     if (user && wss.current) {
       wss.current.onclose = (event) => {
         console.log(
@@ -83,6 +84,18 @@ export default function Home() {
 
   return (
     <>
+      <link
+        rel='stylesheet'
+        href='https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap'
+      ></link>
+      <link
+        rel='stylesheet'
+        href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
+      ></link>
+      <link
+        rel='stylesheet'
+        href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
+      ></link>
       <Script
         src='https://telegram.org/js/telegram-web-app.js'
         onLoad={() => {
