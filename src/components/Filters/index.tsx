@@ -77,146 +77,153 @@ const Filters: React.FC<FiltersProps> = ({
   };
 
   return (
-    <Modal
-      modalTitle='Filters'
-      trigger={
-        <Image src={iconObj.filters} width={24} height={24} alt='Filter' />
-      }
-      height='60dvh'
-      closeElement={
-        <Button
-          label='Apply'
-          className='btn-primary-50 icon'
-          onClick={handleApply}
-        />
-      }
-      modalBg='var(--color-background-secondary)'
-    >
-      <div className='content filter-box'>
-        <PriceRanger
-          key={`price-${resetKey}`}
-          maxValue={maxPrice}
-          minValue={minPrice}
-          icons={true}
-          rangeTitle='Price'
-          onChange={setPriceRange}
-          step={1}
-        />
+    <>
+      <Image
+        src={iconObj.filters}
+        width={24}
+        height={24}
+        alt='Filter'
+        id='filtersModalTrigger'
+      />
+      <Modal
+        modalTitle='Filters'
+        triggerId='filtersModalTrigger'
+        height='60dvh'
+        closeElement={
+          <Button
+            label='Apply'
+            className='btn-primary-50 icon'
+            onClick={handleApply}
+          />
+        }
+        modalBg='var(--color-background-secondary)'
+      >
+        <div className='content filter-box'>
+          <PriceRanger
+            key={`price-${resetKey}`}
+            maxValue={maxPrice}
+            minValue={minPrice}
+            icons={true}
+            rangeTitle='Price'
+            onChange={setPriceRange}
+            step={1}
+          />
 
-        <Modal
-          modalTitle='Weapon'
-          trigger={
-            <div className='filter-option'>
-              <p className='filter-title'>Weapon</p>
-              <span className='material-symbols-outlined'>arrow_right_alt</span>
-            </div>
-          }
-          fade={false}
-          subModal={true}
-          height='60dvh'
-          closeElement={
-            <Button
-              label='Apply'
-              className='btn-primary-50 icon'
-              onClick={handleApply}
-            />
-          }
-          className='sub-filter-modal'
-          modalBg='var(--color-background-secondary)'
-        >
-          <div className='content weapon'>
-            {uniqueWeapons.map((weaponName) => (
-              <div className='filter-option' key={weaponName}>
-                <CustomCheckbox
-                  label={weaponName}
-                  name={weaponName}
-                  defaultChecked={weapon.includes(weaponName)}
-                  onChange={(checked) => {
-                    if (checked) {
-                      setWeapon((prev) => [...prev, weaponName]);
-                    } else {
-                      setWeapon((prev) =>
-                        prev.filter((item) => item !== weaponName)
-                      );
-                    }
-                  }}
-                />
-              </div>
-            ))}
+          <div className='filter-option' id='weaponModalTrigger'>
+            <p className='filter-title'>Weapon</p>
+            <span className='material-symbols-outlined'>arrow_right_alt</span>
           </div>
-        </Modal>
 
-        <div className='filter-option'>
-          <CustomRadioButton
-            label={"StarTrack"}
-            name='startrack'
-            defaultSelected={starTrack}
-            onChange={setStarTrack}
+          <Modal
+            modalTitle='Weapon'
+            triggerId='weaponModalTrigger'
+            fade={false}
+            subModal={true}
+            height='60dvh'
+            closeElement={
+              <Button
+                label='Apply'
+                className='btn-primary-50 icon'
+                onClick={handleApply}
+              />
+            }
+            className='sub-filter-modal'
+            modalBg='var(--color-background-secondary)'
+          >
+            <div className='content weapon filter-box'>
+              {uniqueWeapons.map((weaponName) => (
+                <div className='filter-option' key={weaponName}>
+                  <CustomCheckbox
+                    label={weaponName}
+                    name={weaponName}
+                    defaultChecked={weapon.includes(weaponName)}
+                    onChange={(checked) => {
+                      if (checked) {
+                        setWeapon((prev) => [...prev, weaponName]);
+                      } else {
+                        setWeapon((prev) =>
+                          prev.filter((item) => item !== weaponName)
+                        );
+                      }
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          </Modal>
+
+          <div className='filter-option'>
+            <CustomRadioButton
+              label={"StarTrack"}
+              name='startrack'
+              defaultSelected={starTrack}
+              onChange={setStarTrack}
+            />
+          </div>
+
+          <PriceRanger
+            key={`float-${resetKey}`}
+            maxValue={maxFloat}
+            minValue={minFloat}
+            icons={false}
+            rangeTitle='Float'
+            onChange={setFloatRange}
+            step={0.0001}
+          />
+
+          <div className='filter-option' id='rarityModalTrigger'>
+            <p className='filter-title'>Rarity</p>
+            <span className='material-symbols-outlined'>arrow_right_alt</span>
+          </div>
+
+          <Modal
+            modalTitle='Rarity'
+            triggerId='rarityModalTrigger'
+            fade={false}
+            subModal={true}
+            height='60dvh'
+            closeElement={
+              <Button
+                label='Apply'
+                className='btn-primary-50 icon'
+                onClick={handleApply}
+              />
+            }
+            className='sub-filter-modal'
+            modalBg='var(--color-background-secondary)'
+          >
+            <div className='content rarity filter-box'>
+              {uniqueRarities.map((rarityName) => (
+                <div className='filter-option' key={rarityName}>
+                  <CustomCheckbox
+                    label={rarityName}
+                    name={rarityName}
+                    colorBlock={true}
+                    defaultChecked={rarity.includes(rarityName)}
+                    onChange={(checked) => {
+                      if (checked) {
+                        setRarity((prev) => [...prev, rarityName]);
+                      } else {
+                        setRarity((prev) =>
+                          prev.filter((item) => item !== rarityName)
+                        );
+                      }
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          </Modal>
+
+          <Button
+            label='Reset'
+            className='btn-tertiary-white-35'
+            icon='refresh'
+            onClick={handleReset}
           />
         </div>
-
-        <PriceRanger
-          key={`float-${resetKey}`}
-          maxValue={maxFloat}
-          minValue={minFloat}
-          icons={false}
-          rangeTitle='Float'
-          onChange={setFloatRange}
-          step={0.0001}
-        />
-
-        <Modal
-          modalTitle='Rarity'
-          trigger={
-            <div className='filter-option'>
-              <p className='filter-title'>Rarity</p>
-              <span className='material-symbols-outlined'>arrow_right_alt</span>
-            </div>
-          }
-          fade={false}
-          subModal={true}
-          height='60dvh'
-          closeElement={
-            <Button
-              label='Apply'
-              className='btn-primary-50 icon'
-              onClick={handleApply}
-            />
-          }
-          className='sub-filter-modal'
-          modalBg='var(--color-background-secondary)'
-        >
-          <div className='content rarity'>
-            {uniqueRarities.map((rarityName) => (
-              <div className='filter-option' key={rarityName}>
-                <CustomCheckbox
-                  label={rarityName}
-                  name={rarityName}
-                  colorBlock={true}
-                  defaultChecked={rarity.includes(rarityName)}
-                  onChange={(checked) => {
-                    if (checked) {
-                      setRarity((prev) => [...prev, rarityName]);
-                    } else {
-                      setRarity((prev) =>
-                        prev.filter((item) => item !== rarityName)
-                      );
-                    }
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-        </Modal>
-
-        <Button
-          label='Reset'
-          className='btn-tertiary-white-35'
-          icon='refresh'
-          onClick={handleReset}
-        />
-      </div>
-    </Modal>
+      </Modal>
+    </>
   );
 };
 
