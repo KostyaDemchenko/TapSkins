@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import Script from "next/script";
 import Image from "next/image";
 
-import { User } from "@/src/utils/types";
+import { SuccessDisplay, User } from "@/src/utils/types";
 
 import Nav from "@/src/components/Nav";
 import Button from "@/src/components/Button";
 import ValidationModal from "@/src/components/ValidationModal";
 
-import { ToastContainer, ToastOptions, toast } from "react-toastify";
+import { Id, ToastContainer, ToastOptions, toast } from "react-toastify";
 import iconObj from "@/public/icons/utils";
 
 import { Skin, Cart } from "@/src/utils/types";
@@ -17,26 +17,33 @@ import { SkinOrderCard, HistoryOrderCard } from "@/src/components/Carts";
 import "@/src/app/globals.scss";
 import "./style.scss";
 
+const toastSettings: ToastOptions = {
+  position: "top-right",
+  autoClose: 3000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: false,
+  draggable: true,
+  progress: undefined,
+  theme: "dark",
+};
+
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<Skin[]>([]);
   const [tg, setTg] = useState<WebApp | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [opportunityToBuy, setOpportunityToBuy] = useState<SuccessDisplay>({
+    success: false,
+    message: "",
+  });
+
 
   const userCart = useRef<null | Cart>(null);
+  const toastId = useRef<Id>();
 
   const deleteHandle = (el: Skin) => {
     const status = userCart.current!.deleteFromCart(el);
 
-    const toastSettings: ToastOptions = {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: false,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    };
     if (status.success) toast.success(status.message, toastSettings);
     else toast.error(status.message, toastSettings);
 
@@ -67,6 +74,25 @@ export default function CartPage() {
     })();
   }, [tg]);
 
+  useEffect(() => {
+    if (opportunityToBuy.message.trim() === "") return;
+
+    if (opportunityToBuy.loading) {
+      toastId.current = toast.loading(opportunityToBuy.message, { ...toastSettings, closeOnClick: false });
+      return;
+    }
+
+    toast.update(toastId.current!, {
+      render: opportunityToBuy.message,
+      type: opportunityToBuy.success ? "success" : "error",
+      isLoading: false,
+      pauseOnHover: !opportunityToBuy.success,
+      autoClose: 5000,
+      closeOnClick: true
+    });
+
+  }, [opportunityToBuy]);
+
   return (
     <>
       <Script
@@ -75,7 +101,9 @@ export default function CartPage() {
           setTg(global.window.Telegram.WebApp);
         }}
       />
-      <ToastContainer />
+      <div style={{ position: "absolute" }}>
+        <ToastContainer />
+      </div>
       <main>
         <div className='container'>
           <div className='top-box'>
@@ -123,16 +151,34 @@ export default function CartPage() {
                     </h4>
                   </div>
                   <Button
-                    label={`Buy`}
+                    label="Buy"
                     className='btn-primary-25 purchase-buying'
                     icon=''
+                    disabled={(() => {
+                      if (!user) return false;
+                      return user.getBalancePurple() < userCart.current.getTotalPrice();
+                    })()}
                     id='tradeLinkValidation'
-                    onClick={() => {}}
+                    onClick={function (e) {
+                    }}
                   />
                 </>
               )}
 
-              <ValidationModal triggerId='tradeLinkValidation' />
+              <ValidationModal onClickHandle={async (e) => {
+                if (!userCart.current || opportunityToBuy.loading || opportunityToBuy.success) return;
+                setOpportunityToBuy({
+                  loading: true,
+                  message: "Checking skins for availability...",
+                  success: false
+                })
+                const data = await user!.buySkins(userCart.current.getItems());
+                if (data.success) {
+                  userCart.current.clearCart();
+                  setCartItems([]);
+                }
+                setOpportunityToBuy(data);
+              }} triggerId='tradeLinkValidation' />
             </>
           )}
         </div>

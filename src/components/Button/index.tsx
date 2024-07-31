@@ -4,7 +4,7 @@ import "./style.scss";
 
 interface ButtonProps {
   label: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
   className?: string;
   icon?: string;

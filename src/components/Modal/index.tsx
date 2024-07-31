@@ -15,6 +15,7 @@ interface ModalProps {
   children: React.ReactNode;
   closeElement?: React.ReactNode;
   onClose?: () => void;
+  blockClosing?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -28,6 +29,7 @@ const Modal: React.FC<ModalProps> = ({
   subModal = false,
   closeElement,
   modalBg = "var(--color-surface)",
+  blockClosing
 }) => {
   const [visible, setVisible] = useState(false);
   const [top, setTop] = useState("100dvh");
@@ -67,6 +69,7 @@ const Modal: React.FC<ModalProps> = ({
   };
 
   const hide = () => {
+    if (blockClosing) return;
     setTop("100dvh");
     setVisible(false);
     if (onClose) onClose();

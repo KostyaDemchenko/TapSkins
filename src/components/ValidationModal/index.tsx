@@ -39,7 +39,7 @@ const urlSchema = z.string().refine(
 );
 
 // ValidationModal component
-const ValidationModal: React.FC<{ triggerId: string }> = ({ triggerId }) => {
+const ValidationModal: React.FC<{ triggerId: string, onClickHandle: (e: string) => void }> = ({ triggerId, onClickHandle }) => {
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -75,7 +75,7 @@ const ValidationModal: React.FC<{ triggerId: string }> = ({ triggerId }) => {
           className='btn-primary-50'
           icon=''
           disabled={!!error || inputValue === ""}
-          onClick={() => {}}
+          onClick={() => onClickHandle(inputValue)}
         />
       }
     >

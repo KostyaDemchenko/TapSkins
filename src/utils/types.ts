@@ -140,18 +140,6 @@ export class User {
     if (obj.max_stamina) this.max_stamina = obj.max_stamina;
   }
 
-  increaseStamina() {
-    this.stamina += this.staminaStep;
-    if (this.stamina > this.max_stamina) this.stamina = this.max_stamina;
-  }
-
-  dereaseStamina() {
-    if (this.stamina - this.staminaDecrease < 0) return;
-    if (this.stamina - this.staminaDecrease >= 0) {
-      this.stamina -= this.staminaDecrease;
-    } else this.stamina = 0;
-  }
-
   increaseBalance() {
     this.balance_common += this.balance_icnrease_amnt;
   }
@@ -165,12 +153,70 @@ export class User {
     this.stamina += totalStamina;
     if (this.stamina > this.max_stamina) this.stamina = this.max_stamina;
   }
+  dereaseStamina() {
+    if (this.stamina - this.staminaDecrease < 0) return;
+    if (this.stamina - this.staminaDecrease >= 0) {
+      this.stamina -= this.staminaDecrease;
+    } else this.stamina = 0;
+  }
+  increaseStamina() {
+    this.stamina += this.staminaStep;
+    if (this.stamina > this.max_stamina) this.stamina = this.max_stamina;
+  }
 
   getBalanceCommon() {
     return this.balance_common;
   }
   getBalancePurple() {
     return this.balance_purple;
+  }
+
+  async buySkins(skins: Skin[]) {
+    const skinIds = skins.map((el) => el.item_id).join(",");
+
+    try {
+      const response = await fetch(`${this.backendAddress}/check-skins`, {
+        body: JSON.stringify({ skinIds }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.text();
+      if (data.trim() === "") {
+        return {
+          message: "We've received your order!",
+          success: true,
+          loading: false
+        }
+      }
+      else {
+        const productEnum = <string[]>[];
+        data.split(",").forEach(id => {
+          const element = skins.find(el => el.item_id === parseInt(id));
+          if (element) productEnum.push(element.skin_name);
+        })
+
+        return {
+          message: `We're sorry, but such skins has reserved:\n${productEnum.join(", ")}`,
+          success: false,
+          loading: false
+        }
+      }
+      // return data;
+    } catch (error) {
+      console.error("Error occurred while buying skins:", error);
+      return {
+        message: "Error to check",
+        success: false,
+        loading: false,
+      };
+    }
   }
 }
 
@@ -270,6 +316,11 @@ export class Cart {
     };
   }
 
+  clearCart() {
+    this.skins = [];
+    this.storage.removeItem(this.storageKey);
+  };
+
   getTotalPrice() {
     this.checkLocalStorage();
     return this.skins!.reduce((accum, currVal) => {
@@ -310,7 +361,7 @@ export type TaskProps = {
   reward: number;
   link_to_join: string;
   social_icon: string;
-}
+};
 
 export class Task {
   public taskField: TaskProps;
