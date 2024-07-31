@@ -24,7 +24,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     intervalId: null
   });
   const [exchangeStatus, setExchangeStatus] = React.useState<SuccessDisplay | null>();
-  const [rerender, setRerender] = React.useState<boolean>(false);
   const toastElement = React.useRef<Id>();
 
   const increaseStamina = () => {
@@ -50,20 +49,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
       if (!response.success) {
         console.error("Money wasn't increased");
       }
-      // if (response.success) {
-      //   user?.setUser(response.newUser);
-      //   setUserStamina(user!.stamina);
-      // }
-
-      // if (response.success) {
-      //   const updatedUser = new User(tg!.initDataUnsafe.user!.id, tg!.initData);
-      //   updatedUser.max_stamina = user.max_stamina;
-      //   updatedUser.setUser(response.newUser);
-
-      //   setUser(updatedUser);
-      // } else {
-      //   console.log("Money has not increased");
-      // }
     };
   }
 

@@ -42,7 +42,7 @@ const ExchangeCurrency: React.FC<ExchangeCurrencyProps> = ({ User, setExchangeSt
         }
       >
         <p>Balance</p>
-        <h1>{User ? <>{User.balance_common.toLocaleString('ru-RU')}</> : <>{(123123123).toLocaleString("ru-RU")}</>}<Image
+        <h1>{User ? <>{User.getBalanceCommon().toLocaleString('ru-RU')}</> : <>{(123123123).toLocaleString("ru-RU")}</>}<Image
           src={iconObj.yellowCoin}
           width={16}
           height={16}

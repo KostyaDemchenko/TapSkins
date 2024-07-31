@@ -57,7 +57,7 @@ export default function SkinStorePage() {
       const response = await userClass.authUser(tg);
       console.log("Sending...");
       if (response) {
-        userBalance.current = userClass.balance_purple;
+        userBalance.current = userClass.getBalancePurple();
         setUser(userClass);
       }
     })();
@@ -94,6 +94,8 @@ export default function SkinStorePage() {
 
     fetchData();
   }, []);
+
+  
 
   const applyFilters = (filters: any) => {
     const filtered = skins.filter((skin: Skin) => {
@@ -181,8 +183,8 @@ export default function SkinStorePage() {
       <main>
         <div className='container'>
           <div className='middle-box'>
-            {user && <UserBalanceStore userBalanceStore={user.balance_purple} />}
-            {!user && <UserBalanceStore userBalanceStore={1500} />}
+            {user && <UserBalanceStore user={user} />}
+            {!user && <UserBalanceStore />}
             <div className='top-box'>
               <Search onSearch={handleSearch} />
               <Filters

@@ -22,7 +22,7 @@ export class User {
 
   private backendAddress: string = process.env.NEXT_PUBLIC_BACKEND_ADDRESS!;
   private staminaStep = 3; // сколько стамины в периоде будет добавляться
-  private balance_icnrease_amnt: number = 1;
+  private balance_icnrease_amnt: number = 1000;
   private staminaDecrease = 5;
   public staminaDelay = 1000; // период добавления стамины в секундах
   private exchangeCoeff = 10000; // сколько золотых монеток нужно чтобы получить 1 фиолетовую
