@@ -16,13 +16,13 @@ export class User {
   public last_daily_bonus_time_clicked: number = 0;
   public invited_users: number = 0;
   public max_stamina: number = 1000;
-  private balance_icnrease_amnt: number = 1000;
   public stamina: number = this.max_stamina;
   public last_click: number = 0;
   public initData: string;
 
   private backendAddress: string = process.env.NEXT_PUBLIC_BACKEND_ADDRESS!;
   private staminaStep = 3; // сколько стамины в периоде будет добавляться
+  private balance_icnrease_amnt: number = 1;
   private staminaDecrease = 5;
   public staminaDelay = 1000; // период добавления стамины в секундах
   private exchangeCoeff = 10000; // сколько золотых монеток нужно чтобы получить 1 фиолетовую

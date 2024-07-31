@@ -1,13 +1,17 @@
 @import "@/src/app/shortSyles.scss";
 
 .skin-store-container {
-  @include flex(flex-start, flex-start);
-  @include f-direction(row);
+  // @include flex(flex-start, flex-start);
+  // @include f-direction(row);
 
-  flex-wrap: wrap;
+  // flex-wrap: wrap;
 
-  width: 100%;
-  gap: 5px 5px;
+  // width: 100%;
+  // gap: 5px 5px;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
 
   padding: 150px 0 60px 0;
 }

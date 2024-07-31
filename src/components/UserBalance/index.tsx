@@ -123,7 +123,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     <div className="user-balance-container">
       <div className="user-balance">
         <p>Balance</p>
-        <h1>{user ? <>{user.balance_common.toLocaleString('ru-RU')}</> : <>{(123123123).toLocaleString("ru-RU")}</>}<Image
+        <h1>{user ? <>{user.balance_common.toLocaleString('ru-RU')}</> : <>{(0).toLocaleString("ru-RU")}</>}<Image
           src={iconObj.yellowCoin}
           width={16}
           height={16}
@@ -133,7 +133,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
         <h3>
           {user ? <>{user.balance_purple.toLocaleString('ru-RU')}</>
             :
-            <>{(123123123).toLocaleString("ru-RU")}</>}
+            <>{(0).toLocaleString("ru-RU")}</>}
           <Image
             src={iconObj.purpleCoin}
             width={16}

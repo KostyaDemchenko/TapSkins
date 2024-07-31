@@ -55,7 +55,7 @@ export default function SkinStorePage() {
       }
       const userClass = new User(tg.initDataUnsafe.user.id, tg.initData);
       const response = await userClass.authUser(tg);
-
+      console.log("Sending...");
       if (response) {
         userBalance.current = userClass.balance_purple;
         setUser(userClass);
