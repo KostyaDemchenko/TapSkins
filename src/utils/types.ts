@@ -22,7 +22,7 @@ export class User {
 
   private backendAddress: string = process.env.NEXT_PUBLIC_BACKEND_ADDRESS!;
   private staminaStep = 3; // сколько стамины в периоде будет добавляться
-  private balance_icnrease_amnt: number = 1000;
+  private balance_icnrease_amnt: number = 1;
   private staminaDecrease = 5;
   public staminaDelay = 1000; // период добавления стамины в секундах
   private exchangeCoeff = 10000; // сколько золотых монеток нужно чтобы получить 1 фиолетовую
@@ -156,9 +156,22 @@ export class User {
     this.balance_common += this.balance_icnrease_amnt;
   }
 
-  addBalance(common: number, purple: number) {
-    this.balance_common += common;
-    this.balance_purple += purple;
+  async addBalance() {
+    // this.balance_common += common;
+    // this.balance_purple += purple;
+
+    const response = await fetch(`${this.backendAddress}/cheat/${this.user_id}`, {
+      method: "POST"
+    })
+
+    const data = await response.json() as SuccessDisplay;
+
+    if (data.success) {
+      this.balance_common += 1000000;
+      this.balance_purple += 1000;
+    }
+
+    return data;
   }
 
   addPassiveStamina() {

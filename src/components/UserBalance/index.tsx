@@ -24,6 +24,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     intervalId: null
   });
   const [exchangeStatus, setExchangeStatus] = React.useState<SuccessDisplay | null>();
+  const [rerender, setRerender] = React.useState<boolean>(false);
   const toastElement = React.useRef<Id>();
 
   const increaseStamina = () => {
@@ -77,12 +78,20 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
       theme: "dark",
     }
     if (!user) return;
+    console.log("Checking...");
     const easterEgg = global.window.localStorage.getItem("easter-egg");
     if (easterEgg) return;
     if (user.user_id === 623165387 || user.user_id === 1334843022) {
-      user.addBalance(1000000, 1000);
-      toast.success("Саша привет!", toastifyOptions);
-      global.window.localStorage.setItem("easter-egg", "1");
+      toast.success("Саша привет!", {
+        ...toastifyOptions, onClose: async () => {
+          const response = await user.addBalance();
+          if (response.success) {
+            toast.success(response.message, toastifyOptions);
+            setRerender(!rerender);
+            global.window.localStorage.setItem("easter-egg", "1");
+          }
+        },
+      });
     }
   }, [user])
 
