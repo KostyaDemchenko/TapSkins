@@ -48,9 +48,6 @@ const userBalanceStore: React.FC<userBalanceStoreProps> = ({
 
   return (
     <div className='user-balance'>
-      <div style={{ position: "absolute" }}>
-        {/* <ToastContainer /> */}
-      </div>
       <div className='balance-box'>
         <p className='title'>Balance</p>
         <div className='amount'>
