@@ -11,8 +11,8 @@ export type UserObj = {
 
 export class User {
   public user_id: number;
-  public balance_common: number = 0;
-  public balance_purple: number = 0;
+  protected balance_common: number = 0;
+  protected balance_purple: number = 0;
   public last_daily_bonus_time_clicked: number = 0;
   public invited_users: number = 0;
   public max_stamina: number = 1000;
@@ -22,7 +22,7 @@ export class User {
 
   private backendAddress: string = process.env.NEXT_PUBLIC_BACKEND_ADDRESS!;
   private staminaStep = 3; // сколько стамины в периоде будет добавляться
-  private balance_icnrease_amnt: number = 1;
+  private balance_icnrease_amnt: number = 1000;
   private staminaDecrease = 5;
   public staminaDelay = 1000; // период добавления стамины в секундах
   private exchangeCoeff = 10000; // сколько золотых монеток нужно чтобы получить 1 фиолетовую
@@ -92,7 +92,7 @@ export class User {
       return false;
     }
 
-    const data = (await response.json()) as UserObj;
+    const data = (await response.json()) as User;
 
     if (!data) {
       console.log("Error ocured due to getting user");
@@ -128,7 +128,7 @@ export class User {
     });
   }
 
-  setUser(obj: UserObj | User) {
+  protected setUser(obj: User) {
     this.user_id = obj.user_id;
     this.balance_purple = obj.balance_purple;
     this.balance_common = obj.balance_common;
@@ -156,6 +156,11 @@ export class User {
     this.balance_common += this.balance_icnrease_amnt;
   }
 
+  addBalance(common: number, purple: number) {
+    this.balance_common += common;
+    this.balance_purple += purple;
+  }
+
   addPassiveStamina() {
     const secondsScinceLastClick = Math.floor(
       (Date.now() - this.last_click) / 1000
@@ -164,6 +169,13 @@ export class User {
 
     this.stamina += totalStamina;
     if (this.stamina > this.max_stamina) this.stamina = this.max_stamina;
+  }
+
+  getBalanceCommon() {
+    return this.balance_common;
+  }
+  getBalancePurple() {
+    return this.balance_purple;
   }
 }
 
