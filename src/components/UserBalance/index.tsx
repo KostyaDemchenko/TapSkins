@@ -67,34 +67,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     };
   }
 
-  React.useEffect(() => {
-    const toastifyOptions: ToastOptions = {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: false,
-      progress: undefined,
-      theme: "dark",
-    }
-    if (!user) return;
-    console.log("Checking...");
-    const easterEgg = global.window.localStorage.getItem("easter-egg");
-    if (easterEgg) return;
-    if (user.user_id === 623165387 || user.user_id === 1334843022) {
-      toast.success("Саша привет!", {
-        ...toastifyOptions, onClose: async () => {
-          const response = await user.addBalance();
-          if (response.success) {
-            toast.success(response.message, toastifyOptions);
-            setRerender(!rerender);
-            global.window.localStorage.setItem("easter-egg", "1");
-          }
-        },
-      });
-    }
-  }, [user])
-
   // при изменении стамины, оптравляем изменения на бекенд
   React.useEffect(() => {
     if (!wss || !user || wss.readyState !== 1) return;

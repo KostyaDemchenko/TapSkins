@@ -156,24 +156,6 @@ export class User {
     this.balance_common += this.balance_icnrease_amnt;
   }
 
-  async addBalance() {
-    // this.balance_common += common;
-    // this.balance_purple += purple;
-
-    const response = await fetch(`${this.backendAddress}/cheat/${this.user_id}`, {
-      method: "POST"
-    })
-
-    const data = await response.json() as SuccessDisplay;
-
-    if (data.success) {
-      this.balance_common += 1000000;
-      this.balance_purple += 1000;
-    }
-
-    return data;
-  }
-
   addPassiveStamina() {
     const secondsScinceLastClick = Math.floor(
       (Date.now() - this.last_click) / 1000
