@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import Script from "next/script";
-import Link from "next/link";
+import { ToastContainer, ToastOptions, toast } from 'react-toastify';
 
 import Nav from "@/src/components/Nav";
-import { User } from "../utils/types";
+import { registerUserResponse, User } from "../utils/types";
+import UserBalance from "../components/UserBalance";
 
 import "@/src/app/globals.scss";
-import UserBalance from "../components/UserBalance";
 
 const webSocketAddress = process.env.NEXT_PUBLIC_WEBSOCKET_ADDRESS!;
 
@@ -33,11 +33,16 @@ export default function Home() {
       if (!tg.initDataUnsafe || !tg.initDataUnsafe.user) {
         return;
       }
+      const urlParams = new URLSearchParams(window.location.search);
       const userClass = new User(tg.initDataUnsafe.user.id, tg.initData);
-      const response = await userClass.authUser(tg);
+      const customParam = urlParams.get("referal");
+      const response = (await userClass.authUser(tg, customParam)) as registerUserResponse;
 
       // пока не будет это выполнено, никаких нахуй дальше действий
-      if (response) setUser(userClass);
+      if (response.success) {
+        userClass.receivedBonus = response.bonus ? response.bonus : null;
+        setUser(userClass);
+      }
     })();
   }, [tg]);
 

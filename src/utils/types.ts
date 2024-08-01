@@ -9,6 +9,12 @@ export type UserObj = {
   [key: string]: number;
 };
 
+export type registerUserResponse = {
+  user: User;
+  bonus?: { balance_common: number; balance_purple: number } | null;
+  success: boolean;
+}
+
 export class User {
   public user_id: number;
   protected balance_common: number = 0;
@@ -19,6 +25,10 @@ export class User {
   public stamina: number = this.max_stamina;
   public last_click: number = 0;
   public initData: string;
+  public receivedBonus: {
+    balance_common: number;
+    balance_purple: number;
+  } | null = null;
 
   private backendAddress: string = process.env.NEXT_PUBLIC_BACKEND_ADDRESS!;
   private staminaStep = 3; // сколько стамины в периоде будет добавляться
@@ -71,7 +81,7 @@ export class User {
   }
   // loginning user into tap skins
   // will return true if everything is okay, and false is everything is bad
-  async authUser(tg: WebApp) {
+  async authUser(tg: WebApp, referalId?: string | null) {
     // проверяем подлинность данных телеграмма, получаем пользователя и\или создаем его,
     // устанавливаем webSocket соединение
     const initData = tg.initData;
@@ -79,28 +89,35 @@ export class User {
 
     const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
 
-    const response = await fetch(`${backendAddress}/auth`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ hash, initData }),
-    });
+    const response = await fetch(
+      `${backendAddress}/auth${referalId ? `?referalId=${referalId}` : ""}`,
+      {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ hash, initData }),
+      }
+    );
 
     if (!response.ok) {
       console.log("Error to auth", response);
-      return false;
+      return {
+        success: false,
+        bonus: null,
+        user: null,
+      };
     }
 
-    const data = (await response.json()) as User;
+    const data = <registerUserResponse>await response.json();
 
     if (!data) {
       console.log("Error ocured due to getting user");
       return false;
     }
-    this.setUser(data);
+    this.setUser(data.user);
 
-    return true;
+    return data;
   }
 
   checkSubscription(channelId: `@${string}`) {
@@ -192,21 +209,22 @@ export class User {
         return {
           message: "We've received your order!",
           success: true,
-          loading: false
-        }
-      }
-      else {
+          loading: false,
+        };
+      } else {
         const productEnum = <string[]>[];
-        data.split(",").forEach(id => {
-          const element = skins.find(el => el.item_id === parseInt(id));
+        data.split(",").forEach((id) => {
+          const element = skins.find((el) => el.item_id === parseInt(id));
           if (element) productEnum.push(element.skin_name);
-        })
+        });
 
         return {
-          message: `We're sorry, but such skins has reserved:\n${productEnum.join(", ")}`,
+          message: `We're sorry, but such skins has reserved:\n${productEnum.join(
+            ", "
+          )}`,
           success: false,
-          loading: false
-        }
+          loading: false,
+        };
       }
       // return data;
     } catch (error) {
@@ -319,7 +337,7 @@ export class Cart {
   clearCart() {
     this.skins = [];
     this.storage.removeItem(this.storageKey);
-  };
+  }
 
   getTotalPrice() {
     this.checkLocalStorage();

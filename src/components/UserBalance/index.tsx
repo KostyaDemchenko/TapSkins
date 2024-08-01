@@ -15,6 +15,15 @@ interface UserBalanceProps {
   wss?: WebSocket;
 }
 
+const toastifyOptions: ToastOptions = {
+  position: "top-right",
+  autoClose: 3000,
+  hideProgressBar: false,
+  closeOnClick: false,
+  progress: undefined,
+  theme: "dark",
+}
+
 const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   // const staminaDelay = user.staminaDelay; // период добавления стамины
   const staminaDelay = user ? user.staminaDelay : 1000;
@@ -63,17 +72,16 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   }, [userStamina]);
 
   React.useEffect(() => {
-    const toastifyOptions: ToastOptions = {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      progress: undefined,
-      theme: "dark",
-    }
     if (!exchangeStatus) return;
 
-    if (exchangeStatus.loading && !exchangeStatus.success) toastElement.current = toast.loading("Exchanging...", toastifyOptions);
+    if (exchangeStatus.loading && !exchangeStatus.success) {
+      if (!toastElement.current) {
+        toastElement.current = toast.loading("Exchanging...", toastifyOptions);
+      }
+      else {
+        toast.update(toastElement.current, {...toastifyOptions, isLoading: true, render: "Exchanging..."});
+      }
+    }
     else toast.update(toastElement.current!, {
       render: exchangeStatus.message,
       type: exchangeStatus.success ? "success" : "error",
@@ -85,6 +93,14 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
 
 
   }, [exchangeStatus]);
+
+  React.useEffect(() => {
+    if (user && user.receivedBonus) {
+      if (!toastElement.current) toastElement.current = toast.success("You've received referal bonus!", { ...toastifyOptions, closeOnClick: true});
+      else toast.update(toastElement.current, {
+        ...toastifyOptions, render: "You've received referal bonus!", type: "success", closeOnClick: true})
+    }
+  }, [])
 
   const clickerButtonHandler = () => {
     if (exchangeStatus?.loading) return;
