@@ -5,16 +5,9 @@ import Skeleton from "@mui/material/Skeleton";
 
 // Style import
 import "./style.scss";
+import { Reward, SuccessDisplay, User } from "@/src/utils/types";
 
-interface Reward {
-  reward_id: number;
-  reward_name: string;
-  reward_type: string;
-  reward: number;
-  referal_icon: string;
-}
-
-const ReferalList: React.FC = () => {
+const ReferalList: React.FC<{ user: User, setSuccessClaimedReferal: (e: SuccessDisplay) => void }> = ({ user, setSuccessClaimedReferal }) => {
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -44,20 +37,34 @@ const ReferalList: React.FC = () => {
     <div className='referal-list'>
       {loading
         ? Array.from(new Array(5)).map((_, index) => (
-            <Skeleton
-              variant='rounded'
-              height={84}
-              animation='wave'
-              sx={{
-                bgcolor: "var(--color-surface)",
-                marginBottom: "5px",
-                width: "100%",
-              }}
-            />
-          ))
+          <Skeleton
+            variant='rounded'
+            height={84}
+            animation='wave'
+            sx={{
+              bgcolor: "var(--color-surface)",
+              marginBottom: "5px",
+              width: "100%",
+            }}
+          />
+        ))
         : rewards.map((reward) => (
-            <ReferalCard key={reward.reward_id} reward={reward} />
-          ))}
+          <ReferalCard onClickHandle={async () => {
+            console.log("Claiming reward...");
+            setSuccessClaimedReferal({
+              loading: true,
+              message: "Claiming reward...",
+              success: false
+            })
+            const response = await user.getReward(reward);
+            setSuccessClaimedReferal({
+              success: response.success,
+              message: response.message,
+              loading: false
+            });
+            console.log(response);
+          }} key={reward.reward_id} reward={reward} />
+        ))}
     </div>
   );
 };
