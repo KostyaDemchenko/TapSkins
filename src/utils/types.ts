@@ -237,11 +237,35 @@ export class User {
     }
   }
 
-  // потом тип поменяешь
+  // потом тип поменяешь аргумента
   async getSkins(setSkins: any) {
     fetch(`${this.backendAddress}/skins`).then(d => d.json()).then(d => {
       console.log(d);
     })
+  }
+
+  async getReward(reward: Reward): Promise<SuccessDisplay> {
+    const response = await fetch(`${this.backendAddress}/reward/${reward.reward_id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ initData: this.initData }),
+    });
+
+    if (!response.ok) {
+      console.log(response);
+
+      return {
+        message: "Can't claim reward!",
+        success: false,
+      }
+      // return false;
+    }
+
+    const data = await response.json();
+    this.invited_users -= reward.referal_amount;
+    return data;
   }
 }
 
@@ -256,6 +280,15 @@ export type Skin = {
   weapon_type: string;
   startrack: string;
 };
+
+export type Reward = {
+  reward_id: number;
+  reward_name: string;
+  reward_type: string;
+  reward: number;
+  referal_icon: string;
+  referal_amount: number;
+}
 
 //! Функционал:
 // - добавление одного элемента в корзину, то есть запись в localStorage,
@@ -403,4 +436,5 @@ export type SuccessDisplay = {
   success: boolean;
   message: string;
   loading?: boolean;
+  details?: string;
 };

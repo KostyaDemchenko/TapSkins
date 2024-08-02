@@ -336,13 +336,15 @@ interface ReferalCardProps {
     referal_icon: string;
   };
   className?: string;
+  onClickHandle?: () => void;
 }
 
-const ReferalCard: React.FC<ReferalCardProps> = ({ reward, className }) => (
+const ReferalCard: React.FC<ReferalCardProps> = ({ reward, className, onClickHandle }) => (
   <a
     target='_blank'
     className={`referal-card ${className}`}
     key={reward.reward_id}
+    onClick={onClickHandle}
   >
     <div className='referal-icon'>
       <img src={reward.referal_icon} alt='referal icon' />

@@ -5,10 +5,15 @@ import ReferralsList from "@/src/components/Referal";
 import Button from "@/src/components/Button";
 
 import "./style.scss";
-import { User } from "@/src/utils/types";
+import { SuccessDisplay, User } from "@/src/utils/types";
 
 const RewardCenter: React.FC<{ user: User }> = ({ user }) => {
   const [activeSection, setActiveSection] = useState("tasks");
+  const [successClaimedReferal, setSuccessClaimedReferal] = useState<SuccessDisplay>({
+    message: "",
+    success: false,
+    loading: false
+  });
 
   const handleSectionChange = (section: React.SetStateAction<string>) => {
     setActiveSection(section);
@@ -53,7 +58,7 @@ const RewardCenter: React.FC<{ user: User }> = ({ user }) => {
               icon=''
               onClick={() => { }}
             />
-            <ReferralsList />
+            {user && <ReferralsList setSuccessClaimedReferal={setSuccessClaimedReferal} user={user} />}
           </div>
         </div>
       </div>
