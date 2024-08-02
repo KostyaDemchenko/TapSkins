@@ -71,6 +71,7 @@ export default async function handler(
 
         // for number
         reward: row.reward.number || 0,
+        referal_amount: row.referal_amount.number || 0,
 
         // for file
         referal_icon: extractFileUrls(row.referal_icon.files),
