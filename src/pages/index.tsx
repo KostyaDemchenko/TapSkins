@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Script from "next/script";
-import { ToastContainer, ToastOptions, toast } from 'react-toastify';
+import Head from "next/head";
+import { ToastContainer, ToastOptions, toast } from "react-toastify";
 
 import Nav from "@/src/components/Nav";
 import { registerUserResponse, User } from "../utils/types";
@@ -36,7 +37,10 @@ export default function Home() {
       const urlParams = new URLSearchParams(window.location.search);
       const userClass = new User(tg.initDataUnsafe.user.id, tg.initData);
       const customParam = urlParams.get("referal");
-      const response = (await userClass.authUser(tg, customParam)) as registerUserResponse;
+      const response = (await userClass.authUser(
+        tg,
+        customParam
+      )) as registerUserResponse;
 
       // пока не будет это выполнено, никаких нахуй дальше действий
       if (response.success) {
@@ -89,18 +93,21 @@ export default function Home() {
 
   return (
     <>
-      {/* <Link
-        rel='stylesheet'
-        href='https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap'
-      />
-      <Link
-        rel='stylesheet'
-        href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
-      />
-      <Link
-        rel='stylesheet'
-        href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
-      /> */}
+      <Head>
+        <link
+          rel='stylesheet'
+          href='https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap'
+        />
+        <link
+          rel='stylesheet'
+          href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
+        />
+        <link
+          rel='stylesheet'
+          href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
+        />
+      </Head>
+
       <Script
         src='https://telegram.org/js/telegram-web-app.js'
         onLoad={() => {

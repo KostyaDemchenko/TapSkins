@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Script from "next/script";
 import Image from "next/image";
+import Head from "next/head";
 
 import { SuccessDisplay, User } from "@/src/utils/types";
 
@@ -36,7 +37,6 @@ export default function CartPage() {
     success: false,
     message: "",
   });
-
 
   const userCart = useRef<null | Cart>(null);
   const toastId = useRef<Id>();
@@ -78,7 +78,10 @@ export default function CartPage() {
     if (opportunityToBuy.message.trim() === "") return;
 
     if (opportunityToBuy.loading) {
-      toastId.current = toast.loading(opportunityToBuy.message, { ...toastSettings, closeOnClick: false });
+      toastId.current = toast.loading(opportunityToBuy.message, {
+        ...toastSettings,
+        closeOnClick: false,
+      });
       return;
     }
 
@@ -88,13 +91,26 @@ export default function CartPage() {
       isLoading: false,
       pauseOnHover: !opportunityToBuy.success,
       autoClose: 5000,
-      closeOnClick: true
+      closeOnClick: true,
     });
-
   }, [opportunityToBuy]);
 
   return (
     <>
+      <Head>
+        <link
+          rel='stylesheet'
+          href='https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap'
+        />
+        <link
+          rel='stylesheet'
+          href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
+        />
+        <link
+          rel='stylesheet'
+          href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
+        />
+      </Head>
       <Script
         src='https://telegram.org/js/telegram-web-app.js'
         onLoad={() => {
@@ -151,34 +167,46 @@ export default function CartPage() {
                     </h4>
                   </div>
                   <Button
-                    label="Buy"
+                    label='Buy'
                     className='btn-primary-25 purchase-buying'
                     icon=''
                     disabled={(() => {
                       if (!user) return false;
-                      return user.getBalancePurple() < userCart.current.getTotalPrice();
+                      return (
+                        user.getBalancePurple() <
+                        userCart.current.getTotalPrice()
+                      );
                     })()}
                     id='tradeLinkValidation'
-                    onClick={function (e) {
-                    }}
+                    onClick={function (e) {}}
                   />
                 </>
               )}
 
-              <ValidationModal onClickHandle={async (e) => {
-                if (!userCart.current || opportunityToBuy.loading || opportunityToBuy.success) return;
-                setOpportunityToBuy({
-                  loading: true,
-                  message: "Checking skins for availability...",
-                  success: false
-                })
-                const data = await user!.buySkins(userCart.current.getItems());
-                if (data.success) {
-                  userCart.current.clearCart();
-                  setCartItems([]);
-                }
-                setOpportunityToBuy(data);
-              }} triggerId='tradeLinkValidation' />
+              <ValidationModal
+                onClickHandle={async (e) => {
+                  if (
+                    !userCart.current ||
+                    opportunityToBuy.loading ||
+                    opportunityToBuy.success
+                  )
+                    return;
+                  setOpportunityToBuy({
+                    loading: true,
+                    message: "Checking skins for availability...",
+                    success: false,
+                  });
+                  const data = await user!.buySkins(
+                    userCart.current.getItems()
+                  );
+                  if (data.success) {
+                    userCart.current.clearCart();
+                    setCartItems([]);
+                  }
+                  setOpportunityToBuy(data);
+                }}
+                triggerId='tradeLinkValidation'
+              />
             </>
           )}
         </div>

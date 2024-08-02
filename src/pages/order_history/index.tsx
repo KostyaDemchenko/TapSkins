@@ -1,6 +1,6 @@
 import React from "react";
 import Script from "next/script";
-import Link from "next/link";
+import Head from "next/head";
 
 import Nav from "@/src/components/Nav";
 import { User, UserObj } from "@/src/utils/types";
@@ -35,6 +35,20 @@ export default function rewards_page() {
 
   return (
     <>
+      <Head>
+        <link
+          rel='stylesheet'
+          href='https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap'
+        />
+        <link
+          rel='stylesheet'
+          href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
+        />
+        <link
+          rel='stylesheet'
+          href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
+        />
+      </Head>
       <Script
         src='https://telegram.org/js/telegram-web-app.js'
         onLoad={() => {

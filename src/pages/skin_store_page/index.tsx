@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Script from "next/script";
+import Head from "next/head";
 
 import { User } from "@/src/utils/types";
 
@@ -26,8 +27,6 @@ const rarityOrder = [
 ];
 
 export default function SkinStorePage() {
-
-
   const [tg, setTg] = useState<WebApp | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -96,8 +95,6 @@ export default function SkinStorePage() {
 
     fetchData();
   }, []);
-
-  
 
   const applyFilters = (filters: any) => {
     const filtered = skins.filter((skin: Skin) => {
@@ -176,6 +173,20 @@ export default function SkinStorePage() {
 
   return (
     <>
+      <Head>
+        <link
+          rel='stylesheet'
+          href='https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap'
+        />
+        <link
+          rel='stylesheet'
+          href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
+        />
+        <link
+          rel='stylesheet'
+          href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
+        />
+      </Head>
       <Script
         src='https://telegram.org/js/telegram-web-app.js'
         onLoad={() => {
