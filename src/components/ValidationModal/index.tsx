@@ -7,12 +7,12 @@ import Button from "@/src/components/Button";
 import "./style.scss";
 
 // Validation schemas
-const partnerSchema = z.string().regex(/^\d+$/, {
-  message: "Partner ID should be a number.",
+const partnerSchema = z.string().regex(/^\d{9,}$/, {
+  message: "Partner ID should be a number with at least 9 digits.",
 });
 
-const tokenSchema = z.string().regex(/^\w+$/, {
-  message: "Token should be alphanumeric.",
+const tokenSchema = z.string().regex(/^\w{8,}$/, {
+  message: "Token should be alphanumeric with at least 8 characters.",
 });
 
 const urlSchema = z.string().refine(
@@ -39,7 +39,10 @@ const urlSchema = z.string().refine(
 );
 
 // ValidationModal component
-const ValidationModal: React.FC<{ triggerId: string, onClickHandle: (e: string) => void }> = ({ triggerId, onClickHandle }) => {
+const ValidationModal: React.FC<{
+  triggerId: string;
+  onClickHandle: (e: string) => void;
+}> = ({ triggerId, onClickHandle }) => {
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState<string | null>(null);
 
