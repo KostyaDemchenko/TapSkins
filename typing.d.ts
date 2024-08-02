@@ -92,11 +92,12 @@ export interface RowTaskStore {
   };
 }
 
-// Task_Store_data_types
+// Referal_Store_data_types
 export interface ReferalRewardStoreDataStructured {
   reward_id: number;
   reward_name: string;
   reward: number;
+  referal_amount: number;
   reward_type: string;
   referal_icon: string;
   [key: string]: any;
@@ -118,6 +119,12 @@ export interface RowReferal {
   };
   reward_type: { id: string; multi_select: MultiSelectOption[] };
   reward: {
+    id: string;
+    name: string;
+    type: string;
+    number: number;
+  };
+  referal_amount: {
     id: string;
     name: string;
     type: string;
