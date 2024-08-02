@@ -58,6 +58,8 @@ export default function SkinStorePage() {
       console.log("Sending...");
       if (response) {
         userBalance.current = userClass.getBalancePurple();
+        //! receiving skins list
+        userClass.getSkins("");
         setUser(userClass);
       }
     })();

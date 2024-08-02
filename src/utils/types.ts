@@ -90,7 +90,7 @@ export class User {
     const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
 
     const response = await fetch(
-      `${backendAddress}/auth${referalId ? `?referalId=${referalId}` : ""}`,
+      `${backendAddress}/auth${referalId !== "undefined" ? `?referalId=${referalId}` : ""}`,
       {
         method: "post",
         headers: {
@@ -235,6 +235,13 @@ export class User {
         loading: false,
       };
     }
+  }
+
+  // потом тип поменяешь
+  async getSkins(setSkins: any) {
+    fetch(`${this.backendAddress}/skins`).then(d => d.json()).then(d => {
+      console.log(d);
+    })
   }
 }
 
