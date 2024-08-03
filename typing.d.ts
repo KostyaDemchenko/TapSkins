@@ -137,3 +137,58 @@ export interface RowReferal {
     files: { name: string; file: { url: string } }[];
   };
 }
+
+// Order_History_data_types
+export interface OrderHistiryDataStructured {
+  skin_name: string;
+  image_src: string;
+  item_id: number;
+  user_id: number;
+  order_id: number;
+  price: number;
+  float: number;
+  rarity: string;
+  startrack: string;
+  [key: string]: any;
+}
+
+export interface RowOrderHistory {
+  name: string;
+  skin_name: {
+    id: string;
+    title: [{ type: string; text: { content: string } }];
+  };
+  image_src?: { id: string; name: string; type: string; url: string };
+  item_id: {
+    id: string;
+    name: string;
+    type: string;
+    number: number;
+  };
+  user_id: {
+    id: string;
+    name: string;
+    type: string;
+    number: number;
+  };
+  order_id: {
+    id: string;
+    name: string;
+    type: string;
+    number: number;
+  };
+  price: {
+    id: string;
+    name: string;
+    type: string;
+    number: number;
+  };
+  float: {
+    id: string;
+    name: string;
+    type: string;
+    number: number;
+  };
+  rarity: { id: string; multi_select: MultiSelectOption[] };
+  startrack: { id: string; multi_select: MultiSelectOption[] };
+}
