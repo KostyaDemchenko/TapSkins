@@ -16,8 +16,16 @@ nav {
 
   .link {
     @include flex(center, center);
+
     width: 52px;
     height: 52px;
+    -webkit-tap-highlight-color: transparent;
+    transition: 0.2s ease-in-out;
+
+    &:active {
+      scale: 1.2;
+      transition: 0.2s ease-in-out;
+    }
   }
 
   .disabled {

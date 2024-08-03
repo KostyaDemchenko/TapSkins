@@ -1,14 +1,16 @@
-import { SuccessDisplay, User } from "@/src/utils/types";
 import React from "react";
-import iconObj from "@/public/icons/utils";
 import Image from "next/image";
-import "./style.scss";
-import chicken from "@/public/chicken.png";
-import ExchangeCurrency from "../ExchangeCurrency";
-import ProgressBar from "../ProgressBar";
-import { Id, ToastContainer, ToastOptions, toast } from 'react-toastify';
 
-import 'react-toastify/dist/ReactToastify.css';
+import ExchangeCurrency from "@/src/components/ExchangeCurrency";
+import ProgressBar from "@/src/components/ProgressBar";
+
+import iconObj from "@/public/icons/utils";
+import imgObj from "@/public/img/utils";
+import { Id, ToastContainer, ToastOptions, toast } from "react-toastify";
+import { SuccessDisplay, User } from "@/src/utils/types";
+
+import "./style.scss";
+import "react-toastify/dist/ReactToastify.css";
 
 interface UserBalanceProps {
   user?: User;
@@ -22,7 +24,7 @@ const toastifyOptions: ToastOptions = {
   closeOnClick: false,
   progress: undefined,
   theme: "dark",
-}
+};
 
 const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   // const staminaDelay = user.staminaDelay; // период добавления стамины
@@ -30,9 +32,10 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   const [userStamina, setUserStamina] = React.useState<number>(0);
   const staminaIntervals = React.useRef<{ timeOutId: any; intervalId: any }>({
     timeOutId: null,
-    intervalId: null
+    intervalId: null,
   });
-  const [exchangeStatus, setExchangeStatus] = React.useState<SuccessDisplay | null>();
+  const [exchangeStatus, setExchangeStatus] =
+    React.useState<SuccessDisplay | null>();
   const toastElement = React.useRef<Id>();
 
   const increaseStamina = () => {
@@ -41,7 +44,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
       user.increaseStamina();
       setUserStamina(user.stamina);
     }, staminaDelay);
-  }
+  };
 
   if (wss) {
     // при готовности соединения запускаем таймер на восстановление стамины
@@ -64,11 +67,13 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   // при изменении стамины, оптравляем изменения на бекенд
   React.useEffect(() => {
     if (!wss || !user || wss.readyState !== 1) return;
-    wss.send(JSON.stringify({
-      user_id: user.user_id,
-      stamina: user.stamina,
-      balance_common: user.getBalanceCommon()
-    }));
+    wss.send(
+      JSON.stringify({
+        user_id: user.user_id,
+        stamina: user.stamina,
+        balance_common: user.getBalanceCommon(),
+      })
+    );
   }, [userStamina]);
 
   React.useEffect(() => {
@@ -77,37 +82,49 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     if (exchangeStatus.loading && !exchangeStatus.success) {
       if (!toastElement.current) {
         toastElement.current = toast.loading("Exchanging...", toastifyOptions);
+      } else {
+        toast.update(toastElement.current, {
+          ...toastifyOptions,
+          isLoading: true,
+          render: "Exchanging...",
+        });
       }
-      else {
-        toast.update(toastElement.current, {...toastifyOptions, isLoading: true, render: "Exchanging..."});
-      }
-    }
-    else toast.update(toastElement.current!, {
-      render: exchangeStatus.message,
-      type: exchangeStatus.success ? "success" : "error",
-      isLoading: false,
-      autoClose: 3000,
-      pauseOnHover: false,
-      closeOnClick: true
-    });
-
-
+    } else
+      toast.update(toastElement.current!, {
+        render: exchangeStatus.message,
+        type: exchangeStatus.success ? "success" : "error",
+        isLoading: false,
+        autoClose: 3000,
+        pauseOnHover: false,
+        closeOnClick: true,
+      });
   }, [exchangeStatus]);
 
   React.useEffect(() => {
     if (user && user.receivedBonus) {
-      if (!toastElement.current) toastElement.current = toast.success("You've received referal bonus!", { ...toastifyOptions, closeOnClick: true});
-      else toast.update(toastElement.current, {
-        ...toastifyOptions, render: "You've received referal bonus!", type: "success", closeOnClick: true})
+      if (!toastElement.current)
+        toastElement.current = toast.success("You've received referal bonus!", {
+          ...toastifyOptions,
+          closeOnClick: true,
+        });
+      else
+        toast.update(toastElement.current, {
+          ...toastifyOptions,
+          render: "You've received referal bonus!",
+          type: "success",
+          closeOnClick: true,
+        });
     }
-  }, [])
+  }, []);
 
   const clickerButtonHandler = () => {
     if (exchangeStatus?.loading) return;
     if (!user) return;
 
-    if (staminaIntervals.current.timeOutId) clearTimeout(staminaIntervals.current.timeOutId);
-    if (staminaIntervals.current.intervalId) clearInterval(staminaIntervals.current.intervalId);
+    if (staminaIntervals.current.timeOutId)
+      clearTimeout(staminaIntervals.current.timeOutId);
+    if (staminaIntervals.current.intervalId)
+      clearInterval(staminaIntervals.current.intervalId);
 
     if (user && wss) {
       user.dereaseStamina();
@@ -116,53 +133,82 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     }
 
     staminaIntervals.current.timeOutId = setTimeout(increaseStamina, 300);
-  }
+  };
 
-  return <>
-    <div style={{ position: "absolute" }}>
-      <ToastContainer />
-    </div>
-    <div className="user-balance-container">
-      <div className="user-balance">
-        <p>Balance</p>
-        <h1>{user ? <>{user.getBalanceCommon().toLocaleString('ru-RU')}</> : <>{(0).toLocaleString("ru-RU")}</>}<Image
-          src={iconObj.yellowCoin}
-          width={16}
-          height={16}
-          alt='Purple coin'
-        /></h1>
-        <ExchangeCurrency setExchangeStatus={setExchangeStatus} User={user} />
-        <h3>
-          {user ? <>{user.getBalancePurple().toLocaleString('ru-RU')}</>
-            :
-            <>{(0).toLocaleString("ru-RU")}</>}
-          <Image
-            src={iconObj.purpleCoin}
-            width={16}
-            height={16}
-            alt='Purple coin'
-          /></h3>
+  return (
+    <>
+      <div style={{ position: "absolute" }}>
+        <ToastContainer />
       </div>
-      <div className="clicker-button-container">
-        <div className="clicker-button-border"></div>
-        <div className="clicker-button" onClick={clickerButtonHandler}>
-          <img src={chicken.src} alt="Picture" />
+      <div className='user-balance-container'>
+        <div className='user-balance'>
+          <p>Balance</p>
+          <h1>
+            {user ? (
+              <>{user.getBalanceCommon().toLocaleString("ru-RU")}</>
+            ) : (
+              <>{(0).toLocaleString("ru-RU")}</>
+            )}
+            <Image
+              src={iconObj.yellowCoin}
+              width={16}
+              height={16}
+              alt='Purple coin'
+            />
+          </h1>
+          <ExchangeCurrency setExchangeStatus={setExchangeStatus} User={user} />
+          <h3>
+            {user ? (
+              <>{user.getBalancePurple().toLocaleString("ru-RU")}</>
+            ) : (
+              <>{(0).toLocaleString("ru-RU")}</>
+            )}
+            <Image
+              src={iconObj.purpleCoin}
+              width={16}
+              height={16}
+              alt='Purple coin'
+            />
+          </h3>
+        </div>
+        <div className='clicker-button-container'>
+          <div className='clicker-button-border'></div>
+          <div className='clicker-button' onClick={clickerButtonHandler}>
+            <Image
+              src={imgObj.bomb}
+              width={279}
+              height={279}
+              alt='bomb button'
+            />
+          </div>
+        </div>
+        <div className='stamina-info'>
+          {user ? (
+            <>
+              <p>
+                <span>Limit</span>{" "}
+                <span>
+                  {user.stamina}/{user.max_stamina}
+                </span>
+              </p>
+              <ProgressBar
+                titleVisible={false}
+                total={user.max_stamina}
+                completed={user.stamina}
+              />
+            </>
+          ) : (
+            <>
+              <p>
+                <span>Limit</span> <span>1000/1000</span>
+              </p>
+              <ProgressBar titleVisible={false} total={1000} completed={1000} />
+            </>
+          )}
         </div>
       </div>
-      <div className="stamina-info">
-        {user ? <>
-          <p><span>Limit</span> <span>{user.stamina}/{user.max_stamina}</span></p>
-          <ProgressBar titleVisible={false} total={user.max_stamina} completed={user.stamina} />
-        </>
-          :
-          <>
-            <p><span>Limit</span> <span>1000/1000</span></p>
-            <ProgressBar titleVisible={false} total={1000} completed={1000} />
-          </>
-        }
-      </div>
-    </div>
-  </>
-}
+    </>
+  );
+};
 
 export default UserBalance;
