@@ -83,6 +83,7 @@ const Filters: React.FC<FiltersProps> = ({
         width={24}
         height={24}
         alt='Filter'
+        className='filter-icon'
         id='filtersModalTrigger'
       />
       <Modal

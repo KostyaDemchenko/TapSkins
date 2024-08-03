@@ -1,5 +1,9 @@
 @import "@/src/app/shortSyles.scss";
 
+.filter-icon {
+  cursor: pointer;
+}
+
 .filter-box {
   .filter-option {
     @include flex(space-between, center);

@@ -35,6 +35,8 @@
     @include p-montserrat-12-125-regular;
     color: var(--color-text-secondary);
 
+    cursor: pointer;
+
     transition: 0.3s;
 
     &.active {
