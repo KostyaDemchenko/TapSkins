@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-
 import { createPortal } from "react-dom";
 import "rodal/lib/rodal.css";
 import "./style.scss";
 
 interface ModalProps {
   modalTitle: string;
-  triggerId: string;
   height?: string;
   className?: string;
   modalBg?: string;
@@ -16,11 +14,12 @@ interface ModalProps {
   closeElement?: React.ReactNode;
   onClose?: () => void;
   blockClosing?: boolean;
+  triggerId?: string;
+  isVisible?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
   modalTitle,
-  triggerId,
   children,
   className = "",
   height = "70dvh",
@@ -29,27 +28,37 @@ const Modal: React.FC<ModalProps> = ({
   subModal = false,
   closeElement,
   modalBg = "var(--color-surface)",
-  blockClosing
+  blockClosing,
+  triggerId,
+  isVisible = false,
 }) => {
-  const [visible, setVisible] = useState(false);
   const [top, setTop] = useState("100dvh");
   const modalRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(isVisible);
 
   useEffect(() => {
     setMounted(true);
-    const triggerElement = document.getElementById(triggerId);
-    if (triggerElement) {
-      triggerElement.addEventListener("click", show);
-    }
-
-    return () => {
-      setMounted(false);
+    if (triggerId) {
+      const triggerElement = document.getElementById(triggerId);
       if (triggerElement) {
-        triggerElement.removeEventListener("click", show);
+        triggerElement.addEventListener("click", show);
       }
-    };
+      return () => {
+        if (triggerElement) {
+          triggerElement.removeEventListener("click", show);
+        }
+      };
+    }
   }, [triggerId]);
+
+  useEffect(() => {
+    if (isVisible) {
+      show();
+    } else {
+      hide();
+    }
+  }, [isVisible]);
 
   useEffect(() => {
     if (visible) {
@@ -71,7 +80,7 @@ const Modal: React.FC<ModalProps> = ({
   const hide = () => {
     if (blockClosing) return;
     setTop("100dvh");
-    setVisible(false);
+    setTimeout(() => setVisible(false), 300); // Delay to allow animation to finish
     if (onClose) onClose();
   };
 
