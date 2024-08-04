@@ -85,7 +85,9 @@ body.no-scroll {
         @include flex(center, center);
         @include f-direction(row);
 
-        width: 100%;
+        position: relative;
+
+        width: fit-content;
         gap: 10px;
 
         .modal-title {
@@ -96,6 +98,11 @@ body.no-scroll {
         .back-btn {
           width: 24px;
           height: 24px;
+
+          position: absolute;
+          left: -30px;
+          top: 50%;
+          transform: translateY(-50%);
 
           .icon {
             font-size: 24px;
