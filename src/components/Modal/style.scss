@@ -91,6 +91,7 @@ body.no-scroll {
         .modal-title {
           @include p-montserrat-18-125-bold;
           color: var(--color-text-primary);
+          padding-right: 25px;
         }
 
         .back-btn {

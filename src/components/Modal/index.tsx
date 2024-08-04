@@ -80,13 +80,15 @@ const Modal: React.FC<ModalProps> = ({
   const hide = () => {
     if (blockClosing) return;
     setTop("100dvh");
-    setTimeout(() => setVisible(false), 300); // Delay to allow animation to finish
+    setTimeout(() => setVisible(false), 300);
     if (onClose) onClose();
   };
 
   const handleClickOutside = (e: React.MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-      hide();
+      if (subModal) {
+        hide();
+      }
     }
   };
 
