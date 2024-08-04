@@ -56,3 +56,21 @@
     }
   }
 }
+
+.exchange-modal {
+  &.modal-dialog .modal-box {
+    @include flex(center, center);
+    @include f-direction(column);
+
+    .content {
+      @include flex(flex-start, center);
+      @include f-direction(column);
+
+      .user-balance-exchange {
+        background-color: var(--color-ui-bg);
+        padding: 6px;
+        border-radius: 5px;
+      }
+    }
+  }
+}
