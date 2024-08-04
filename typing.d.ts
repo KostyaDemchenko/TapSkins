@@ -142,12 +142,14 @@ export interface RowReferal {
 export interface OrderHistiryDataStructured {
   skin_name: string;
   image_src: string;
+  user_trade_link: string;
   item_id: number;
   user_id: number;
   order_id: number;
   price: number;
   float: number;
   rarity: string;
+  status: string;
   startrack: string;
   [key: string]: any;
 }
@@ -159,6 +161,7 @@ export interface RowOrderHistory {
     title: [{ type: string; text: { content: string } }];
   };
   image_src?: { id: string; name: string; type: string; url: string };
+  user_trade_link?: { id: string; name: string; type: string; url: string };
   item_id: {
     id: string;
     name: string;
@@ -190,5 +193,6 @@ export interface RowOrderHistory {
     number: number;
   };
   rarity: { id: string; multi_select: MultiSelectOption[] };
+  status: { id: string; multi_select: MultiSelectOption[] };
   startrack: { id: string; multi_select: MultiSelectOption[] };
 }

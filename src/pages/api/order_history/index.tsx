@@ -52,6 +52,7 @@ export default async function handler(
 
         // for url
         image_src: row.image_src?.url ?? "URL not available",
+        user_trade_link: row.user_trade_link?.url ?? "URL not available",
 
         // for number
         item_id: row.item_id.number || 0,
@@ -62,6 +63,7 @@ export default async function handler(
 
         // for multi_select
         rarity: extractMultiSelectNames(row.rarity),
+        status: extractMultiSelectNames(row.status),
         startrack: extractMultiSelectNames(row.startrack),
       })
     );
