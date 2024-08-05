@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import axios from "axios";
 
 import RewardModal from "@/src/components/RevardModal";
 
@@ -11,7 +12,7 @@ import "./style.scss";
 interface DailyRewardProps {
   className?: string;
   onClick?: () => void;
-  lastTimeClicked: string; // Изменил тип на строку
+  lastTimeClicked: string; // Дата последнего клика в формате строки
 }
 
 const DailyReward: React.FC<DailyRewardProps> = ({
@@ -22,49 +23,71 @@ const DailyReward: React.FC<DailyRewardProps> = ({
   const [showModal, setShowModal] = useState<boolean>(false);
   const [canClaimReward, setCanClaimReward] = useState<boolean>(false);
   const [timeRemaining, setTimeRemaining] = useState<string>("");
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
   useEffect(() => {
-    const parseDate = (dateString: string) => {
-      const [day, month, year, hour, minute, second] = dateString
-        .replace(/[-:]/g, " ")
-        .split(" ")
-        .map(Number);
-      return new Date(year, month - 1, day, hour, minute, second);
-    };
-
-    const checkRewardStatus = () => {
-      const now = Date.now();
-      const lastClickTime = parseDate(lastTimeClicked).getTime();
-      const timeDifference = now - lastClickTime;
-
-      if (timeDifference >= 24 * 60 * 60 * 1000) {
-        setCanClaimReward(true);
-        setTimeRemaining("");
-      } else {
-        setCanClaimReward(false);
-        const hours = Math.floor(
-          (24 * 60 * 60 * 1000 - timeDifference) / (60 * 60 * 1000)
+    const fetchCurrentTime = async () => {
+      try {
+        const response = await axios.get(
+          "http://worldtimeapi.org/api/timezone/Etc/UTC"
         );
-        const minutes = Math.floor(
-          (24 * 60 * 60 * 1000 - timeDifference - hours * 60 * 60 * 1000) /
-            (60 * 1000)
-        );
-        const seconds = Math.floor(
-          (24 * 60 * 60 * 1000 -
-            timeDifference -
-            hours * 60 * 60 * 1000 -
-            minutes * 60 * 1000) /
-            1000
-        );
-        setTimeRemaining(`${hours}h ${minutes}m ${seconds}s`);
+        const currentTime = new Date(response.data.datetime);
+        setCurrentTime(currentTime);
+      } catch (error) {
+        console.error("Error fetching current time:", error);
       }
     };
 
-    checkRewardStatus();
-    const interval = setInterval(checkRewardStatus, 1000);
+    fetchCurrentTime();
+    const interval = setInterval(fetchCurrentTime, 60000); // Обновляем время каждую минуту
 
     return () => clearInterval(interval);
-  }, [lastTimeClicked]);
+  }, []);
+
+  useEffect(() => {
+    if (currentTime) {
+      const parseDate = (dateString: string) => {
+        const [day, month, year, hour, minute, second] = dateString
+          .replace(/[-:]/g, " ")
+          .split(" ")
+          .map(Number);
+        return new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+      };
+
+      const checkRewardStatus = () => {
+        const now = currentTime.getTime();
+        const lastClickTime = parseDate(lastTimeClicked).getTime();
+        const timeDifference = now - lastClickTime;
+
+        if (timeDifference >= 24 * 60 * 60 * 1000) {
+          setCanClaimReward(true);
+          setTimeRemaining("");
+        } else {
+          setCanClaimReward(false);
+          const hours = Math.floor(
+            (24 * 60 * 60 * 1000 - timeDifference) / (60 * 60 * 1000)
+          );
+          const minutes = Math.floor(
+            (24 * 60 * 60 * 1000 - timeDifference - hours * 60 * 60 * 1000) /
+              (60 * 1000)
+          );
+          const seconds = Math.floor(
+            (24 * 60 * 60 * 1000 -
+              timeDifference -
+              hours * 60 * 60 * 1000 -
+              minutes * 60 * 1000) /
+              1000
+          );
+          setTimeRemaining(`${hours}h ${minutes}m ${seconds}s`);
+        }
+      };
+
+      checkRewardStatus();
+      const interval = setInterval(checkRewardStatus, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [lastTimeClicked, currentTime]);
 
   const handleClick = () => {
     if (canClaimReward && onClick) {
@@ -75,7 +98,7 @@ const DailyReward: React.FC<DailyRewardProps> = ({
 
   return (
     <>
-      <button
+      <div
         onClick={handleClick}
         id='rewardModalTrigger'
         className={`task-card daily-reward ${className} ${
@@ -112,7 +135,7 @@ const DailyReward: React.FC<DailyRewardProps> = ({
             <p className='daily-reward-counter-text'>{timeRemaining}</p>
           )}
         </div>
-      </button>
+      </div>
       <RewardModal
         triggerId='rewardModalTrigger'
         isVisible={showModal}
