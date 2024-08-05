@@ -1,0 +1,26 @@
+@import "@/src/app/shortSyles.scss";
+
+.daily-reward {
+  @include flex(space-between, center);
+  @include f-direction(row);
+
+  width: 100%;
+
+  padding: 0 10px;
+
+  .left-site {
+    @include flex(space-between, center);
+    @include f-direction(row);
+
+    gap: 10px;
+  }
+
+  .daily-reward-counter-text {
+    @include p-montserrat-14-125-medium;
+    color: var(--color-text-primary);
+  }
+
+  &.disabled {
+    opacity: 0.6;
+  }
+}

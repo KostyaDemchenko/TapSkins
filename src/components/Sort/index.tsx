@@ -86,7 +86,7 @@ const Sort: React.FC<SortProps> = ({ isLoading, onSort }) => {
                     sortOption === "price_high_to_low" ? "active" : ""
                   }`}
                 >
-                  Price from high to low
+                  Price (from high to low)
                 </p>
               </div>
               <div
@@ -105,7 +105,7 @@ const Sort: React.FC<SortProps> = ({ isLoading, onSort }) => {
                     sortOption === "price_low_to_high" ? "active" : ""
                   }`}
                 >
-                  Price from low to high
+                  Price (from low to high)
                 </p>
               </div>
               <div
@@ -124,7 +124,7 @@ const Sort: React.FC<SortProps> = ({ isLoading, onSort }) => {
                     sortOption === "rarity_high_to_low" ? "active" : ""
                   }`}
                 >
-                  Rarity from high to low
+                  Rarity (from high to low)
                 </p>
               </div>
               <div
@@ -143,7 +143,7 @@ const Sort: React.FC<SortProps> = ({ isLoading, onSort }) => {
                     sortOption === "rarity_low_to_high" ? "active" : ""
                   }`}
                 >
-                  Rarity from low to high
+                  Rarity (from low to high)
                 </p>
               </div>
             </div>

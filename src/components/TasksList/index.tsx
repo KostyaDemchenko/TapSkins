@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 // Component import
 import ProgressBar from "@/src/components/ProgressBar";
 import { TaskCard } from "@/src/components/Carts";
+import DailyReward from "@/src/components/DailyReward";
 import Skeleton from "@mui/material/Skeleton";
 import RewardModal from "@/src/components/RevardModal";
 
@@ -57,6 +58,10 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         isLoading={loading} // Передаем состояние загрузки
       />
       <div className='tasks-list'>
+        <DailyReward
+          lastTimeClicked={"05-08-2024 00:00:00"}
+          // onClick={отправить данные о дате и времени клика}
+        />
         {loading
           ? Array.from(new Array(5)).map((_, index) => (
               <Skeleton
