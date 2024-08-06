@@ -90,7 +90,7 @@ export class User {
     const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
 
     const response = await fetch(
-      `${backendAddress}/auth${referalId !== "undefined" ? `?referalId=${referalId}` : ""}`,
+      `${backendAddress}/auth${referalId === "undefined" ? "" : `?referalId=${referalId}`}`,
       {
         method: "post",
         headers: {
