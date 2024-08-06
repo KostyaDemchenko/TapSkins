@@ -11,6 +11,7 @@ import RewardModal from "@/src/components/RevardModal";
 import "./style.scss";
 
 import { TaskProps, User } from "@/src/utils/types";
+import { formatDate } from "@/src/utils/functions";
 
 const TasksList: React.FC<{ user: User }> = ({ user }) => {
   const [tasks, setTasks] = useState<TaskProps[]>([]);
@@ -48,6 +49,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
     setShowModal(true);
   };
 
+
   return (
     <>
       <ProgressBar
@@ -58,32 +60,34 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         isLoading={loading} // Передаем состояние загрузки
       />
       <div className='tasks-list'>
-        <DailyReward
-          lastTimeClicked={"05-08-2024 00:00:00"}
-          // onClick={отправить данные о дате и времени клика}
-        />
+        {user && <DailyReward
+          lastTimeClicked={formatDate(user.last_daily_bonus_time_clicked)}
+          // lastTimeClicked={"05-08-2024 00:00:00"}
+          user={user}
+        // onClick={отправить данные о дате и времени клика}
+        />}
         {loading
           ? Array.from(new Array(5)).map((_, index) => (
-              <Skeleton
-                key={index}
-                variant='rounded'
-                height={84}
-                animation='wave'
-                sx={{
-                  bgcolor: "var(--color-surface)",
-                  marginBottom: "5px",
-                  width: "100%",
-                }}
-              />
-            ))
+            <Skeleton
+              key={index}
+              variant='rounded'
+              height={84}
+              animation='wave'
+              sx={{
+                bgcolor: "var(--color-surface)",
+                marginBottom: "5px",
+                width: "100%",
+              }}
+            />
+          ))
           : tasks.map((task) => (
-              <TaskCard
-                key={task.task_id}
-                task={task}
-                onClick={() => handleTaskClick(task)}
-                id={`rewardTrigger-${task.task_id}`}
-              />
-            ))}
+            <TaskCard
+              key={task.task_id}
+              task={task}
+              onClick={() => handleTaskClick(task)}
+              id={`rewardTrigger-${task.task_id}`}
+            />
+          ))}
       </div>
       {selectedTask && (
         <RewardModal

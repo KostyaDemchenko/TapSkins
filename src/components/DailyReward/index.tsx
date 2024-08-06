@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import axios from "axios";
 
 import RewardModal from "@/src/components/RevardModal";
 
+import { User } from "@/src/utils/types";
 import iconObj from "@/public/icons/utils";
 import imgObj from "@/public/img/utils";
+import { formatDate } from "@/src/utils/functions";
 
 import "./style.scss";
 
@@ -13,33 +14,41 @@ interface DailyRewardProps {
   className?: string;
   onClick?: () => void;
   lastTimeClicked: string; // Дата последнего клика в формате строки
+  user: User;
 }
 
 const DailyReward: React.FC<DailyRewardProps> = ({
   className,
   lastTimeClicked,
   onClick,
+  user
 }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [canClaimReward, setCanClaimReward] = useState<boolean>(false);
   const [timeRemaining, setTimeRemaining] = useState<string>("");
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
+  function getCurrentDateInUTC() {
+    const now = new Date();
+    const utcDate = new Date(Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+      now.getUTCHours(),
+      now.getUTCMinutes(),
+      now.getUTCSeconds()
+    ));
+
+    return utcDate;
+  }
+
   useEffect(() => {
     const fetchCurrentTime = async () => {
-      try {
-        const response = await axios.get(
-          "http://worldtimeapi.org/api/timezone/Etc/UTC"
-        );
-        const currentTime = new Date(response.data.datetime);
-        setCurrentTime(currentTime);
-      } catch (error) {
-        console.error("Error fetching current time:", error);
-      }
+      setCurrentTime(getCurrentDateInUTC());
     };
 
     fetchCurrentTime();
-    const interval = setInterval(fetchCurrentTime, 60000); // Обновляем время каждую минуту
+    const interval = setInterval(fetchCurrentTime, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -51,7 +60,7 @@ const DailyReward: React.FC<DailyRewardProps> = ({
           .replace(/[-:]/g, " ")
           .split(" ")
           .map(Number);
-        return new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+        return new Date(year, month - 1, day, hour, minute, second);
       };
 
       const checkRewardStatus = () => {
@@ -69,14 +78,14 @@ const DailyReward: React.FC<DailyRewardProps> = ({
           );
           const minutes = Math.floor(
             (24 * 60 * 60 * 1000 - timeDifference - hours * 60 * 60 * 1000) /
-              (60 * 1000)
+            (60 * 1000)
           );
           const seconds = Math.floor(
             (24 * 60 * 60 * 1000 -
               timeDifference -
               hours * 60 * 60 * 1000 -
               minutes * 60 * 1000) /
-              1000
+            1000
           );
           setTimeRemaining(`${hours}h ${minutes}m ${seconds}s`);
         }
@@ -89,10 +98,14 @@ const DailyReward: React.FC<DailyRewardProps> = ({
     }
   }, [lastTimeClicked, currentTime]);
 
-  const handleClick = () => {
-    if (canClaimReward && onClick) {
-      onClick();
-      setShowModal(true);
+  const handleClick = async () => {
+    // отобразить лоадер
+    console.log("Trying to get daily reward...");
+    const posibilityToClaimReward = await user.getDailyReward();
+    if (canClaimReward && onClick && posibilityToClaimReward.success) {
+      console.log("Claiming...");
+      setCanClaimReward(false);
+      lastTimeClicked = formatDate(Date.now());
     }
   };
 
@@ -101,9 +114,8 @@ const DailyReward: React.FC<DailyRewardProps> = ({
       <div
         onClick={handleClick}
         id='rewardModalTrigger'
-        className={`task-card daily-reward ${className} ${
-          !canClaimReward ? "disabled" : ""
-        }`}
+        className={`task-card daily-reward ${className} ${!canClaimReward ? "disabled" : ""
+          }`}
         style={{ cursor: canClaimReward ? "pointer" : "not-allowed" }}
       >
         <div className='left-site'>
@@ -138,7 +150,8 @@ const DailyReward: React.FC<DailyRewardProps> = ({
       </div>
       <RewardModal
         triggerId='rewardModalTrigger'
-        isVisible={showModal}
+        // isVisible ничего не делает
+        isVisible={false}
         onClose={() => setShowModal(false)}
         rewardAmount={5000}
         rewardName='Daily Reward'

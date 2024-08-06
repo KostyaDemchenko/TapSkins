@@ -267,6 +267,30 @@ export class User {
     this.invited_users -= reward.referal_amount;
     return data;
   }
+  async getDailyReward(): Promise<SuccessDisplay> {
+    const response = await fetch(`${this.backendAddress}/daily-reward`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ initData: this.initData })
+    });
+
+    console.log(response);
+
+    if (!response.ok) {
+      console.log(response);
+      return {
+        message: "Error occured! Try again",
+        success: false
+      }
+    }
+
+    const data = await response.json();
+    console.log(data);
+
+    return data;
+  }
 }
 
 export type Skin = {
