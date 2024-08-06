@@ -17,6 +17,7 @@ import { SkinOrderCard, HistoryOrderCard } from "@/src/components/Carts";
 
 import "@/src/app/globals.scss";
 import "./style.scss";
+import { boolean } from "zod";
 
 const toastSettings: ToastOptions = {
   position: "top-right",
@@ -33,21 +34,30 @@ export default function CartPage() {
   const [cartItems, setCartItems] = useState<Skin[]>([]);
   const [tg, setTg] = useState<WebApp | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [opportunityToBuy, setOpportunityToBuy] = useState<SuccessDisplay>({
     success: false,
     message: "",
   });
 
   const userCart = useRef<null | Cart>(null);
-  const toastId = useRef<Id>();
+  const toastId = useRef<Id | null>(null);
 
-  const deleteHandle = (el: Skin) => {
-    const status = userCart.current!.deleteFromCart(el);
+  const deleteHandle = async (el: Skin) => {
+    if (!user) return;
+    setIsDeleting(true);
+    toastId.current = toast.loading("Trying to delete...", toastSettings);
+    const status = await userCart.current!.deleteFromCart(el, user.getInitData());
 
-    if (status.success) toast.success(status.message, toastSettings);
-    else toast.error(status.message, toastSettings);
+    toast.update(toastId.current, {
+      render: status.message,
+      type: status.success ? "success" : "error",
+      isLoading: false,
+      autoClose: 3000
+    });
 
     setCartItems(userCart.current!.getItems());
+    setIsDeleting(false);
   };
 
   useEffect(() => {
@@ -175,6 +185,7 @@ export default function CartPage() {
                     className='btn-primary-25 purchase-buying'
                     icon=''
                     disabled={(() => {
+                      if (isDeleting) return true
                       if (!user) return false;
                       return (
                         user.getBalancePurple() <
@@ -182,7 +193,7 @@ export default function CartPage() {
                       );
                     })()}
                     id='tradeLinkValidation'
-                    onClick={function (e) {}}
+                    onClick={function (e) { }}
                   />
                 </>
               )}

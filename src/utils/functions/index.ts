@@ -44,4 +44,14 @@ const formatDate = (milliseconds: number) => {
   return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
 };
 
-export { truncateName, truncateFloat, colorMap, formatDate };
+const postFetch = (request: string, body: {} | null = null) => {
+  return fetch(request, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+}
+
+export { truncateName, truncateFloat, colorMap, formatDate, postFetch };

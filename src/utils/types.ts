@@ -1,3 +1,5 @@
+import { postFetch } from "./functions";
+
 export type UserObj = {
   user_id: number;
   balance_common: number;
@@ -13,7 +15,7 @@ export type registerUserResponse = {
   user: User;
   bonus?: { balance_common: number; balance_purple: number } | null;
   success: boolean;
-}
+};
 
 export class User {
   public user_id: number;
@@ -45,6 +47,9 @@ export class User {
   getExchangeBallance() {
     const purpleAmnt = Math.floor(this.balance_common / this.exchangeCoeff);
     return purpleAmnt;
+  }
+  getInitData() {
+    return this.initData;
   }
   // возвращает SuccessDisplay
   async exchangeBallance() {
@@ -90,7 +95,9 @@ export class User {
     const backendAddress = process.env.NEXT_PUBLIC_BACKEND_ADDRESS;
 
     const response = await fetch(
-      `${backendAddress}/auth${referalId === "undefined" ? "" : `?referalId=${referalId}`}`,
+      `${backendAddress}/auth${
+        referalId === "undefined" ? "" : `?referalId=${referalId}`
+      }`,
       {
         method: "post",
         headers: {
@@ -193,7 +200,7 @@ export class User {
 
     try {
       const response = await fetch(`${this.backendAddress}/check-skins`, {
-        body: JSON.stringify({ skinIds }),
+        body: JSON.stringify({ skinIds, initData: this.initData }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -239,19 +246,24 @@ export class User {
 
   // потом тип поменяешь аргумента
   async getSkins(setSkins: any) {
-    fetch(`${this.backendAddress}/skins`).then(d => d.json()).then(d => {
-      console.log(d);
-    })
+    fetch(`${this.backendAddress}/skins`)
+      .then((d) => d.json())
+      .then((d) => {
+        console.log(d);
+      });
   }
 
   async getReward(reward: Reward): Promise<SuccessDisplay> {
-    const response = await fetch(`${this.backendAddress}/reward/${reward.reward_id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ initData: this.initData }),
-    });
+    const response = await fetch(
+      `${this.backendAddress}/reward/${reward.reward_id}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ initData: this.initData }),
+      }
+    );
 
     if (!response.ok) {
       console.log(response);
@@ -259,7 +271,7 @@ export class User {
       return {
         message: "Can't claim reward!",
         success: false,
-      }
+      };
       // return false;
     }
 
@@ -273,7 +285,7 @@ export class User {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ initData: this.initData })
+      body: JSON.stringify({ initData: this.initData }),
     });
 
     console.log(response);
@@ -282,8 +294,8 @@ export class User {
       console.log(response);
       return {
         message: "Error occured! Try again",
-        success: false
-      }
+        success: false,
+      };
     }
 
     const data = await response.json();
@@ -312,7 +324,7 @@ export type Reward = {
   reward: number;
   referal_icon: string;
   referal_amount: number;
-}
+};
 
 //! Функционал:
 // - добавление одного элемента в корзину, то есть запись в localStorage,
@@ -324,6 +336,7 @@ export class Cart {
   public userBalance: number = 0;
   private storage;
   private storageKey = "skins-cart";
+  private backendAddress: string = process.env.NEXT_PUBLIC_BACKEND_ADDRESS!;
 
   // передаем баланс юзера сюда
   constructor(userBalance: number = 0) {
@@ -346,13 +359,10 @@ export class Cart {
   //   success: booolean, сообщает об успехе добавления
   //   message: string текст сообщения, (недостаточно денег, товар занят, успешное добавление и тд)
   // }
-  addToCart(skin: Skin) {
+  async addToCart(skin: Skin, initData: string): Promise<SuccessDisplay> {
     this.checkLocalStorage();
 
     const totalCartPrice = this.getTotalPrice() + skin.price;
-
-    if (this.userBalance - totalCartPrice < 0)
-      return { success: false, message: "Not enough money on balance!" };
 
     const skinDuplicat = this.skins!.find((el) => el.item_id === skin.item_id);
 
@@ -363,13 +373,31 @@ export class Cart {
       };
     }
 
-    this.skins!.push(skin);
-    this.storage.setItem(this.storageKey, JSON.stringify(this.skins));
+    if (this.userBalance - totalCartPrice < 0)
+      return { success: false, message: "Not enough money on balance!" };
 
-    return {
-      success: true,
-      message: "Successfully added to cart",
-    };
+    const response = await postFetch(
+      `${this.backendAddress}/cart/add/${skin.item_id}`,
+      { initData: initData }
+    );
+
+    if (!response.ok) {
+      console.error(response);
+      return {
+        message: "Some error occured!",
+        success: false,
+        loading: false,
+      };
+    }
+
+    const data = (await response.json()) as SuccessDisplay;
+
+    if (data.success) {
+      this.skins!.push(skin);
+      this.storage.setItem(this.storageKey, JSON.stringify(this.skins));
+    }
+
+    return data;
   }
 
   // так же возвращает:
@@ -377,8 +405,24 @@ export class Cart {
   //   success: booolean, сообщает об успехе удаления
   //   message: string текст сообщения
   // }
-  deleteFromCart(skin: Skin) {
+  async deleteFromCart(skin: Skin, initData: string): Promise<SuccessDisplay> {
     this.checkLocalStorage();
+
+    const response = await postFetch(
+      `${this.backendAddress}/cart/remove/${skin.item_id}`,
+      { initData: initData }
+    );
+
+    if (!response.ok) {
+      return await response.json();
+    }
+
+    const result = await response.json() as SuccessDisplay;
+
+
+    if (!result.success) {
+      return result;
+    }
 
     const searchingId = this.skins!.findIndex(
       (el) => el.item_id === skin.item_id

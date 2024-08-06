@@ -2,18 +2,29 @@ import React, { useState, useEffect, useRef } from "react";
 
 import Skeleton from "@mui/material/Skeleton";
 import { SkinCard } from "@/src/components/Carts";
-import { ToastContainer, toast, ToastOptions } from "react-toastify";
+import { ToastContainer, toast, ToastOptions, Id } from "react-toastify";
 
-import { Cart, Skin, SuccessDisplay } from "@/src/utils/types";
+import { Cart, Skin, SuccessDisplay, User } from "@/src/utils/types";
 
 import "./style.scss";
+
+const toastSettings: ToastOptions = {
+  position: "top-right",
+  autoClose: 3000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: false,
+  draggable: true,
+  progress: undefined,
+  theme: "dark",
+};
 
 interface SkinStoreProps {
   searchTerm: string;
   skins: Skin[];
   isLoading: boolean;
   filters: any;
-  userBalance: number;
+  user: User | null;
 }
 
 const SkinStore: React.FC<SkinStoreProps> = ({
@@ -21,13 +32,18 @@ const SkinStore: React.FC<SkinStoreProps> = ({
   skins,
   isLoading,
   filters,
-  userBalance,
+  user,
 }) => {
   const [filteredSkins, setFilteredSkins] = useState<Skin[]>(skins);
   const userCart = useRef<Cart | null>(null);
+  const toastId = useRef<Id | null>(null);
+
+  const addingToCart = useRef<boolean>(false);
 
   useEffect(() => {
-    userCart.current = new Cart(userBalance);
+    if (user) {
+      userCart.current = new Cart(user.getBalancePurple());
+    }
     let filtered = skins;
 
     if (searchTerm) {
@@ -96,20 +112,31 @@ const SkinStore: React.FC<SkinStoreProps> = ({
     );
   }
 
-  const addToCartHandle = (skin: Skin) => {
-    const status = userCart.current!.addToCart(skin) as SuccessDisplay;
-    const toastSettings: ToastOptions = {
-      position: "top-right",
-      autoClose: 3000,
+  const addToCartHandle = async (skin: Skin) => {
+    if (addingToCart.current) return
+    addingToCart.current = true;
+    toastId.current = toast.loading("Checking skin for availability...", toastSettings);
+    if (!user) {
+      toast.update(toastId.current, {
+        render: "Error occured! Reload page please!",
+        type: "error",
+        isLoading: false,
+        hideProgressBar: false,
+        autoClose: 3000
+      });
+      return;
+    }
+    const status = (await userCart.current!.addToCart(skin, user.getInitData())) as SuccessDisplay;
+    
+    addingToCart.current = false;
+    toast.update(toastId.current, {
+      render: status.message,
+      type: status.success ? "success" : "error",
+      isLoading: false,
       hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: false,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    };
-    if (status.success) toast.success(status.message, toastSettings);
-    else toast.error(status.message, toastSettings);
+      autoClose: 3000
+    });
+
   };
 
   return (

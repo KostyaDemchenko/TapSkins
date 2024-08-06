@@ -223,7 +223,7 @@ export default function SkinStorePage() {
             </div>
           </div>
           <SkinStore
-            userBalance={userBalance.current}
+            user={user}
             searchTerm={searchTerm}
             skins={getSortedSkins()}
             isLoading={isLoading}
