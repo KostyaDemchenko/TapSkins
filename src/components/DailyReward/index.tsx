@@ -21,7 +21,7 @@ const DailyReward: React.FC<DailyRewardProps> = ({
   className,
   lastTimeClicked,
   onClick,
-  user
+  user,
 }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [canClaimReward, setCanClaimReward] = useState<boolean>(false);
@@ -30,14 +30,16 @@ const DailyReward: React.FC<DailyRewardProps> = ({
 
   function getCurrentDateInUTC() {
     const now = new Date();
-    const utcDate = new Date(Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate(),
-      now.getUTCHours(),
-      now.getUTCMinutes(),
-      now.getUTCSeconds()
-    ));
+    const utcDate = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        now.getUTCHours(),
+        now.getUTCMinutes(),
+        now.getUTCSeconds()
+      )
+    );
 
     return utcDate;
   }
@@ -78,14 +80,14 @@ const DailyReward: React.FC<DailyRewardProps> = ({
           );
           const minutes = Math.floor(
             (24 * 60 * 60 * 1000 - timeDifference - hours * 60 * 60 * 1000) /
-            (60 * 1000)
+              (60 * 1000)
           );
           const seconds = Math.floor(
             (24 * 60 * 60 * 1000 -
               timeDifference -
               hours * 60 * 60 * 1000 -
               minutes * 60 * 1000) /
-            1000
+              1000
           );
           setTimeRemaining(`${hours}h ${minutes}m ${seconds}s`);
         }
@@ -99,7 +101,8 @@ const DailyReward: React.FC<DailyRewardProps> = ({
   }, [lastTimeClicked, currentTime]);
 
   const handleClick = async () => {
-    // отобразить лоадер
+    if (!canClaimReward) return; // предотвращаем выполнение если награду нельзя получить
+
     console.log("Trying to get daily reward...");
     const posibilityToClaimReward = await user.getDailyReward();
     if (canClaimReward && onClick && posibilityToClaimReward.success) {
@@ -111,11 +114,13 @@ const DailyReward: React.FC<DailyRewardProps> = ({
 
   return (
     <>
-      <div
+      <button
         onClick={handleClick}
         id='rewardModalTrigger'
-        className={`task-card daily-reward ${className} ${!canClaimReward ? "disabled" : ""
-          }`}
+        className={`task-card daily-reward ${className} ${
+          !canClaimReward ? "disabled" : ""
+        }`}
+        disabled={!canClaimReward}
         style={{ cursor: canClaimReward ? "pointer" : "not-allowed" }}
       >
         <div className='left-site'>
@@ -147,7 +152,7 @@ const DailyReward: React.FC<DailyRewardProps> = ({
             <p className='daily-reward-counter-text'>{timeRemaining}</p>
           )}
         </div>
-      </div>
+      </button>
       <RewardModal
         triggerId='rewardModalTrigger'
         // isVisible ничего не делает
