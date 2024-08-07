@@ -13,8 +13,23 @@ import "./style.scss";
 import { TaskProps, User } from "@/src/utils/types";
 import { formatDate } from "@/src/utils/functions";
 
+interface TasksResponse {
+  unCompletedTasks: TaskProps[];
+  tasks: {
+    completed: number;
+    total: number;
+  };
+
+}
+
 const TasksList: React.FC<{ user: User }> = ({ user }) => {
-  const [tasks, setTasks] = useState<TaskProps[]>([]);
+  const [tasks, setTasks] = useState<TasksResponse>({
+    unCompletedTasks: [],
+    tasks: {
+      completed: 0,
+      total: 0
+    }
+  });
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedTask, setSelectedTask] = useState<TaskProps | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -22,9 +37,8 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch("/api/task_store");
-        const data = await response.json();
-        setTasks(data.taskStoreDataStructured);
+        const data = await user.getTasks();
+        setTasks(data);
       } catch (error) {
         console.error("Error fetching tasks:", error);
       } finally {
@@ -55,17 +69,29 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       <ProgressBar
         titleVisible={true}
         title='Tasks'
-        total={tasks.length}
-        completed={1} // Можно заменить на переменную, которая считает завершенные задачи
+        total={tasks.tasks.total}
+        completed={tasks.tasks.completed} // Можно заменить на переменную, которая считает завершенные задачи
         isLoading={loading} // Передаем состояние загрузки
       />
       <div className='tasks-list'>
-        {user && <DailyReward
-          lastTimeClicked={formatDate(user.last_daily_bonus_time_clicked)}
-          // lastTimeClicked={"05-08-2024 00:00:00"}
-          user={user}
-        // onClick={отправить данные о дате и времени клика}
-        />}
+        {loading ?
+          <Skeleton
+            variant='rounded'
+            height={84}
+            animation='wave'
+            sx={{
+              bgcolor: "var(--color-surface)",
+              marginBottom: "5px",
+              width: "100%",
+            }}
+          />
+          :
+          (user && <DailyReward
+            lastTimeClicked={formatDate(user.last_daily_bonus_time_clicked)}
+            // lastTimeClicked={"05-08-2024 00:00:00"}
+            user={user}
+          />)
+        }
         {loading
           ? Array.from(new Array(5)).map((_, index) => (
             <Skeleton
@@ -80,7 +106,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
               }}
             />
           ))
-          : tasks.map((task) => (
+          : tasks.unCompletedTasks.map((task) => (
             <TaskCard
               key={task.task_id}
               task={task}

@@ -1,3 +1,4 @@
+import { TaskStoreDataStructured } from "@/typing";
 import { postFetch } from "./functions";
 
 export type UserObj = {
@@ -195,6 +196,14 @@ export class User {
     return this.balance_purple;
   }
 
+  // потом тип поменяешь аргумента
+  async getSkins(setSkins: any) {
+    fetch(`${this.backendAddress}/skins`)
+      .then((d) => d.json())
+      .then((d) => {
+        console.log(d);
+      });
+  }
   async buySkins(skins: Skin[]) {
     const skinIds = skins.map((el) => el.item_id).join(",");
 
@@ -242,15 +251,6 @@ export class User {
         loading: false,
       };
     }
-  }
-
-  // потом тип поменяешь аргумента
-  async getSkins(setSkins: any) {
-    fetch(`${this.backendAddress}/skins`)
-      .then((d) => d.json())
-      .then((d) => {
-        console.log(d);
-      });
   }
 
   async getReward(reward: Reward): Promise<SuccessDisplay> {
@@ -301,6 +301,27 @@ export class User {
     const data = await response.json();
     console.log(data);
 
+    return data;
+  }
+
+  async getTasks(): Promise<{
+    unCompletedTasks: TaskProps[];
+    tasks: {
+      completed: number;
+      total: number;
+    };
+  }> {
+    const response = await fetch(
+      `${this.backendAddress}/tasks?${this.initData}`
+    );
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Some error!", errorResponse);
+      return errorResponse;
+    }
+
+    const data = await response.json();
     return data;
   }
 }
@@ -417,8 +438,7 @@ export class Cart {
       return await response.json();
     }
 
-    const result = await response.json() as SuccessDisplay;
-
+    const result = (await response.json()) as SuccessDisplay;
 
     if (!result.success) {
       return result;
