@@ -57,44 +57,36 @@ export default function SkinStorePage() {
       console.log("Sending...");
       if (response) {
         userBalance.current = userClass.getBalancePurple();
-        //! receiving skins list
-        userClass.getSkins("");
+        try {
+          // const response = await fetch("/api/skin_store");
+          // const data = await response.json();
+          const data = await userClass.getSkins();
+          setSkins(data);
+          setFilteredSkins(data);
+
+          const prices = data.map((skin: Skin) => skin.price);
+          setMinPrice(Math.min(...prices));
+          setMaxPrice(Math.max(...prices));
+
+          const floats = data.map((skin: Skin) => skin.float);
+          setMinFloat(Math.min(...floats));
+          setMaxFloat(Math.max(...floats));
+
+          const uniqueWeaponTypes: string[] = Array.from(
+            new Set(
+              data.map((skin: Skin) => skin.weapon_type)
+            )
+          );
+          setWeaponTypes(uniqueWeaponTypes);
+        } catch (error) {
+          console.error("Error fetching the skin store data:", error);
+        } finally {
+          setIsLoading(false);
+        }
         setUser(userClass);
       }
     })();
   }, [tg]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/skin_store");
-        const data = await response.json();
-        setSkins(data.storeDataStructured);
-        setFilteredSkins(data.storeDataStructured);
-
-        const prices = data.storeDataStructured.map((skin: Skin) => skin.price);
-        setMinPrice(Math.min(...prices));
-        setMaxPrice(Math.max(...prices));
-
-        const floats = data.storeDataStructured.map((skin: Skin) => skin.float);
-        setMinFloat(Math.min(...floats));
-        setMaxFloat(Math.max(...floats));
-
-        const uniqueWeaponTypes: string[] = Array.from(
-          new Set(
-            data.storeDataStructured.map((skin: Skin) => skin.weapon_type)
-          )
-        );
-        setWeaponTypes(uniqueWeaponTypes);
-      } catch (error) {
-        console.error("Error fetching the skin store data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const applyFilters = (filters: any) => {
     const filtered = skins.filter((skin: Skin) => {

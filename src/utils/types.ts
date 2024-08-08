@@ -197,12 +197,10 @@ export class User {
   }
 
   // потом тип поменяешь аргумента
-  async getSkins(setSkins: any) {
-    fetch(`${this.backendAddress}/skins`)
-      .then((d) => d.json())
-      .then((d) => {
-        console.log(d);
-      });
+  async getSkins() {
+    const response = await fetch(`${this.backendAddress}/skins`);
+    
+    return await response.json();
   }
   async buySkins(skins: Skin[]) {
     const skinIds = skins.map((el) => el.item_id).join(",");
