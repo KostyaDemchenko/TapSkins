@@ -1,4 +1,4 @@
-import { TaskStoreDataStructured } from "@/typing";
+import { SkinStoreDataStructured, TaskStoreDataStructured } from "@/typing";
 import { postFetch } from "./functions";
 
 export type UserObj = {
@@ -27,7 +27,7 @@ export class User {
   public max_stamina: number = 1000;
   public stamina: number = this.max_stamina;
   public last_click: number = 0;
-  public initData: string;
+  private initData: string;
   public receivedBonus: {
     balance_common: number;
     balance_purple: number;
@@ -358,12 +358,14 @@ export class Cart {
   private storage;
   private storageKey = "skins-cart";
   private backendAddress: string = process.env.NEXT_PUBLIC_BACKEND_ADDRESS!;
+  private totalPrice: number = 0;
 
   // передаем баланс юзера сюда
   constructor(userBalance: number = 0) {
     this.storage = global.window.localStorage;
     this.userBalance = userBalance;
-    this.checkLocalStorage();
+
+    // this.checkLocalStorage();
   }
 
   // берем все что в localStorage хранится и записываем себе
@@ -381,22 +383,6 @@ export class Cart {
   //   message: string текст сообщения, (недостаточно денег, товар занят, успешное добавление и тд)
   // }
   async addToCart(skin: Skin, initData: string): Promise<SuccessDisplay> {
-    this.checkLocalStorage();
-
-    const totalCartPrice = this.getTotalPrice() + skin.price;
-
-    const skinDuplicat = this.skins!.find((el) => el.item_id === skin.item_id);
-
-    if (skinDuplicat) {
-      return {
-        success: false,
-        message: "Item is already in the cart!",
-      };
-    }
-
-    if (this.userBalance - totalCartPrice < 0)
-      return { success: false, message: "Not enough money on balance!" };
-
     const response = await postFetch(
       `${this.backendAddress}/cart/add/${skin.item_id}`,
       { initData: initData }
@@ -412,11 +398,6 @@ export class Cart {
     }
 
     const data = (await response.json()) as SuccessDisplay;
-
-    if (data.success) {
-      this.skins!.push(skin);
-      this.storage.setItem(this.storageKey, JSON.stringify(this.skins));
-    }
 
     return data;
   }
@@ -468,15 +449,25 @@ export class Cart {
   }
 
   getTotalPrice() {
-    this.checkLocalStorage();
-    return this.skins!.reduce((accum, currVal) => {
-      return accum + currVal.price;
-    }, 0);
+    return this.totalPrice;
   }
 
-  getItems() {
-    this.checkLocalStorage();
-    return this.skins!;
+  async getItems(initData: string) {
+    const response = await fetch(`${this.backendAddress}/cart?${initData}`);
+
+    const data = await response.json();
+    if (!response.ok) {
+      console.error(data);
+    }
+
+    const totalPrice = (data.items as SkinStoreDataStructured[]).reduce(
+      (accum, curval) => accum + curval.price,
+      0
+    );
+
+    this.totalPrice = totalPrice;
+
+    return data.items;
   }
 }
 

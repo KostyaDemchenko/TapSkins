@@ -56,14 +56,10 @@ export default function CartPage() {
       autoClose: 3000
     });
 
-    setCartItems(userCart.current!.getItems());
     setIsDeleting(false);
   };
 
   useEffect(() => {
-    // это потом удалить
-    userCart.current = new Cart();
-    setCartItems(userCart.current.getItems());
     if (!tg) return;
 
     tg.expand();
@@ -77,8 +73,8 @@ export default function CartPage() {
       const response = await userClass.authUser(tg);
 
       if (response) {
-        const userBalance = 1000;
-        setCartItems(new Cart(userBalance).getItems());
+        userCart.current = new Cart();
+        setCartItems(await userCart.current.getItems(tg.initData));
         setUser(userClass);
       }
     })();
@@ -142,7 +138,7 @@ export default function CartPage() {
               History
             </a>
           </div>
-          {userCart.current && (
+          {userCart.current && cartItems && (
             <>
               {!cartItems.length && (
                 <div className='empty-cart'>
@@ -155,7 +151,7 @@ export default function CartPage() {
                   </a>
                 </div>
               )}
-              {!!cartItems.length && (
+              {!!cartItems.length && user && (
                 <>
                   {cartItems.map((el) => {
                     return (
@@ -201,6 +197,7 @@ export default function CartPage() {
               <ValidationModal
                 onClickHandle={async (e) => {
                   if (
+                    !user ||
                     !userCart.current ||
                     opportunityToBuy.loading ||
                     opportunityToBuy.success
@@ -211,9 +208,13 @@ export default function CartPage() {
                     message: "Checking skins for availability...",
                     success: false,
                   });
-                  const data = await user!.buySkins(
-                    userCart.current.getItems()
-                  );
+                  const data = {
+                    success: true,
+                    message: "Ok!"
+                  }
+                  // const data = await user!.buySkins(
+                  //   await userCart.current.getItems(user.getInitData())
+                  // );
                   if (data.success) {
                     userCart.current.clearCart();
                     setCartItems([]);
