@@ -8,6 +8,7 @@ import { SuccessDisplay, User } from "@/src/utils/types";
 import Nav from "@/src/components/Nav";
 import Button from "@/src/components/Button";
 import ValidationModal from "@/src/components/ValidationModal";
+import Skeleton from "@mui/material/Skeleton";
 
 import { Id, ToastContainer, ToastOptions, toast } from "react-toastify";
 import iconObj from "@/public/icons/utils";
@@ -31,7 +32,7 @@ const toastSettings: ToastOptions = {
 };
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<Skin[]>([]);
+  const [cartItems, setCartItems] = useState<Skin[] | null>(null);
   const [tg, setTg] = useState<WebApp | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -48,6 +49,10 @@ export default function CartPage() {
     setIsDeleting(true);
     toastId.current = toast.loading("Trying to delete...", toastSettings);
     const status = await userCart.current!.deleteFromCart(el, user.getInitData());
+
+    if (status.success) {
+      setCartItems(cartItems!.filter((item) => item.item_id !== el.item_id));
+    }
 
     toast.update(toastId.current, {
       render: status.message,
@@ -74,7 +79,7 @@ export default function CartPage() {
 
       if (response) {
         userCart.current = new Cart();
-        setCartItems(await userCart.current.getItems(tg.initData));
+        setCartItems(await userCart.current!.getItems(tg.initData));
         setUser(userClass);
       }
     })();
@@ -100,6 +105,10 @@ export default function CartPage() {
       closeOnClick: true,
     });
   }, [opportunityToBuy]);
+
+  useEffect(() => {
+    console.log(cartItems);
+  }, [cartItems]);
 
   return (
     <>
@@ -133,7 +142,7 @@ export default function CartPage() {
       <main>
         <div className='container'>
           <div className='top-box'>
-            <h3 className='items-amnt'>Items ({cartItems.length})</h3>
+            <h3 className='items-amnt'>Items ({cartItems ? cartItems.length : 0})</h3>
             <a className='btn-secondary-35' href='/order_history'>
               History
             </a>
@@ -225,6 +234,20 @@ export default function CartPage() {
               />
             </>
           )}
+          {!cartItems && userCart.current && <>
+            {Array.from(new Array(3)).map((_, index) => (
+              <Skeleton
+                key={index}
+                variant='rounded'
+                height={120}
+                animation="wave"
+                sx={{
+                  bgcolor: "var(--color-surface)",
+                  width: "100%",
+                }}
+              />
+            ))}
+          </>}
         </div>
       </main>
       <Nav />

@@ -199,7 +199,7 @@ export class User {
   // потом тип поменяешь аргумента
   async getSkins() {
     const response = await fetch(`${this.backendAddress}/skins`);
-    
+
     return await response.json();
   }
   async buySkins(skins: Skin[]) {
@@ -406,8 +406,6 @@ export class Cart {
   //   message: string текст сообщения
   // }
   async deleteFromCart(skin: Skin, initData: string): Promise<SuccessDisplay> {
-    this.checkLocalStorage();
-
     const response = await postFetch(
       `${this.backendAddress}/cart/remove/${skin.item_id}`,
       { initData: initData }
@@ -419,26 +417,7 @@ export class Cart {
 
     const result = (await response.json()) as SuccessDisplay;
 
-    if (!result.success) {
-      return result;
-    }
-
-    const searchingId = this.skins!.findIndex(
-      (el) => el.item_id === skin.item_id
-    );
-
-    if (searchingId === -1)
-      return {
-        success: false,
-        message: "Strange...there is no such element",
-      };
-
-    this.skins!.splice(searchingId, 1);
-    this.storage.setItem(this.storageKey, JSON.stringify(this.skins));
-    return {
-      success: true,
-      message: "Deleted successfully!",
-    };
+    return result;
   }
 
   clearCart() {
