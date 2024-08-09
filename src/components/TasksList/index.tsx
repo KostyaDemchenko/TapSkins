@@ -56,13 +56,14 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       const formattedLink = task.link_to_join.replace("https://t.me/", "@");
       console.log(`Join Telegram channel: ${formattedLink}`);
     } else {
-      window.location.href = task.link_to_join;
+      // Используем window.open с параметром "_blank"
+      window.open(task.link_to_join, '_blank');
     }
-
+  
     setSelectedTask(task);
     setShowModal(true);
   };
-
+  
 
   return (
     <>
