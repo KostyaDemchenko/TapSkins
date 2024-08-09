@@ -141,7 +141,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     staminaIntervals.current.timeOutId = setTimeout(increaseStamina, 300);
 
     // Вызов вибрации при нажатии на кнопку
-    const randomPattern = [50];
+    const randomPattern = [75];
 
     triggerVibration(randomPattern);
   };
