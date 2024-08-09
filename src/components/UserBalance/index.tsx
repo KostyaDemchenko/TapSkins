@@ -121,6 +121,9 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     if (navigator.vibrate) {
       navigator.vibrate(pattern);
     }
+    else {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_ADDRESS}/log?text='Vibration not supported'`)
+    }
   };
 
   const clickerButtonHandler = () => {
