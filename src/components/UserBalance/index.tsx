@@ -9,6 +9,7 @@ import iconObj from "@/public/icons/utils";
 import imgObj from "@/public/img/utils";
 import { Id, ToastContainer, ToastOptions, toast } from "react-toastify";
 import { SuccessDisplay, User } from "@/src/utils/types";
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 import "./style.scss";
 import "react-toastify/dist/ReactToastify.css";
@@ -128,29 +129,36 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     }
   };
 
+  const triggerHapticFeedback = async () => {
+    try {
+      await Haptics.impact({ style: ImpactStyle.Heavy });
+    } catch (err) {
+      console.error('Haptic feedback is not available', err);
+    }
+  };
+  
+
   const clickerButtonHandler = () => {
     if (exchangeStatus?.loading) return;
     if (!user) return;
-
+  
     if (staminaIntervals.current.timeOutId)
       clearTimeout(staminaIntervals.current.timeOutId);
     if (staminaIntervals.current.intervalId)
       clearInterval(staminaIntervals.current.intervalId);
-
+  
     if (user && wss) {
       user.dereaseStamina();
       user.increaseBalance();
       setUserStamina(user.stamina);
     }
-
+  
     staminaIntervals.current.timeOutId = setTimeout(increaseStamina, 300);
-
-    // Вызов вибрации при нажатии на кнопку
-    const randomPattern = [75, 100, 75];
-
-    triggerVibration(randomPattern);
+  
+    // Вызов тактильного отклика при нажатии на кнопку
+    triggerHapticFeedback();
   };
-
+  
   return (
     <>
       <div style={{ position: "absolute" }}>
