@@ -291,7 +291,6 @@ const TaskCard: React.FC<TaskCardProps> = ({
   id,
 }) => (
   <a
-    target='_blank'
     id={id}
     onClick={onClick}
     className={`task-card ${className}`}
