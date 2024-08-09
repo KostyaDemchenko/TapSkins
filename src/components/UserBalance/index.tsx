@@ -3,6 +3,8 @@ import Image from "next/image";
 
 import ExchangeCurrency from "@/src/components/ExchangeCurrency";
 import ProgressBar from "@/src/components/ProgressBar";
+import HapticFeedback from "react-native-haptic-feedback";
+
 
 import iconObj from "@/public/icons/utils";
 import imgObj from "@/public/img/utils";
@@ -122,6 +124,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
       navigator.vibrate(pattern);
     }
     else {
+      HapticFeedback.trigger("impactLight");
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_ADDRESS}/log?text='Vibration not supported'`)
     }
   };
