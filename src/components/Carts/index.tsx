@@ -383,4 +383,41 @@ const ReferalCard: React.FC<ReferalCardProps> = ({
   </a>
 );
 
-export { SkinCard, TaskCard, ReferalCard, SkinOrderCard, HistoryOrderCard };
+// OrderCartTrigger
+interface OrderCartTriggerProps {
+  order_id?: number;
+  order_content?: string;
+  onClickHandle?: () => void;
+  id?: string;
+}
+
+const OrderCartTrigger: React.FC<OrderCartTriggerProps> = ({
+  order_id,
+  order_content,
+  onClickHandle,
+  id,
+}) => (
+  <div onClick={onClickHandle} id={id}>
+    <div className='left-side'>
+      <div className='icon-box'>
+        <span className='material-symbols-rounded'>shopping_cart</span>
+      </div>
+      <div className='order-details'>
+        <p className='order-id'>{order_id}</p>
+        <p className='order-content'>{order_content}</p>
+      </div>
+    </div>
+    <div className='right-side'>
+      <span className='material-symbols-outlined'>arrow_forward_ios</span>
+    </div>
+  </div>
+);
+
+export {
+  SkinCard,
+  TaskCard,
+  ReferalCard,
+  SkinOrderCard,
+  HistoryOrderCard,
+  OrderCartTrigger,
+};

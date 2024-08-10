@@ -3,9 +3,9 @@ import Script from "next/script";
 import Head from "next/head";
 
 import Nav from "@/src/components/Nav";
-import { User, UserObj } from "@/src/utils/types";
-import { HistoryOrderCard } from "@/src/components/Carts";
+import { User, OrderHistiryData } from "@/src/utils/types";
 import ContactUsModal from "@/src/components/ContactUsModal";
+import HistoryorderList from "@/src/components/HistoryOrderList";
 
 import "@/src/app/globals.scss";
 import "./style.scss";
@@ -13,6 +13,9 @@ import "./style.scss";
 export default function rewards_page() {
   const [tg, setTg] = React.useState<WebApp | null>();
   const [user, setUser] = React.useState<User | null>(null);
+  const [orderHistory, setOrderHistory] = React.useState<OrderHistiryData[]>(
+    []
+  ); // начальное значение - пустой массив
 
   React.useEffect(() => {
     if (!tg) return;
@@ -29,6 +32,11 @@ export default function rewards_page() {
 
       if (response) {
         setUser(userClass);
+
+        // Выполняем запрос к API после аутентификации
+        const orderHistoryResponse = await fetch("/api/order_history");
+        const orderHistoryData = await orderHistoryResponse.json();
+        setOrderHistory(orderHistoryData); // сохраняем данные в состояние
       }
     })();
   }, [tg]);
@@ -63,23 +71,9 @@ export default function rewards_page() {
         <a className='title' href='/cart_page'>
           <span className='material-symbols-outlined'>chevron_backward</span>
           <h1 className='page-title'>History</h1>
+          <HistoryorderList info={orderHistory} />{" "}
+          {/* передаем данные как пропс */}
         </a>
-        {/* запрос на получение истории закказов пользователя если они есть то
-        отображать */}
-        {/* <HistoryOrderCard id="contactUsModal" skin={сюда передавать даные о скине} status={Тут может быть 3 варината "Done" | "In Progress" | "Canceled" } /> */}
-        {/* ^^^^^^^ */}
-        {/*  обернуть в список  */}
-        {/* //
-        //
-        // */}
-        {/* если в списке ничего нету отображать это контейнер */}
-        {/* <div className='no-history'>
-          <p className='description'>No History Yet...</p>
-          <Link className='btn-secondary-35' href='/skin_store_page'>
-            <span className='material-symbols-outlined two'>shopping_cart</span>
-            <p>To cart</p>
-          </Link>
-        </div> */}
       </main>
       <ContactUsModal triggerId='contactUsModal' />
       <Nav />
