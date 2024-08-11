@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 // Component import
 import { OrderCartTrigger, SkinOrderCard } from "@/src/components/Carts";
@@ -7,7 +7,7 @@ import Button from "@/src/components/Button";
 import ContactUsModal from "@/src/components/ContactUsModal";
 
 // Types
-import { OrderHistiryData, Skin } from "@/src/utils/types"; // убедитесь, что тип Skin импортирован
+import { OrderHistiryData } from "@/src/utils/types";
 
 // Style import
 import "./style.scss";
@@ -17,57 +17,107 @@ interface HistoryorderListProps {
 }
 
 const HistoryorderList: React.FC<HistoryorderListProps> = ({ info }) => {
-  if (!info) {
-    return <p>Loading...</p>; // пока данные загружаются
-  }
+  const groupedOrders = useMemo(() => {
+    const orderMap = new Map<number, OrderHistiryData[]>();
 
-  // Функция-обработчик для удаления заказа (пока просто заглушка)
-  const handleDelete = (order_id: number) => {
-    console.log(`Order ${order_id} deleted`);
-    // Здесь можно добавить логику для удаления заказа
+    info.forEach((order) => {
+      if (!orderMap.has(order.order_id)) {
+        orderMap.set(order.order_id, []);
+      }
+      orderMap.get(order.order_id)?.push(order);
+    });
+
+    return Array.from(orderMap.values());
+  }, [info]);
+
+  // Функция для определения цвета статуса
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "In Progress":
+        return "var(--color-system-yellow-dark)";
+      case "Done":
+        return "var(--color-system-green)";
+      case "Canceled":
+        return "var(--color-system-red)";
+      default:
+        return "inherit"; // Используем цвет по умолчанию, если статус не соответствует ни одному из известных
+    }
   };
 
   return (
-    <>
-      {info.map((order) => (
-        <React.Fragment key={order.order_id}>
-          <OrderCartTrigger
-            id={`modalOrderInfoTrigger-${order.order_id}`}
-            order_id={order.order_id}
-            order_content={order.skin_name}
-          />
+    <div className='history-order-list'>
+      <div className='container'>
+        {groupedOrders.map((orderGroup) => {
+          const orderId = orderGroup[0].order_id;
+          const combinedSkinNames = orderGroup
+            .map((o) => o.skin_name)
+            .join(", ");
+          const combinedSkins = orderGroup.map((o) => ({
+            skin_name: o.skin_name,
+            image_src: o.image_src,
+            rarity: o.rarity,
+            price: o.price,
+            float: o.float,
+            startrack: o.startrack,
+            item_id: o.item_id,
+            weapon_name: "Some Weapon Name",
+            weapon_type: "Some Weapon Type",
+          }));
 
-          <Modal
-            modalTitle={`Order ${order.order_id}`}
-            height='75dvh'
-            className='order-info-modal'
-            triggerId={`modalOrderInfoTrigger-${order.order_id}`}
-          >
-            <SkinOrderCard
-              skin={{
-                skin_name: order.skin_name,
-                image_src: order.image_src,
-                rarity: order.rarity,
-                price: order.price,
-                float: order.float,
-                startrack: order.startrack,
-                item_id: order.item_id, // добавляем item_id
-                weapon_name: "Some Weapon Name", // добавляем weapon_name, если оно не приходит в API, нужно его учитывать
-                weapon_type: "Some Weapon Type", // добавляем weapon_type, аналогично
-              }}
-              deleteHandle={() => handleDelete(order.order_id)} // передаем функцию удаления
-            />
-            <Button
-              label={`Got It`}
-              className='btn-primary-50'
-              icon=''
-              id='contactUsModalTrigger'
-            />
-          </Modal>
-        </React.Fragment>
-      ))}
-      <ContactUsModal triggerId='contactUsModalTrigger' />
-    </>
+          return (
+            <React.Fragment key={orderId}>
+              <OrderCartTrigger
+                id={`modalOrderInfoTrigger-${orderId}`}
+                order_id={orderId}
+                order_content={combinedSkinNames}
+              />
+
+              <Modal
+                modalTitle={`Order #${orderId}`}
+                height='75dvh'
+                className='order-info-modal'
+                triggerId={`modalOrderInfoTrigger-${orderId}`}
+              >
+                <div className='order-info'>
+                  <div className='order-info-status-box'>
+                    <p className='order-info-status-title'>Status:</p>
+                    <p
+                      className='order-info-status'
+                      style={{ color: getStatusColor(orderGroup[0].status) }} // Применяем цвет статуса
+                    >
+                      {orderGroup[0].status}
+                    </p>
+                  </div>
+                  <p className='items-amount'>Items ({orderGroup.length})</p>
+                </div>
+                <div className='skin-order-cards-container'>
+                  {combinedSkins.map((skin, index) => (
+                    <SkinOrderCard
+                      key={index}
+                      skin={skin}
+                      showDeleteIcon={false}
+                      deleteHandle={() => {}}
+                    />
+                  ))}
+                </div>
+                <Button
+                  label={`Support Center`}
+                  className='btn-primary-50 bg-secondary'
+                  icon=''
+                  id='contactUsModalTrigger'
+                />
+                <ContactUsModal
+                  fade={false}
+                  subModal={true}
+                  height='75dvh'
+                  triggerId='contactUsModalTrigger'
+                />
+              </Modal>
+            </React.Fragment>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 

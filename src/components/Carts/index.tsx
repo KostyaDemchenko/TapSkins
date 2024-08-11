@@ -143,20 +143,24 @@ const SkinCard: React.FC<SkinCardProps> = ({
 interface SkinOrderCardProps {
   skin: Skin;
   deleteHandle: () => void;
+  showDeleteIcon?: boolean;
 }
 
 const SkinOrderCard: React.FC<SkinOrderCardProps> = ({
   skin,
   deleteHandle,
+  showDeleteIcon = true, // Значение по умолчанию
 }) => {
   return (
     <div className='skin-card skin-order-card'>
-      <div
-        className='skin-order-card-trash material-symbols-outlined'
-        onClick={deleteHandle}
-      >
-        delete
-      </div>
+      {showDeleteIcon && (
+        <div
+          className='skin-order-card-trash material-symbols-outlined'
+          onClick={deleteHandle}
+        >
+          delete
+        </div>
+      )}
       <div className='img-case'>
         <SkinBackground
           imageSrc={skin.image_src}
@@ -397,13 +401,13 @@ const OrderCartTrigger: React.FC<OrderCartTriggerProps> = ({
   onClickHandle,
   id,
 }) => (
-  <div onClick={onClickHandle} id={id}>
+  <div className='order-cart' onClick={onClickHandle} id={id}>
     <div className='left-side'>
       <div className='icon-box'>
         <span className='material-symbols-rounded'>shopping_cart</span>
       </div>
       <div className='order-details'>
-        <p className='order-id'>{order_id}</p>
+        <p className='order-id'>Order: #{order_id}</p>
         <p className='order-content'>{order_content}</p>
       </div>
     </div>

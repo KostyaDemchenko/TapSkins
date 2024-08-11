@@ -217,3 +217,46 @@
     }
   }
 }
+
+.order-cart {
+  @include flex(space-between, center);
+  width: 100%;
+
+  background-color: var(--color-surface);
+  border-radius: 5px;
+  padding: 22px 10px;
+  cursor: pointer;
+
+  .left-side {
+    @include flex(flex-start, center);
+    @include f-direction(row);
+
+    gap: 15px;
+
+    .material-symbols-rounded {
+      font-size: 32px;
+      color: var(--color-ui-bg);
+    }
+
+    .order-details {
+      @include flex(flex-start, flex-start);
+      @include f-direction(column);
+
+      gap: 5px;
+
+      .order-id {
+        @include p-montserrat-10-125-medium;
+        color: var(--color-text-secondary);
+      }
+
+      .order-content {
+        @include p-montserrat-12-125-medium;
+        color: var(--color-text-primary);
+        white-space: nowrap; // Запрещаем перенос текста
+        overflow: hidden; // Обрезаем текст, который не помещается
+        text-overflow: ellipsis; // Добавляем троеточие для переполненного текста
+        max-width: 280px;
+      }
+    }
+  }
+}

@@ -57,6 +57,11 @@ button {
     height: 20px;
   }
 
+  &.bg-secondary {
+    color: var(--color-buttons-text-white);
+    background: var(--color-buttons-secondary-fill);
+  }
+
   &:disabled {
     background: var(--color-buttons-secondary-fill);
   }

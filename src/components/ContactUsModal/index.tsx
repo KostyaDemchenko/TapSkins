@@ -10,25 +10,29 @@ import "./style.scss";
 
 interface ContactUsModalProps {
   triggerId: string;
+  fade?: boolean;
+  subModal?: boolean;
+  height?: string;
 }
 
-const ContactUsModal: React.FC<ContactUsModalProps> = ({ triggerId }) => {
+const ContactUsModal: React.FC<ContactUsModalProps> = ({
+  triggerId,
+  fade = true,
+  subModal = false,
+  height = "60dvh",
+}) => {
   return (
     <Modal
       modalTitle='Contact us'
-      height='60dvh'
+      height={height}
+      fade={fade}
+      subModal={subModal}
       triggerId={triggerId}
       className='contact-us-modal'
       closeElement={
         <a className='btn-primary-50' href='https://t.me/dmitro_fewd'>
           Write a Message
         </a>
-        // <Button
-        //   label={`Confirm`}
-        //   className='btn-primary-50'
-        //   icon=''
-        //   onClick={() => {}}
-        // />
       }
     >
       <Image src={imgObj.contactUs} width={160} height={160} alt='Contact us' />

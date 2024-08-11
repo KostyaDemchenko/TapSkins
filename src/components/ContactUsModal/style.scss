@@ -9,7 +9,7 @@
       gap: 35px;
 
       .desctription-box {
-        @include flex(flex-start, center);
+        @include flex(center, center);
         @include f-direction(column);
 
         max-width: 300px;
@@ -17,9 +17,11 @@
         gap: 15px;
 
         .title {
+          @include flex(center, center);
           @include h3-montserrat-24-125-bold;
           color: var(--color-text-primary);
           text-align: center;
+          padding: 0;
         }
 
         .description {

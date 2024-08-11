@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Script from "next/script";
 import Head from "next/head";
 
@@ -6,18 +6,18 @@ import Nav from "@/src/components/Nav";
 import { User, OrderHistiryData } from "@/src/utils/types";
 import ContactUsModal from "@/src/components/ContactUsModal";
 import HistoryorderList from "@/src/components/HistoryOrderList";
+import Skeleton from "@mui/material/Skeleton";
 
 import "@/src/app/globals.scss";
 import "./style.scss";
 
 export default function rewards_page() {
-  const [tg, setTg] = React.useState<WebApp | null>();
-  const [user, setUser] = React.useState<User | null>(null);
-  const [orderHistory, setOrderHistory] = React.useState<OrderHistiryData[]>(
-    []
-  ); // начальное значение - пустой массив
+  const [tg, setTg] = useState<WebApp | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [orderHistory, setOrderHistory] = useState<OrderHistiryData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!tg) return;
 
     tg.expand();
@@ -33,10 +33,24 @@ export default function rewards_page() {
       if (response) {
         setUser(userClass);
 
-        // Выполняем запрос к API после аутентификации
-        const orderHistoryResponse = await fetch("/api/order_history");
-        const orderHistoryData = await orderHistoryResponse.json();
-        setOrderHistory(orderHistoryData); // сохраняем данные в состояние
+        try {
+          const orderHistoryResponse = await fetch(
+            `/api/order_history?user_id=${userClass.user_id}` // Передаем user_id как параметр
+          );
+          const data = await orderHistoryResponse.json();
+          if (Array.isArray(data.ordersHistoryDataStructured)) {
+            setOrderHistory(data.ordersHistoryDataStructured);
+          } else {
+            console.error(
+              "Received data is not an array:",
+              data.ordersHistoryDataStructured
+            );
+          }
+        } catch (error) {
+          console.error("Error fetching order history:", error);
+        } finally {
+          setLoading(false);
+        }
       }
     })();
   }, [tg]);
@@ -71,9 +85,29 @@ export default function rewards_page() {
         <a className='title' href='/cart_page'>
           <span className='material-symbols-outlined'>chevron_backward</span>
           <h1 className='page-title'>History</h1>
-          <HistoryorderList info={orderHistory} />{" "}
-          {/* передаем данные как пропс */}
         </a>
+
+        {loading ? (
+          <div className='history-order-list'>
+            <div className='container'>
+              {Array.from(new Array(5)).map((_, index) => (
+                <Skeleton
+                  key={index}
+                  variant='rectangular'
+                  height={84}
+                  animation='wave'
+                  sx={{
+                    bgcolor: "var(--color-surface)",
+                    marginBottom: "5px",
+                    width: "100%",
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        ) : (
+          user && <HistoryorderList info={orderHistory} />
+        )}
       </main>
       <ContactUsModal triggerId='contactUsModal' />
       <Nav />
