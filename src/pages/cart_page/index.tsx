@@ -164,7 +164,7 @@ export default function CartPage() {
               ))}
             </>
           )}
-          {cartItems !== null && cartItems.length === 0 && (
+          {cartItems === null && (
             <div className='empty-cart'>
               <p>No items in the cart!</p>
               <a className='btn-secondary-35' href='/skin_store_page'>
