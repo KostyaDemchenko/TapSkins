@@ -39,6 +39,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   const [exchangeStatus, setExchangeStatus] =
     React.useState<SuccessDisplay | null>();
   const toastElement = React.useRef<Id>();
+  const [tiltStyle, setTiltStyle] = React.useState<{ transform: string }>({ transform: 'none' });
 
   const increaseStamina = () => {
     staminaIntervals.current.intervalId = setInterval(() => {
@@ -119,16 +120,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     }
   }, []);
 
-  const triggerVibration = (pattern: number[]) => {
-    if (navigator.vibrate) {
-      navigator.vibrate(75);
-    }
-    else {
-      // HapticFeedback.trigger("impactLight");
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_ADDRESS}/log?text='Vibration not supported'`)
-    }
-  };
-
   const triggerHapticFeedback = async () => {
     try {
       await Haptics.impact({ style: ImpactStyle.Heavy });
@@ -136,29 +127,50 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
       console.error('Haptic feedback is not available', err);
     }
   };
-  
 
-  const clickerButtonHandler = () => {
+
+  const clickerButtonHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    console.log("down...")
     if (exchangeStatus?.loading) return;
     if (!user) return;
-  
+
     if (staminaIntervals.current.timeOutId)
       clearTimeout(staminaIntervals.current.timeOutId);
     if (staminaIntervals.current.intervalId)
       clearInterval(staminaIntervals.current.intervalId);
-  
+
     if (user && wss) {
       user.dereaseStamina();
       user.increaseBalance();
       setUserStamina(user.stamina);
     }
-  
+
     staminaIntervals.current.timeOutId = setTimeout(increaseStamina, 300);
-  
-    // Вызов тактильного отклика при нажатии на кнопку
+
+    // Получаем координаты клика и вычисляем угол наклона
+    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const clickX = e.clientX;
+    const clickY = e.clientY;
+
+    // Calculate the angle in degrees for X and Y rotation
+    const deltaX = clickX - centerX;
+    const deltaY = clickY - centerY;
+    const angleX = (deltaY / rect.height) * 30; // Control the intensity of the tilt
+    const angleY = -(deltaX / rect.width) * 30; // Control the intensity of the tilt
+
+    // Apply 3D rotation
+    setTiltStyle({ transform: `rotateX(${angleX}deg) rotateY(${angleY}deg)` });
+
     triggerHapticFeedback();
   };
-  
+
+  const mouseUpHandler = () => {
+    console.log("up...")
+    setTiltStyle({ transform: `rotateX(${0}deg) rotateY(${0}deg)` });
+  }
+
   return (
     <>
       <div style={{ position: "absolute" }}>
@@ -219,9 +231,9 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
             )}
           </h3>
         </div>
-        <div className='clicker-button-container'>
+        <div className='clicker-button-container' style={tiltStyle} onMouseUp={mouseUpHandler} onMouseDown={clickerButtonHandler}>
           <div className='clicker-button-border'></div>
-          <div className='clicker-button' onClick={clickerButtonHandler}>
+          <div className='clicker-button'>
             {user ? (
               <Image
                 src={imgObj.bomb}

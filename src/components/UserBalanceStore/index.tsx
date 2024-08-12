@@ -8,6 +8,7 @@ import { SuccessDisplay, User } from "@/src/utils/types";
 import Modal from "../Modal";
 
 import "./style.scss";
+import { Skeleton } from "@mui/material";
 
 interface userBalanceStoreProps {
   user?: User;
@@ -48,7 +49,13 @@ const userBalanceStore: React.FC<userBalanceStoreProps> = ({ user }) => {
         <p className='title'>Balance</p>
         <div className='amount'>
           <p className='balance'>
-            {user ? user.getBalancePurple().toLocaleString("RU-ru") : 0}
+            {user ? user.getBalancePurple().toLocaleString("RU-ru") : <Skeleton
+              variant='rounded'
+              width={24}
+              height={24}
+              animation='wave'
+              sx={{ bgcolor: "var(--color-surface)" }}
+            />}
           </p>
           <Image src={iconObj.purpleCoin} alt='Purple Coin' />
         </div>

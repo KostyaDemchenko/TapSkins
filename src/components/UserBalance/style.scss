@@ -49,7 +49,7 @@
     user-select: none;
 
     &:active {
-      scale: 0.95;
+      scale: 0.98;
     }
 
     .clicker-button {
@@ -64,6 +64,7 @@
       margin-bottom: 50px;
 
       cursor: pointer;
+      transition: transform 0.2s ease;
       transform-origin: center;
 
       background-color: var(--color-background);
@@ -77,6 +78,7 @@
       right: -1px;
       bottom: -1px;
       border-radius: 100%;
+      transform: 0.1s;
       background: var(--main-grad);
       box-shadow: 0 0 40px -27px var(--color-system-yellow);
     }
