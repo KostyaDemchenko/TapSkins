@@ -145,24 +145,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     }
 
     staminaIntervals.current.timeOutId = setTimeout(increaseStamina, 300);
-
-    // const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-    // const centerX = rect.left + rect.width / 2;
-    // const centerY = rect.top + rect.height / 2;
-    // const clickX = e.clientX;
-    // const clickY = e.clientY;
-
-    
-    // const deltaX = clickX - centerX;
-    // const deltaY = clickY - centerY;
-    // const angleX = (deltaY / rect.height) * 40; 
-    // const angleY = -(deltaX / rect.width) * 40; 
-
-    
-    // setTiltStyle({ transform: `rotateX(${angleX}deg) rotateY(${angleY}deg)` });
-
-    // setTiltStyle({ transform: `rotateX(${0}deg) rotateY(${0}deg)` });
-
     triggerHapticFeedback();
   };
 
