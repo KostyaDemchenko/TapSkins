@@ -322,6 +322,12 @@ export class User {
     const data = await response.json();
     return data;
   }
+
+  async getRewardsForCompletedTasks() {
+    fetch(`${this.backendAddress}/tasks/completed?${this.initData}`).then(d => d.json()).then(d => {
+      console.log(d);
+    });
+  }
 }
 
 export type Skin = {

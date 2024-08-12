@@ -45,6 +45,7 @@ export default function Home() {
       // пока не будет это выполнено, никаких нахуй дальше действий
       if (response.success) {
         userClass.receivedBonus = response.bonus ? response.bonus : null;
+        userClass.getRewardsForCompletedTasks();
         setUser(userClass);
       }
     })();
