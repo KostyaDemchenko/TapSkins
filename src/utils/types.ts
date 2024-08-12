@@ -166,7 +166,9 @@ export class User {
   }
 
   increaseBalance() {
-    this.balance_common += this.balance_icnrease_amnt;
+    if (this.stamina - this.staminaDecrease >= 0) {
+      this.balance_common += this.balance_icnrease_amnt;
+    }
   }
 
   addPassiveStamina() {
