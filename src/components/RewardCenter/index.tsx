@@ -56,7 +56,16 @@ const RewardCenter: React.FC<{ user: User }> = ({ user }) => {
               className='btn-primary-50'
               label='Send Invite'
               icon=''
-              onClick={() => { }}
+              onClick={async () => {
+                const response = await user.assemblyReferalLink();
+                
+                if (response.success) {
+                  const referalLink = response.message;
+                }
+                else {
+                  // вывести тоастер, в который передать response.message ( там будет сообщение про ошибку )
+                }
+              }}
             />
             {user && <ReferralsList setSuccessClaimedReferal={setSuccessClaimedReferal} user={user} />}
           </div>

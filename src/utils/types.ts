@@ -326,9 +326,38 @@ export class User {
   }
 
   async getRewardsForCompletedTasks() {
-    fetch(`${this.backendAddress}/tasks/completed?${this.initData}`).then(d => d.json()).then(d => {
-      console.log(d);
-    });
+    fetch(`${this.backendAddress}/tasks/completed?${this.initData}`)
+      .then((d) => d.json())
+      .then((d) => {
+        console.log(d);
+      });
+  }
+
+  async assemblyReferalLink():Promise<SuccessDisplay> {
+    const response = await fetch(
+      `${this.backendAddress}/referal-link?${this.initData}`
+    );
+    
+    if (!response.ok) {
+      console.error("Error with referal link!", response);
+      try {
+        console.error(await response.json());
+      }
+      catch(e){
+        console.log(e);
+      }
+      return {
+        success: false,
+        message: "Some error occured!",
+      }
+    }
+
+    const referalLink = await response.text()
+
+    return {
+      success: true,
+      message: referalLink,
+    };
   }
 }
 
