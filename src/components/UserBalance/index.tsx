@@ -10,6 +10,7 @@ import imgObj from "@/public/img/utils";
 import { Id, ToastContainer, ToastOptions, toast } from "react-toastify";
 import { SuccessDisplay, User } from "@/src/utils/types";
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import Skeleton from "@mui/material/Skeleton"; // Импортируем компонент Skeleton
 
 import "./style.scss";
 import "react-toastify/dist/ReactToastify.css";
