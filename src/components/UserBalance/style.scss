@@ -45,12 +45,14 @@
     max-width: 279px;
     height: 279px;
     width: 100%;
-    transition: 0.3s;
+    transition: transform .1s linear;
+    transform-origin: center;
+    transform-style: preserve-3d;
     user-select: none;
 
-    &:active {
-      scale: 0.98;
-    }
+    // &:active {
+    //   scale: 0.98;
+    // }
 
     .clicker-button {
       @include flex(center, center);
@@ -64,8 +66,8 @@
       margin-bottom: 50px;
 
       cursor: pointer;
-      transition: transform 0.2s ease;
-      transform-origin: center;
+      // transition: transform 0.2s ease;
+      // transform-origin: center;
 
       background-color: var(--color-background);
       -webkit-tap-highlight-color: transparent;
@@ -78,7 +80,7 @@
       right: -1px;
       bottom: -1px;
       border-radius: 100%;
-      transform: 0.1s;
+      // transform: 0.1s;
       background: var(--main-grad);
       box-shadow: 0 0 40px -27px var(--color-system-yellow);
     }

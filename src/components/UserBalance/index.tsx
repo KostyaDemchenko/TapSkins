@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
 
 import ExchangeCurrency from "@/src/components/ExchangeCurrency";
@@ -130,7 +130,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
 
 
   const clickerButtonHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    console.log("down...")
     if (exchangeStatus?.loading) return;
     if (!user) return;
 
@@ -147,28 +146,48 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
 
     staminaIntervals.current.timeOutId = setTimeout(increaseStamina, 300);
 
-    // Получаем координаты клика и вычисляем угол наклона
-    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const clickX = e.clientX;
-    const clickY = e.clientY;
+    // const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+    // const centerX = rect.left + rect.width / 2;
+    // const centerY = rect.top + rect.height / 2;
+    // const clickX = e.clientX;
+    // const clickY = e.clientY;
 
-    // Calculate the angle in degrees for X and Y rotation
-    const deltaX = clickX - centerX;
-    const deltaY = clickY - centerY;
-    const angleX = (deltaY / rect.height) * 30; // Control the intensity of the tilt
-    const angleY = -(deltaX / rect.width) * 30; // Control the intensity of the tilt
+    
+    // const deltaX = clickX - centerX;
+    // const deltaY = clickY - centerY;
+    // const angleX = (deltaY / rect.height) * 40; 
+    // const angleY = -(deltaX / rect.width) * 40; 
 
-    // Apply 3D rotation
-    setTiltStyle({ transform: `rotateX(${angleX}deg) rotateY(${angleY}deg)` });
+    
+    // setTiltStyle({ transform: `rotateX(${angleX}deg) rotateY(${angleY}deg)` });
+
+    // setTiltStyle({ transform: `rotateX(${0}deg) rotateY(${0}deg)` });
 
     triggerHapticFeedback();
   };
 
-  const mouseUpHandler = () => {
-    console.log("up...")
+  const touchEnd = () => {
+    console.log("up...");
     setTiltStyle({ transform: `rotateX(${0}deg) rotateY(${0}deg)` });
+  };
+
+  const touchStart = (e: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) => {
+    const event = e as React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>;
+    const isTouch = event.type === 'touchstart';
+
+    const clientX = isTouch ? (event as React.TouchEvent<HTMLDivElement>).touches[0].clientX : (event as React.MouseEvent<HTMLDivElement, MouseEvent>).clientX;
+    const clientY = isTouch ? (event as React.TouchEvent<HTMLDivElement>).touches[0].clientY : (event as React.MouseEvent<HTMLDivElement, MouseEvent>).clientY;
+
+    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    const deltaX = clientX - centerX;
+    const deltaY = clientY - centerY;
+    const angleX = (deltaY / rect.height) * 30; // Control the intensity of the tilt
+    const angleY = -(deltaX / rect.width) * 30; // Control the intensity of the tilt
+
+    setTiltStyle({ transform: `rotateX(${angleX}deg) rotateY(${angleY}deg)` });
   }
 
   return (
@@ -231,7 +250,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
             )}
           </h3>
         </div>
-        <div className='clicker-button-container' style={tiltStyle} onMouseUp={mouseUpHandler} onMouseDown={clickerButtonHandler}>
+        <div className='clicker-button-container' onTouchStart={touchStart} onTouchEnd={touchEnd} style={tiltStyle} onClick={clickerButtonHandler}>
           <div className='clicker-button-border'></div>
           <div className='clicker-button'>
             {user ? (
