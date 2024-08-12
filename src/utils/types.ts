@@ -500,3 +500,18 @@ export type SuccessDisplay = {
   loading?: boolean;
   details?: string;
 };
+
+export type OrderHistiryData = {
+  skin_name: string;
+  image_src: string;
+  user_trade_link: string;
+  item_id: number;
+  user_id: number;
+  order_id: number;
+  price: number;
+  float: number;
+  rarity: string;
+  status: string;
+  startrack: string;
+  [key: string]: any;
+};

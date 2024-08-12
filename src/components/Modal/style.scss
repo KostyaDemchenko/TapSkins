@@ -87,7 +87,7 @@ body.no-scroll {
 
         position: relative;
 
-        width: fit-content;
+        width: 100%;
         gap: 10px;
 
         .modal-title {
@@ -95,19 +95,27 @@ body.no-scroll {
           color: var(--color-text-primary);
         }
 
-        .back-btn {
+        .back-btn,
+        .close-btn {
           width: 24px;
           height: 24px;
 
           position: absolute;
-          left: -30px;
+          left: 0px;
           top: 50%;
           transform: translateY(-50%);
+
+          cursor: pointer;
 
           .icon {
             font-size: 24px;
             color: var(--color-text-primary);
           }
+        }
+
+        .close-btn {
+          left: auto;
+          right: 0px;
         }
       }
 

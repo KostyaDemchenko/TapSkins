@@ -114,6 +114,9 @@ const Modal: React.FC<ModalProps> = ({
               </div>
             )}
             <h2 className='modal-title'>{modalTitle}</h2>
+            <div className='close-btn' onClick={hide}>
+              <span className='material-symbols-outlined icon'>close</span>
+            </div>
           </div>
           <div className='content'>{children}</div>
           <div className='modal-close' onClick={hide}>

@@ -18,7 +18,6 @@ import { SkinOrderCard, HistoryOrderCard } from "@/src/components/Carts";
 
 import "@/src/app/globals.scss";
 import "./style.scss";
-import { boolean } from "zod";
 
 const toastSettings: ToastOptions = {
   position: "top-right",
@@ -45,10 +44,13 @@ export default function CartPage() {
   const toastId = useRef<Id | null>(null);
 
   const deleteHandle = async (el: Skin) => {
-    if (!user) return;
+    if (!user || !userCart.current) return;
     setIsDeleting(true);
     toastId.current = toast.loading("Trying to delete...", toastSettings);
-    const status = await userCart.current!.deleteFromCart(el, user.getInitData());
+    const status = await userCart.current.deleteFromCart(
+      el,
+      user.getInitData()
+    );
 
     if (status.success) {
       setCartItems(cartItems!.filter((item) => item.item_id !== el.item_id));
@@ -58,7 +60,7 @@ export default function CartPage() {
       render: status.message,
       type: status.success ? "success" : "error",
       isLoading: false,
-      autoClose: 3000
+      autoClose: 3000,
     });
 
     setIsDeleting(false);
@@ -79,7 +81,8 @@ export default function CartPage() {
 
       if (response) {
         userCart.current = new Cart();
-        setCartItems(await userCart.current!.getItems(tg.initData));
+        const items = await userCart.current.getItems(tg.initData);
+        setCartItems(items);
         setUser(userClass);
       }
     })();
@@ -105,10 +108,6 @@ export default function CartPage() {
       closeOnClick: true,
     });
   }, [opportunityToBuy]);
-
-  useEffect(() => {
-    console.log(cartItems);
-  }, [cartItems]);
 
   return (
     <>
@@ -142,69 +141,75 @@ export default function CartPage() {
       <main>
         <div className='container'>
           <div className='top-box'>
-            <h3 className='items-amnt'>Items ({cartItems ? cartItems.length : 0})</h3>
+            <h3 className='items-amnt'>
+              Items ({cartItems ? cartItems.length : 0})
+            </h3>
             <a className='btn-secondary-35' href='/order_history'>
               History
             </a>
           </div>
-          {userCart.current && cartItems && (
+          {cartItems === null && userCart.current && (
             <>
-              {!cartItems.length && (
-                <div className='empty-cart'>
-                  <p>No items in the cart!</p>
-                  <a className='btn-secondary-35' href='/skin_store_page'>
-                    <span className='material-symbols-outlined'>
-                      shopping_cart
-                    </span>{" "}
-                    To store
-                  </a>
-                </div>
-              )}
-              {!!cartItems.length && user && (
-                <>
-                  {cartItems.map((el) => {
-                    return (
-                      <SkinOrderCard
-                        key={el.item_id}
-                        deleteHandle={() => {
-                          deleteHandle(el);
-                        }}
-                        skin={el}
-                      />
-                    );
-                  })}
-                  <div className='total-price-box'>
-                    <p>Total</p>
-                    <h4>
-                      {userCart.current.getTotalPrice().toLocaleString("RU-ru")}{" "}
-                      <Image
-                        src={iconObj.purpleCoin}
-                        width={12}
-                        height={12}
-                        alt='Purple coin'
-                      />
-                    </h4>
-                  </div>
-                  <Button
-                    label='Buy'
-                    className='btn-primary-25 purchase-buying'
-                    icon=''
-                    disabled={(() => {
-                      if (isDeleting) return true
-                      if (!user) return false;
-                      return (
-                        user.getBalancePurple() <
-                        userCart.current.getTotalPrice()
-                      );
-                    })()}
-                    id='tradeLinkValidation'
-                    onClick={function (e) { }}
+              {Array.from(new Array(3)).map((_, index) => (
+                <Skeleton
+                  key={index}
+                  variant='rounded'
+                  height={120}
+                  animation='wave'
+                  sx={{
+                    bgcolor: "var(--color-surface)",
+                    width: "100%",
+                  }}
+                />
+              ))}
+            </>
+          )}
+          {cartItems === null && (
+            <div className='empty-cart'>
+              <p>No items in the cart!</p>
+              <a className='btn-secondary-35' href='/skin_store_page'>
+                <span className='material-symbols-outlined'>shopping_cart</span>{" "}
+                To store
+              </a>
+            </div>
+          )}
+          {cartItems !== null && cartItems.length > 0 && userCart.current && (
+            <>
+              {cartItems.map((el) => (
+                <SkinOrderCard
+                  key={el.item_id}
+                  deleteHandle={() => deleteHandle(el)}
+                  skin={el}
+                />
+              ))}
+              <div className='total-price-box'>
+                <p>Total</p>
+                <h4>
+                  {userCart.current.getTotalPrice().toLocaleString("RU-ru")}{" "}
+                  <Image
+                    src={iconObj.purpleCoin}
+                    width={12}
+                    height={12}
+                    alt='Purple coin'
                   />
-                </>
-              )}
-
+                </h4>
+              </div>
+              <Button
+                label='Buy'
+                className='btn-primary-25 purchase-buying'
+                icon=''
+                disabled={(() => {
+                  if (isDeleting) return true;
+                  if (!user) return false;
+                  return (
+                    user.getBalancePurple() < userCart.current.getTotalPrice()
+                  );
+                })()}
+                id='tradeLinkValidation'
+                onClick={() => {}}
+              />
               <ValidationModal
-                onClickHandle={async (e) => {
+                onClickHandle={async () => {
                   if (
                     !user ||
                     !userCart.current ||
@@ -219,8 +224,8 @@ export default function CartPage() {
                   });
                   const data = {
                     success: true,
-                    message: "Ok!"
-                  }
+                    message: "Ok!",
+                  };
                   // const data = await user!.buySkins(
                   //   await userCart.current.getItems(user.getInitData())
                   // );
@@ -234,20 +239,6 @@ export default function CartPage() {
               />
             </>
           )}
-          {!cartItems && userCart.current && <>
-            {Array.from(new Array(3)).map((_, index) => (
-              <Skeleton
-                key={index}
-                variant='rounded'
-                height={120}
-                animation="wave"
-                sx={{
-                  bgcolor: "var(--color-surface)",
-                  width: "100%",
-                }}
-              />
-            ))}
-          </>}
         </div>
       </main>
       <Nav />

@@ -29,7 +29,6 @@ const toastifyOptions: ToastOptions = {
 };
 
 const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
-  // const staminaDelay = user.staminaDelay; // период добавления стамины
   const staminaDelay = user ? user.staminaDelay : 1000;
   const [userStamina, setUserStamina] = React.useState<number>(0);
   const staminaIntervals = React.useRef<{ timeOutId: any; intervalId: any }>({
@@ -169,41 +168,77 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
           <p>Balance</p>
           <h1>
             {user ? (
-              <>{user.getBalanceCommon().toLocaleString("ru-RU")}</>
+              <>
+                {user.getBalanceCommon().toLocaleString("ru-RU")}
+                <Image
+                  src={iconObj.yellowCoin}
+                  width={16}
+                  height={16}
+                  alt='Yellow coin'
+                />
+              </>
             ) : (
-              <>{(0).toLocaleString("ru-RU")}</>
+              <Skeleton
+                variant='rectangular'
+                height={25}
+                width={250}
+                animation='wave'
+                sx={{
+                  bgcolor: "var(--color-surface)",
+                  marginBottom: "5px",
+                  width: "100%",
+                }}
+              />
             )}
-            <Image
-              src={iconObj.yellowCoin}
-              width={16}
-              height={16}
-              alt='Purple coin'
-            />
           </h1>
           <ExchangeCurrency setExchangeStatus={setExchangeStatus} User={user} />
           <h3>
             {user ? (
-              <>{user.getBalancePurple().toLocaleString("ru-RU")}</>
+              <>
+                {user.getBalancePurple().toLocaleString("ru-RU")}
+                <Image
+                  src={iconObj.purpleCoin}
+                  width={16}
+                  height={16}
+                  alt='Purple coin'
+                />
+              </>
             ) : (
-              <>{(0).toLocaleString("ru-RU")}</>
+              <Skeleton
+                variant='rectangular'
+                height={25}
+                width={150}
+                animation='wave'
+                sx={{
+                  bgcolor: "var(--color-surface)",
+                  marginBottom: "5px",
+                  width: "100%",
+                }}
+              />
             )}
-            <Image
-              src={iconObj.purpleCoin}
-              width={16}
-              height={16}
-              alt='Purple coin'
-            />
           </h3>
         </div>
         <div className='clicker-button-container'>
           <div className='clicker-button-border'></div>
           <div className='clicker-button' onClick={clickerButtonHandler}>
-            <Image
-              src={imgObj.bomb}
-              width={279}
-              height={279}
-              alt='bomb button'
-            />
+            {user ? (
+              <Image
+                src={imgObj.bomb}
+                width={279}
+                height={279}
+                alt='bomb button'
+              />
+            ) : (
+              <Skeleton
+                variant='circular'
+                width={279}
+                height={279}
+                animation='wave'
+                sx={{
+                  bgcolor: "var(--color-surface)",
+                }}
+              />
+            )}
           </div>
         </div>
         <div className='stamina-info'>
@@ -223,10 +258,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
             </>
           ) : (
             <>
-              <p>
-                <span>Limit</span> <span>1000/1000</span>
-              </p>
-              <ProgressBar titleVisible={false} total={1000} completed={1000} />
+              <Skeleton width={100} height={20} />{" "}
             </>
           )}
         </div>
