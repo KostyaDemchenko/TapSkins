@@ -15,34 +15,36 @@ const tokenSchema = z.string().regex(/^\w{8,}$/, {
   message: "Token should be alphanumeric with at least 8 characters.",
 });
 
-const urlSchema = z.string().refine(
-  (url) => {
-    const urlPattern =
-      /^https:\/\/steamcommunity\.com\/tradeoffer\/new\/\?partner=(\d+)&token=(\w+)$/;
-    const match = url.match(urlPattern);
+const urlSchema = z
+  .string()
+  .max(100, { message: "URL should be at most 100 characters long." }) // Ограничение на длину URL
+  .refine(
+    (url) => {
+      const urlPattern =
+        /^https:\/\/steamcommunity\.com\/tradeoffer\/new\/\?partner=(\d+)&token=(\w+)$/;
+      const match = url.match(urlPattern);
 
-    if (!match) return false;
+      if (!match) return false;
 
-    const [, partner, token] = match;
+      const [, partner, token] = match;
 
-    try {
-      partnerSchema.parse(partner);
-      tokenSchema.parse(token);
-      return true;
-    } catch (e) {
-      throw e;
+      try {
+        partnerSchema.parse(partner);
+        tokenSchema.parse(token);
+        return true;
+      } catch (e) {
+        throw e;
+      }
+    },
+    {
+      message: "Invalid URL format. Please check the partner ID and token.",
     }
-  },
-  {
-    message: "Invalid URL format. Please check the partner ID and token.",
-  }
-);
+  );
 
-// ValidationModal component
 const ValidationModal: React.FC<{
   triggerId: string;
-  onClickHandle: (e: string) => void;
-}> = ({ triggerId, onClickHandle }) => {
+  onConfirm: () => void; // Теперь это просто функция подтверждения
+}> = ({ triggerId, onConfirm }) => {
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -58,6 +60,7 @@ const ValidationModal: React.FC<{
     try {
       urlSchema.parse(value);
       setError(null);
+      localStorage.setItem("tradeLink", value); // Сохраняем в localStorage
     } catch (e: any) {
       const detailedError = e.errors
         ? e.errors.map((err: any) => err.message).join(" ")
@@ -78,7 +81,7 @@ const ValidationModal: React.FC<{
           className='btn-primary-50'
           icon=''
           disabled={!!error || inputValue === ""}
-          onClick={() => onClickHandle(inputValue)}
+          onClick={onConfirm} // Просто вызываем подтверждение
         />
       }
     >

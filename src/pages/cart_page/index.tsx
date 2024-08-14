@@ -14,7 +14,7 @@ import { Id, ToastContainer, ToastOptions, toast } from "react-toastify";
 import iconObj from "@/public/icons/utils";
 
 import { Skin, Cart } from "@/src/utils/types";
-import { SkinOrderCard, HistoryOrderCard } from "@/src/components/Carts";
+import { SkinOrderCard } from "@/src/components/Carts";
 
 import "@/src/app/globals.scss";
 import "./style.scss";
@@ -39,6 +39,8 @@ export default function CartPage() {
     success: false,
     message: "",
   });
+  const [tradeLink, setTradeLink] = useState<string>("");
+  const [orderId, setOrderId] = useState<number | null>(null); // Добавлено состояние для orderId
 
   const userCart = useRef<null | Cart>(null);
   const toastId = useRef<Id | null>(null);
@@ -64,6 +66,71 @@ export default function CartPage() {
     });
 
     setIsDeleting(false);
+  };
+
+  const handleOrderSubmission = async () => {
+    if (
+      !user ||
+      !userCart.current ||
+      opportunityToBuy.loading ||
+      opportunityToBuy.success
+    )
+      return;
+    setOpportunityToBuy({
+      loading: true,
+      message: "Submitting order...",
+      success: false,
+    });
+
+    try {
+      const orderId = Date.now(); // Создаем единый order_id для всех элементов
+      const orderData = cartItems!.map((item) => ({
+        skin_name: item.skin_name,
+        image_src: item.image_src,
+        item_id: item.item_id,
+        user_id: user.user_id,
+        order_id: orderId, // Используем единый order_id
+        price: item.price,
+        float: item.float,
+        rarity: item.rarity,
+        status: "In Progress",
+        startrack: item.startrack,
+        user_trade_link: tradeLink, // Добавляем trade link
+      }));
+
+      // Отправляем каждый элемент из orderData
+      const promises = orderData.map(async (data) => {
+        const response = await fetch("/api/order_history/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to submit order");
+        }
+        return await response.json();
+      });
+
+      await Promise.all(promises);
+
+      userCart.current.clearCart();
+      setCartItems([]);
+      setOpportunityToBuy({
+        loading: false,
+        message: "Order submitted successfully!",
+        success: true,
+      });
+    } catch (error) {
+      console.error("Error submitting order:", error);
+      setOpportunityToBuy({
+        loading: false,
+        message: "Failed to submit order.",
+        success: false,
+      });
+    }
   };
 
   useEffect(() => {
@@ -206,34 +273,13 @@ export default function CartPage() {
                   );
                 })()}
                 id='tradeLinkValidation'
-                onClick={() => {}}
+                onClick={() => {
+                  // Открываем модальное окно, без отправки заказа
+                }}
               />
               <ValidationModal
-                onClickHandle={async () => {
-                  if (
-                    !user ||
-                    !userCart.current ||
-                    opportunityToBuy.loading ||
-                    opportunityToBuy.success
-                  )
-                    return;
-                  setOpportunityToBuy({
-                    loading: true,
-                    message: "Checking skins for availability...",
-                    success: false,
-                  });
-                  const data = {
-                    success: true,
-                    message: "Ok!",
-                  };
-                  // const data = await user!.buySkins(
-                  //   await userCart.current.getItems(user.getInitData())
-                  // );
-                  if (data.success) {
-                    userCart.current.clearCart();
-                    setCartItems([]);
-                  }
-                  setOpportunityToBuy(data);
+                onConfirm={() => {
+                  handleOrderSubmission();
                 }}
                 triggerId='tradeLinkValidation'
               />
