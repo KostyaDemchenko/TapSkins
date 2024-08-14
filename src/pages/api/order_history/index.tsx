@@ -2,11 +2,6 @@ import { Client } from "@notionhq/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { OrderHistiryDataStructured, RowOrderHistory } from "@/typing";
 
-// Глобальный объект для хранения последнего order_id и временной метки
-const userOrderState: {
-  [userId: number]: { orderId: number; timestamp: number };
-} = {};
-
 const notionSecret = process.env.NOTION_SECRET;
 const notionStoreDataBaseld = process.env.NOTION_ORDER_HISTORY_DATABASE_ID;
 const notion = new Client({ auth: notionSecret });
@@ -16,11 +11,6 @@ function extractMultiSelectNames(options: {
   multi_select: RowOrderHistory[];
 }): string {
   return options.multi_select.map((option) => option.name).join(", ");
-}
-
-// Функция для получения текущего времени в секундах
-function getCurrentTimestamp(): number {
-  return Math.floor(Date.now() / 1000);
 }
 
 // Обработка запроса
@@ -45,101 +35,46 @@ export default async function handler(
     return;
   }
 
-  const { user_id } = req.body as Partial<OrderHistiryDataStructured>;
+  const { user_id } = req.query; // Получаем user_id из запроса
 
   try {
-    const currentTimestamp = getCurrentTimestamp();
-
-    let order_id;
-
-    // Проверяем, есть ли предыдущий запрос от этого пользователя
-    if (
-      userOrderState[user_id!] &&
-      currentTimestamp - userOrderState[user_id!].timestamp < 20
-    ) {
-      // Если прошло меньше 20 секунд, используем старый order_id
-      order_id = userOrderState[user_id!].orderId;
-    } else {
-      // Иначе генерируем новый order_id
-      order_id = Date.now(); // Или другой способ генерации уникального order_id
-      userOrderState[user_id!] = {
-        orderId: order_id,
-        timestamp: currentTimestamp,
-      };
-    }
-
-    const {
-      skin_name,
-      image_src,
-      user_trade_link,
-      item_id,
-      price,
-      float,
-      rarity,
-      status,
-      startrack,
-    } = req.body as Partial<OrderHistiryDataStructured>;
-
-    const response = await notion.pages.create({
-      parent: { database_id: notionStoreDataBaseld },
-      properties: {
-        order_id: {
-          number: order_id,
-        },
-        timestamp: {
-          number: currentTimestamp,
-        },
-        skin_name: {
-          title: [
-            {
-              type: "text",
-              text: {
-                content: skin_name || "Default Name",
-              },
-            },
-          ],
-        },
-        image_src: {
-          url: image_src || "https://example.com/default-image.png",
-        },
-        user_trade_link: {
-          url: user_trade_link || "https://example.com/default-trade-link",
-        },
-        item_id: {
-          number: item_id || 0,
-        },
-        user_id: {
-          number: user_id || 0,
-        },
-        price: {
-          number: price || 0,
-        },
-        float: {
-          number: float || 0.0,
-        },
-        rarity: {
-          multi_select: rarity
-            ? rarity.split(",").map((r: string) => ({ name: r.trim() }))
-            : [],
-        },
-        status: {
-          multi_select: status
-            ? status.split(",").map((s: string) => ({ name: s.trim() }))
-            : [],
-        },
-        startrack: {
-          multi_select: startrack
-            ? startrack.split(",").map((st: string) => ({ name: st.trim() }))
-            : [],
+    const query = await notion.databases.query({
+      database_id: notionStoreDataBaseld,
+      filter: {
+        property: "user_id",
+        number: {
+          equals: parseInt(user_id as string), // Фильтруем по user_id
         },
       },
     });
 
-    res
-      .status(200)
-      .json({ message: "Order added successfully", data: response });
+    // @ts-ignore
+    const rows = query.results.map((res) => res.properties) as RowSkinStore[];
+    const ordersHistoryDataStructured: OrderHistiryDataStructured[] = rows.map(
+      (row) => ({
+        // for name
+        skin_name: row.skin_name.title?.[0]?.text?.content ?? "Default Name",
+
+        // for url
+        image_src: row.image_src?.url ?? "URL not available",
+        user_trade_link: row.user_trade_link?.url ?? "URL not available",
+
+        // for number
+        item_id: row.item_id.number || 0,
+        user_id: row.user_id.number || 0,
+        order_id: row.order_id.number || 0,
+        price: row.price.number || 0,
+        float: row.float.number || 0,
+
+        // for multi_select
+        rarity: extractMultiSelectNames(row.rarity),
+        status: extractMultiSelectNames(row.status),
+        startrack: extractMultiSelectNames(row.startrack),
+      })
+    );
+
+    res.status(200).json({ ordersHistoryDataStructured });
   } catch (error) {
-    console.error("Failed to create order in Notion:", error);
-    res.status(500).json({ error: "Failed to create order in Notion" });
+    res.status(500).json({ error: "Failed to fetch data from Notion" });
   }
 }

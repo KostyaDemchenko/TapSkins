@@ -76,6 +76,7 @@ export default function CartPage() {
       opportunityToBuy.success
     )
       return;
+
     setOpportunityToBuy({
       loading: true,
       message: "Submitting order...",
@@ -83,27 +84,46 @@ export default function CartPage() {
     });
 
     try {
-      const orderId = Date.now(); // Создаем единый order_id для всех элементов
+      // Получаем время последнего order_id из localStorage
+      const lastOrderId = localStorage.getItem("lastOrderId");
+      const lastOrderTimestamp = localStorage.getItem("lastOrderTimestamp");
+      const currentTimestamp = Date.now();
+
+      // Если времени нет или оно больше 10 секунд, создаем новый order_id
+      let orderId = currentTimestamp;
+      if (
+        lastOrderId &&
+        lastOrderTimestamp &&
+        currentTimestamp - parseInt(lastOrderTimestamp) < 10000
+      ) {
+        orderId = parseInt(lastOrderId);
+      } else {
+        // Обновляем orderId и timestamp в localStorage
+        localStorage.setItem("lastOrderId", orderId.toString());
+        localStorage.setItem("lastOrderTimestamp", currentTimestamp.toString());
+      }
+
       const orderData = cartItems!.map((item) => ({
         skin_name: item.skin_name,
         image_src: item.image_src,
         item_id: item.item_id,
         user_id: user.user_id,
-        order_id: orderId, // Используем единый order_id
+        order_id: orderId,
         price: item.price,
         float: item.float,
         rarity: item.rarity,
         status: "In Progress",
         startrack: item.startrack,
-        user_trade_link: tradeLink, // Добавляем trade link
+        user_trade_link: tradeLink,
       }));
 
-      // Отправляем каждый элемент из orderData
       const promises = orderData.map(async (data) => {
         const response = await fetch("/api/order_history/create", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "last-order-id": orderId.toString(),
+            "last-order-timestamp": currentTimestamp.toString(),
           },
           body: JSON.stringify(data),
         });

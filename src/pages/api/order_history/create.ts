@@ -1,4 +1,3 @@
-// /api/history_order/create.ts
 import { Client } from "@notionhq/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { OrderHistiryDataStructured } from "@/typing";
@@ -21,8 +20,24 @@ export default async function handler(
     return;
   }
 
-  // Генерация order_id на основе текущей даты и времени
-  const order_id = Date.now();
+  // Получаем последний order_id и время из localStorage (если они есть)
+  const lastOrderId = parseInt(req.headers["last-order-id"] as string);
+  const lastOrderTimestamp = parseInt(
+    req.headers["last-order-timestamp"] as string
+  );
+
+  // Генерируем новый order_id или используем старый, если прошло менее 10 секунд
+  const currentTimestamp = Date.now();
+  let order_id = currentTimestamp;
+
+  if (
+    lastOrderId &&
+    lastOrderTimestamp &&
+    currentTimestamp - lastOrderTimestamp < 10000
+  ) {
+    order_id = lastOrderId;
+  }
+
   const {
     skin_name,
     image_src,
@@ -36,8 +51,6 @@ export default async function handler(
     startrack,
   } = req.body as Partial<OrderHistiryDataStructured>;
 
-  console.log("Generated order_id:", order_id);
-
   try {
     const response = await notion.pages.create({
       parent: { database_id: notionStoreDataBaseld },
@@ -50,48 +63,46 @@ export default async function handler(
             {
               type: "text",
               text: {
-                content: skin_name || "Default Name", // Название скина
+                content: skin_name || "Default Name",
               },
             },
           ],
         },
         image_src: {
-          url: image_src || "https://example.com/default-image.png", // URL изображения
+          url: image_src || "https://example.com/default-image.png",
         },
         user_trade_link: {
-          url: user_trade_link || "https://example.com/default-trade-link", // Торговая ссылка
+          url: user_trade_link || "https://example.com/default-trade-link",
         },
         item_id: {
-          number: item_id || 0, // ID предмета
+          number: item_id || 0,
         },
         user_id: {
-          number: user_id || 0, // ID пользователя
+          number: user_id || 0,
         },
         price: {
-          number: price || 0, // Цена
+          number: price || 0,
         },
         float: {
-          number: float || 0.0, // Float value
+          number: float || 0.0,
         },
         rarity: {
           multi_select: rarity
             ? rarity.split(",").map((r: string) => ({ name: r.trim() }))
-            : [], // Редкость
+            : [],
         },
         status: {
           multi_select: status
             ? status.split(",").map((s: string) => ({ name: s.trim() }))
-            : [], // Статус
+            : [],
         },
         startrack: {
           multi_select: startrack
             ? startrack.split(",").map((st: string) => ({ name: st.trim() }))
-            : [], // StarTrack
+            : [],
         },
       },
     });
-
-    console.log("Notion response:", response);
 
     res
       .status(200)
