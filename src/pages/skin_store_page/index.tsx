@@ -58,25 +58,32 @@ export default function SkinStorePage() {
       if (response) {
         userBalance.current = userClass.getBalancePurple();
         try {
-          // const response = await fetch("/api/skin_store");
-          // const data = await response.json();
           const data = await userClass.getSkins();
           setSkins(data);
           setFilteredSkins(data);
 
           const prices = data.map((skin: Skin) => skin.price);
-          setMinPrice(Math.min(...prices));
-          setMaxPrice(Math.max(...prices));
+          console.log(prices); // Проверьте, что это массив
+          if (prices && prices.length > 0) {
+            setMinPrice(Math.min(...prices));
+            setMaxPrice(Math.max(...prices));
+          } else {
+            console.error("Prices array is not iterable or is empty:", prices);
+          }
 
           const floats = data.map((skin: Skin) => skin.float);
-          setMinFloat(Math.min(...floats));
-          setMaxFloat(Math.max(...floats));
+          console.log(floats); // Проверьте, что это массив
+          if (floats && floats.length > 0) {
+            setMinFloat(Math.min(...floats));
+            setMaxFloat(Math.max(...floats));
+          } else {
+            console.error("Floats array is not iterable or is empty:", floats);
+          }
 
           const uniqueWeaponTypes: string[] = Array.from(
-            new Set(
-              data.map((skin: Skin) => skin.weapon_type)
-            )
+            new Set(data.map((skin: Skin) => skin.weapon_type))
           );
+          console.log(uniqueWeaponTypes); // Проверьте, что это массив
           setWeaponTypes(uniqueWeaponTypes);
         } catch (error) {
           console.error("Error fetching the skin store data:", error);

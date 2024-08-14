@@ -4,12 +4,11 @@ import Image from "next/image";
 import ExchangeCurrency from "@/src/components/ExchangeCurrency";
 import ProgressBar from "@/src/components/ProgressBar";
 
-
 import iconObj from "@/public/icons/utils";
 import imgObj from "@/public/img/utils";
 import { Id, ToastContainer, ToastOptions, toast } from "react-toastify";
 import { SuccessDisplay, User } from "@/src/utils/types";
-import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import Skeleton from "@mui/material/Skeleton"; // Импортируем компонент Skeleton
 
 import "./style.scss";
@@ -39,7 +38,9 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   const [exchangeStatus, setExchangeStatus] =
     React.useState<SuccessDisplay | null>();
   const toastElement = React.useRef<Id>();
-  const [tiltStyle, setTiltStyle] = React.useState<{ transform: string }>({ transform: 'none' });
+  const [tiltStyle, setTiltStyle] = React.useState<{ transform: string }>({
+    transform: "none",
+  });
 
   const increaseStamina = () => {
     staminaIntervals.current.intervalId = setInterval(() => {
@@ -124,12 +125,13 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     try {
       await Haptics.impact({ style: ImpactStyle.Heavy });
     } catch (err) {
-      console.error('Haptic feedback is not available', err);
+      console.error("Haptic feedback is not available", err);
     }
   };
 
-
-  const clickerButtonHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const clickerButtonHandler = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
     if (exchangeStatus?.loading) return;
     if (!user) return;
 
@@ -153,12 +155,22 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     setTiltStyle({ transform: `rotateX(${0}deg) rotateY(${0}deg)` });
   };
 
-  const touchStart = (e: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) => {
-    const event = e as React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>;
-    const isTouch = event.type === 'touchstart';
+  const touchStart = (
+    e:
+      | React.MouseEvent<HTMLDivElement, MouseEvent>
+      | React.TouchEvent<HTMLDivElement>
+  ) => {
+    const event = e as
+      | React.MouseEvent<HTMLDivElement, MouseEvent>
+      | React.TouchEvent<HTMLDivElement>;
+    const isTouch = event.type === "touchstart";
 
-    const clientX = isTouch ? (event as React.TouchEvent<HTMLDivElement>).touches[0].clientX : (event as React.MouseEvent<HTMLDivElement, MouseEvent>).clientX;
-    const clientY = isTouch ? (event as React.TouchEvent<HTMLDivElement>).touches[0].clientY : (event as React.MouseEvent<HTMLDivElement, MouseEvent>).clientY;
+    const clientX = isTouch
+      ? (event as React.TouchEvent<HTMLDivElement>).touches[0].clientX
+      : (event as React.MouseEvent<HTMLDivElement, MouseEvent>).clientX;
+    const clientY = isTouch
+      ? (event as React.TouchEvent<HTMLDivElement>).touches[0].clientY
+      : (event as React.MouseEvent<HTMLDivElement, MouseEvent>).clientY;
 
     const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -170,7 +182,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     const angleY = -(deltaX / rect.width) * 30; // Control the intensity of the tilt
 
     setTiltStyle({ transform: `rotateX(${angleX}deg) rotateY(${angleY}deg)` });
-  }
+  };
 
   return (
     <>
@@ -232,7 +244,13 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
             )}
           </h3>
         </div>
-        <div className='clicker-button-container' onTouchStart={touchStart} onTouchEnd={touchEnd} style={tiltStyle} onClick={clickerButtonHandler}>
+        <div
+          className='clicker-button-container'
+          onTouchStart={touchStart}
+          onTouchEnd={touchEnd}
+          style={tiltStyle}
+          onClick={clickerButtonHandler}
+        >
           <div className='clicker-button-border'></div>
           <div className='clicker-button'>
             {user ? (
