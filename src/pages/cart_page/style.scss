@@ -10,18 +10,42 @@
   }
 }
 
-.total-price-box {
-  @include flex(space-between);
-  width: 100%;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--color-base-dark-low-purple);
+.info-box {
+  @include flex(flex-start, flex-start);
+  @include f-direction(column);
 
-  p {
-    @include p-montserrat-14-125-regular;
+  gap: 15px;
+  width: 100%;
+
+  .total-price-box {
+    @include flex(space-between, flex-end);
+    width: 100%;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color-base-dark-low-purple);
+
+    p {
+      @include p-montserrat-14-125-regular;
+    }
+
+    h4 {
+      @include h4-montserrat-20-125-bold;
+    }
   }
 
-  h4 {
-    @include h4-montserrat-20-125-bold;
+  .reservation-info {
+    @include flex(flex-start, flex-start);
+    @include f-direction(row);
+
+    width: 100%;
+    gap: 5px;
+
+    .reservation-info-icon {
+      font-size: 16px;
+    }
+
+    .reservation-info-text {
+      @include p-montserrat-12-125-regular;
+    }
   }
 }
 

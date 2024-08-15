@@ -274,17 +274,27 @@ export default function CartPage() {
                   skin={el}
                 />
               ))}
-              <div className='total-price-box'>
-                <p>Total</p>
-                <h4>
-                  {userCart.current.getTotalPrice().toLocaleString("RU-ru")}{" "}
-                  <Image
-                    src={iconObj.purpleCoin}
-                    width={12}
-                    height={12}
-                    alt='Purple coin'
-                  />
-                </h4>
+              <div className='info-box'>
+                <div className='total-price-box'>
+                  <p>Total</p>
+                  <h4>
+                    {userCart.current.getTotalPrice().toLocaleString("RU-ru")}{" "}
+                    <Image
+                      src={iconObj.purpleCoin}
+                      width={12}
+                      height={12}
+                      alt='Purple coin'
+                    />
+                  </h4>
+                </div>
+                <div className='reservation-info'>
+                  <span className='material-symbols-rounded reservation-info-icon'>
+                    info
+                  </span>
+                  <p className='reservation-info-text'>
+                    Items added to your cart will be reserved for 24 hours
+                  </p>
+                </div>
               </div>
               <Button
                 label='Buy'
