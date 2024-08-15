@@ -31,10 +31,6 @@ const toastifyOptions: ToastOptions = {
 const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   const staminaDelay = user ? user.staminaDelay : 1000;
   const [userStamina, setUserStamina] = React.useState<number>(0);
-  const staminaIntervals = React.useRef<{ timeOutId: any; intervalId: any }>({
-    timeOutId: null,
-    intervalId: null,
-  });
   const [exchangeStatus, setExchangeStatus] =
     React.useState<SuccessDisplay | null>();
   const toastElement = React.useRef<Id>();
@@ -43,7 +39,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   });
 
   const increaseStamina = () => {
-    staminaIntervals.current.intervalId = setInterval(() => {
+    setInterval(() => {
       if (!user) return;
       user.increaseStamina();
       setUserStamina(user.stamina);
@@ -69,16 +65,9 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   }
 
   // при изменении стамины, оптравляем изменения на бекенд
-  React.useEffect(() => {
-    if (!wss || !user || wss.readyState !== 1) return;
-    wss.send(
-      JSON.stringify({
-        user_id: user.user_id,
-        stamina: user.stamina,
-        balance_common: user.getBalanceCommon(),
-      })
-    );
-  }, [userStamina]);
+  // React.useEffect(() => {
+  //   if (!wss || !user || wss.readyState !== 1) return;
+  // }, [userStamina]);
 
   React.useEffect(() => {
     if (!exchangeStatus) return;
@@ -135,23 +124,27 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     if (exchangeStatus?.loading) return;
     if (!user) return;
 
-    if (staminaIntervals.current.timeOutId)
-      clearTimeout(staminaIntervals.current.timeOutId);
-    if (staminaIntervals.current.intervalId)
-      clearInterval(staminaIntervals.current.intervalId);
+    // if (staminaIntervals.current.timeOutId)
+    //   clearTimeout(staminaIntervals.current.timeOutId);
+    // if (staminaIntervals.current.intervalId)
+    //   clearInterval(staminaIntervals.current.intervalId);
 
     if (user && wss) {
       user.dereaseStamina();
       user.increaseBalance();
       setUserStamina(user.stamina);
+      wss.send(
+        JSON.stringify({
+          user: user.getInitData()
+        })
+      );
     }
 
-    staminaIntervals.current.timeOutId = setTimeout(increaseStamina, 300);
+    // staminaIntervals.current.timeOutId = setTimeout(increaseStamina, 300);
     triggerHapticFeedback();
   };
 
   const touchEnd = () => {
-    console.log("up...");
     setTiltStyle({ transform: `rotateX(${0}deg) rotateY(${0}deg)` });
   };
 
