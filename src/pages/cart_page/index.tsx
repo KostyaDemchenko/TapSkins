@@ -153,7 +153,10 @@ export default function CartPage() {
     }
   };
 
+  // авторизация и инициализация корзины
   useEffect(() => {
+
+
     if (!tg) return;
 
     tg.expand();
@@ -175,6 +178,7 @@ export default function CartPage() {
     })();
   }, [tg]);
 
+  // отслеживание состояния возможности покупки
   useEffect(() => {
     if (opportunityToBuy.message.trim() === "") return;
 
