@@ -84,6 +84,9 @@ export default function CartPage() {
     });
 
     try {
+      // Извлекаем tradeLink из localStorage
+      const storedTradeLink = localStorage.getItem("tradeLink") || "";
+
       // Получаем время последнего order_id из localStorage
       const lastOrderId = localStorage.getItem("lastOrderId");
       const lastOrderTimestamp = localStorage.getItem("lastOrderTimestamp");
@@ -114,7 +117,7 @@ export default function CartPage() {
         rarity: item.rarity,
         status: "In Progress",
         startrack: item.startrack,
-        user_trade_link: tradeLink,
+        user_trade_link: storedTradeLink, // Используем извлеченный tradeLink
       }));
 
       const promises = orderData.map(async (data) => {
@@ -155,8 +158,6 @@ export default function CartPage() {
 
   // авторизация и инициализация корзины
   useEffect(() => {
-
-
     if (!tg) return;
 
     tg.expand();
