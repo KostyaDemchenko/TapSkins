@@ -164,7 +164,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     }
 
     // Используем легкое тактильное воздействие при нажатии
-    triggerHapticFeedback("light");
+    triggerHapticFeedback("medium");
   };
 
   const touchEnd = () => {
