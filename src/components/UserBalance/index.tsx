@@ -8,7 +8,6 @@ import iconObj from "@/public/icons/utils";
 import imgObj from "@/public/img/utils";
 import { Id, ToastContainer, ToastOptions, toast } from "react-toastify";
 import { SuccessDisplay, User } from "@/src/utils/types";
-import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import Skeleton from "@mui/material/Skeleton";
 
 import "./style.scss";
@@ -37,15 +36,20 @@ const calculateStamina = (last_click: number) => {
 
 const useStamina = (user: User | undefined) => {
   const [stamina, setStamina] = React.useState<number>(user ? user.stamina : 0);
-  const [lastClick, setLastClick] = React.useState<number>(user ? user.last_click : Date.now());
+  const [lastClick, setLastClick] = React.useState<number>(
+    user ? user.last_click : Date.now()
+  );
 
   React.useEffect(() => {
     if (!user) return;
 
     const intervalId = setInterval(() => {
       const receivedPassiveStamina = calculateStamina(lastClick);
-      setStamina(prevStamina => {
-        const newStamina = Math.min(user.max_stamina, prevStamina + receivedPassiveStamina);
+      setStamina((prevStamina) => {
+        const newStamina = Math.min(
+          user.max_stamina,
+          prevStamina + receivedPassiveStamina
+        );
         if (newStamina > prevStamina) {
           setLastClick(Date.now());
         }
@@ -59,10 +63,10 @@ const useStamina = (user: User | undefined) => {
   return [stamina, setStamina, setLastClick] as const;
 };
 
-
 const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   const [stamina, setStamina, setLastClick] = useStamina(user);
-  const [exchangeStatus, setExchangeStatus] = React.useState<SuccessDisplay | null>();
+  const [exchangeStatus, setExchangeStatus] =
+    React.useState<SuccessDisplay | null>();
   const toastElement = React.useRef<Id>();
   const [tiltStyle, setTiltStyle] = React.useState<{ transform: string }>({
     transform: "none",
@@ -111,10 +115,13 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   React.useEffect(() => {
     if (user && user.receivedBonus) {
       if (!toastElement.current)
-        toastElement.current = toast.success("You've received referral bonus!", {
-          ...toastifyOptions,
-          closeOnClick: true,
-        });
+        toastElement.current = toast.success(
+          "You've received referral bonus!",
+          {
+            ...toastifyOptions,
+            closeOnClick: true,
+          }
+        );
       else
         toast.update(toastElement.current, {
           ...toastifyOptions,
@@ -125,9 +132,17 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     }
   }, [user]);
 
-  const triggerHapticFeedback = async () => {
+  const triggerHapticFeedback = (style: "light" | "medium" | "heavy") => {
     try {
-      await Haptics.impact({ style: ImpactStyle.Light });
+      // Используем Telegram Web App Haptic Feedback для iOS
+      window.Telegram?.WebApp?.HapticFeedback?.impactOccurred(style);
+
+      // Используем стандартную вибрацию для Android, если доступна
+      if (navigator.vibrate) {
+        navigator.vibrate(50); // Вибрация на 50 мс
+      } else {
+        console.warn("Vibration API not supported");
+      }
     } catch (err) {
       console.error("Haptic feedback is not available", err);
     }
@@ -143,12 +158,13 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
       user.increaseBalance();
       wss.send(
         JSON.stringify({
-          user: user.getInitData()
+          user: user.getInitData(),
         })
       );
     }
 
-    triggerHapticFeedback();
+    // Используем легкое тактильное воздействие при нажатии
+    triggerHapticFeedback("light");
   };
 
   const touchEnd = () => {
