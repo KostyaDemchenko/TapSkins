@@ -55,7 +55,7 @@ export default function Home() {
   React.useEffect(() => {
     try {
       console.log("Connecting...");
-      const ws = new WebSocket(webSocketAddress);
+      const ws = new WebSocket(`${webSocketAddress}?${user?.getInitData()}`);
       wss.current = ws;
       ws.onopen = () => {
         console.log("Connected");
