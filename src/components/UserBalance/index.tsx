@@ -73,7 +73,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     wss.onmessage = (e) => {
       const response = JSON.parse(e.data);
       if (response.success && user) {
-        user.increaseBalance();
         user.stamina = response.stamina;
         user.last_click = response.last_click;
         setStamina(response.stamina);
@@ -141,6 +140,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     if (!user) return;
 
     if (user && wss) {
+      user.increaseBalance();
       wss.send(
         JSON.stringify({
           user: user.getInitData()
