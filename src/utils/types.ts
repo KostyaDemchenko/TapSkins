@@ -87,7 +87,7 @@ export class User {
   }
   // loginning user into tap skins
   // will return true if everything is okay, and false is everything is bad
-  async authUser(tg: WebApp, referalId?: string | null) {
+  async authUser(tg: WebApp, referalId?: string | null, mainPage?: boolean) {
     // проверяем подлинность данных телеграмма, получаем пользователя и\или создаем его,
     // устанавливаем webSocket соединение
     const initData = tg.initData;
@@ -104,7 +104,7 @@ export class User {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ hash, initData }),
+        body: JSON.stringify({ hash, initData, mainPage }),
       }
     );
 
@@ -333,26 +333,25 @@ export class User {
       });
   }
 
-  async assemblyReferalLink():Promise<SuccessDisplay> {
+  async assemblyReferalLink(): Promise<SuccessDisplay> {
     const response = await fetch(
       `${this.backendAddress}/referal-link?${this.initData}`
     );
-    
+
     if (!response.ok) {
       console.error("Error with referal link!", response);
       try {
         console.error(await response.json());
-      }
-      catch(e){
+      } catch (e) {
         console.log(e);
       }
       return {
         success: false,
         message: "Some error occured!",
-      }
+      };
     }
 
-    const referalLink = await response.text()
+    const referalLink = await response.text();
 
     return {
       success: true,

@@ -39,7 +39,8 @@ export default function Home() {
       const customParam = urlParams.get("referal");
       const response = (await userClass.authUser(
         tg,
-        customParam
+        customParam,
+        true
       )) as registerUserResponse;
 
       // пока не будет это выполнено, никаких нахуй дальше действий
