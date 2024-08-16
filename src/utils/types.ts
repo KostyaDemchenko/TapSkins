@@ -37,7 +37,7 @@ export class User {
   private staminaStep = 3; // сколько стамины в периоде будет добавляться
   private balance_icnrease_amnt: number = 1000;
   private staminaDecrease = 5;
-  public staminaDelay = 1000; // период добавления стамины в секундах
+  public staminaDelay = 500; // период добавления стамины в секундах
   private exchangeCoeff = 10000; // сколько золотых монеток нужно чтобы получить 1 фиолетовую
 
   constructor(user_id: number, initData: string) {
@@ -171,25 +171,33 @@ export class User {
     }
   }
 
-  addPassiveStamina() {
-    const secondsScinceLastClick = Math.floor(
-      (Date.now() - this.last_click) / 1000
-    );
-    const totalStamina = this.staminaStep * secondsScinceLastClick;
+  // addPassiveStamina() {
+  //   const secondsScinceLastClick = Math.floor(
+  //     (Date.now() - this.last_click) / 1000
+  //   );
+  //   const totalStamina = this.staminaStep * secondsScinceLastClick;
 
-    this.stamina += totalStamina;
-    if (this.stamina > this.max_stamina) this.stamina = this.max_stamina;
-  }
-  dereaseStamina() {
-    if (this.stamina - this.staminaDecrease < 0) return;
-    if (this.stamina - this.staminaDecrease >= 0) {
-      this.stamina -= this.staminaDecrease;
-    } else this.stamina = 0;
-  }
-  increaseStamina() {
-    this.stamina += this.staminaStep;
-    if (this.stamina > this.max_stamina) this.stamina = this.max_stamina;
-  }
+  //   this.stamina += totalStamina;
+  //   if (this.stamina > this.max_stamina) this.stamina = this.max_stamina;
+  // }
+  // dereaseStamina() {
+  //   if (this.stamina - this.staminaDecrease < 0) return;
+  //   if (this.stamina - this.staminaDecrease >= 0) {
+  //     this.stamina -= this.staminaDecrease;
+  //   } else this.stamina = 0;
+  // }
+  // increaseStamina() {
+  //   const current_time = Date.now();
+  //   const difTime = Math.abs(current_time - this.last_click);
+  //   const passiveStamina = Math.floor(difTime / 1000);
+
+  //   // добавляем пассивную стамину
+  //   return this.stamina + passiveStamina > 1000
+  //     ? 1000
+  //     : this.stamina + passiveStamina;
+  //   // this.stamina += this.staminaStep;
+  //   // if (this.stamina > this.max_stamina) this.stamina = this.max_stamina;
+  // }
 
   getBalanceCommon() {
     return this.balance_common;

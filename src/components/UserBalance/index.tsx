@@ -9,7 +9,7 @@ import imgObj from "@/public/img/utils";
 import { Id, ToastContainer, ToastOptions, toast } from "react-toastify";
 import { SuccessDisplay, User } from "@/src/utils/types";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
-import Skeleton from "@mui/material/Skeleton"; // Импортируем компонент Skeleton
+import Skeleton from "@mui/material/Skeleton";
 
 import "./style.scss";
 import "react-toastify/dist/ReactToastify.css";
@@ -28,46 +28,61 @@ const toastifyOptions: ToastOptions = {
   theme: "dark",
 };
 
+const calculateStamina = (last_click: number) => {
+  const current_time = Date.now();
+  const difTime = Math.abs(current_time - last_click);
+  const passiveStamina = Math.floor(difTime / 1000) * 3;
+  return passiveStamina;
+};
+
+const useStamina = (user: User | undefined) => {
+  const [stamina, setStamina] = React.useState<number>(user ? user.stamina : 0);
+  const [lastClick, setLastClick] = React.useState<number>(user ? user.last_click : Date.now());
+
+  React.useEffect(() => {
+    if (!user) return;
+
+    const intervalId = setInterval(() => {
+      const receivedPassiveStamina = calculateStamina(lastClick);
+      setStamina(prevStamina => {
+        const newStamina = Math.min(user.max_stamina, prevStamina + receivedPassiveStamina);
+        if (newStamina > prevStamina) {
+          setLastClick(Date.now());
+        }
+        return newStamina;
+      });
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [user, lastClick]);
+
+  return [stamina, setStamina, setLastClick] as const;
+};
+
+
 const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
-  const staminaDelay = user ? user.staminaDelay : 1000;
-  const [userStamina, setUserStamina] = React.useState<number>(0);
-  const [exchangeStatus, setExchangeStatus] =
-    React.useState<SuccessDisplay | null>();
+  const [stamina, setStamina, setLastClick] = useStamina(user);
+  const [exchangeStatus, setExchangeStatus] = React.useState<SuccessDisplay | null>();
   const toastElement = React.useRef<Id>();
   const [tiltStyle, setTiltStyle] = React.useState<{ transform: string }>({
     transform: "none",
   });
 
-  const increaseStamina = () => {
-    setInterval(() => {
-      if (!user) return;
-      user.increaseStamina();
-      setUserStamina(user.stamina);
-    }, staminaDelay);
-  };
-
-  if (wss) {
-    // при готовности соединения запускаем таймер на восстановление стамины
-    React.useEffect(() => {
-      if (!wss || !user) return;
-      increaseStamina();
-      user.addPassiveStamina();
-      setUserStamina(user.stamina);
-    }, [wss.readyState]);
-
+  React.useEffect(() => {
+    if (!wss) return;
     wss.onmessage = (e) => {
       const response = JSON.parse(e.data);
-
-      if (!response.success) {
+      if (response.success && user) {
+        user.increaseBalance();
+        user.stamina = response.stamina;
+        user.last_click = response.last_click;
+        setStamina(response.stamina);
+        setLastClick(response.last_click);
+      } else {
         console.error("Money wasn't increased");
       }
     };
-  }
-
-  // при изменении стамины, оптравляем изменения на бекенд
-  // React.useEffect(() => {
-  //   if (!wss || !user || wss.readyState !== 1) return;
-  // }, [userStamina]);
+  }, [wss, user, setStamina, setLastClick]);
 
   React.useEffect(() => {
     if (!exchangeStatus) return;
@@ -82,7 +97,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
           render: "Exchanging...",
         });
       }
-    } else
+    } else {
       toast.update(toastElement.current!, {
         render: exchangeStatus.message,
         type: exchangeStatus.success ? "success" : "error",
@@ -91,28 +106,29 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
         pauseOnHover: false,
         closeOnClick: true,
       });
+    }
   }, [exchangeStatus]);
 
   React.useEffect(() => {
     if (user && user.receivedBonus) {
       if (!toastElement.current)
-        toastElement.current = toast.success("You've received referal bonus!", {
+        toastElement.current = toast.success("You've received referral bonus!", {
           ...toastifyOptions,
           closeOnClick: true,
         });
       else
         toast.update(toastElement.current, {
           ...toastifyOptions,
-          render: "You've received referal bonus!",
+          render: "You've received referral bonus!",
           type: "success",
           closeOnClick: true,
         });
     }
-  }, []);
+  }, [user]);
 
   const triggerHapticFeedback = async () => {
     try {
-      await Haptics.impact({ style: ImpactStyle.Heavy });
+      await Haptics.impact({ style: ImpactStyle.Light });
     } catch (err) {
       console.error("Haptic feedback is not available", err);
     }
@@ -124,15 +140,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     if (exchangeStatus?.loading) return;
     if (!user) return;
 
-    // if (staminaIntervals.current.timeOutId)
-    //   clearTimeout(staminaIntervals.current.timeOutId);
-    // if (staminaIntervals.current.intervalId)
-    //   clearInterval(staminaIntervals.current.intervalId);
-
     if (user && wss) {
-      user.dereaseStamina();
-      user.increaseBalance();
-      setUserStamina(user.stamina);
       wss.send(
         JSON.stringify({
           user: user.getInitData()
@@ -140,7 +148,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
       );
     }
 
-    // staminaIntervals.current.timeOutId = setTimeout(increaseStamina, 300);
     triggerHapticFeedback();
   };
 
@@ -171,8 +178,8 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
 
     const deltaX = clientX - centerX;
     const deltaY = clientY - centerY;
-    const angleX = (deltaY / rect.height) * 30; // Control the intensity of the tilt
-    const angleY = -(deltaX / rect.width) * 30; // Control the intensity of the tilt
+    const angleX = (deltaY / rect.height) * 30;
+    const angleY = -(deltaX / rect.width) * 30;
 
     setTiltStyle({ transform: `rotateX(${angleX}deg) rotateY(${angleY}deg)` });
   };
@@ -272,13 +279,13 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
               <p>
                 <span>Limit</span>{" "}
                 <span>
-                  {user.stamina}/{user.max_stamina}
+                  {stamina}/{user.max_stamina}
                 </span>
               </p>
               <ProgressBar
                 titleVisible={false}
                 total={user.max_stamina}
-                completed={user.stamina}
+                completed={stamina}
               />
             </>
           ) : (
