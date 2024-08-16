@@ -4,6 +4,7 @@ import type { OrderHistiryDataStructured } from "@/typing";
 
 const notionSecret = process.env.NOTION_SECRET;
 const notionStoreDataBaseld = process.env.NOTION_ORDER_HISTORY_DATABASE_ID;
+const notionSkinStoreDatabaseId = process.env.NOTION_SKIN_STORE_DATABASE_ID; // Добавляем ID базы данных SkinStore
 const notion = new Client({ auth: notionSecret });
 
 export default async function handler(
@@ -15,7 +16,7 @@ export default async function handler(
     return;
   }
 
-  if (!notionSecret || !notionStoreDataBaseld) {
+  if (!notionSecret || !notionStoreDataBaseld || !notionSkinStoreDatabaseId) {
     res.status(500).json({ error: "Missing Notion secret or database ID" });
     return;
   }
@@ -51,7 +52,16 @@ export default async function handler(
     startrack,
   } = req.body as Partial<OrderHistiryDataStructured>;
 
+  // Проверяем, что item_id присутствует и не равен undefined
+  if (typeof item_id === "undefined") {
+    res
+      .status(400)
+      .json({ error: "item_id is required and cannot be undefined" });
+    return;
+  }
+
   try {
+    // Сначала добавляем заказ в OrdersHistory
     const response = await notion.pages.create({
       parent: { database_id: notionStoreDataBaseld },
       properties: {
@@ -104,26 +114,46 @@ export default async function handler(
       },
     });
 
+    // Затем ищем и удаляем товар из таблицы SkinStore
+    const queryResponse = await notion.databases.query({
+      database_id: notionSkinStoreDatabaseId,
+      filter: {
+        property: "item_id",
+        number: {
+          equals: item_id, // Теперь item_id точно будет числом
+        },
+      },
+    });
+
+    const skinStorePage = queryResponse.results[0]; // Предполагаем, что ID уникален и берем первую страницу
+    if (skinStorePage) {
+      await notion.pages.update({
+        page_id: skinStorePage.id,
+        archived: true, // Удаляем страницу (архивируем её)
+      });
+    } else {
+      console.error("Item not found in SkinStore");
+    }
+
     res
       .status(200)
-      .json({ message: "Order added successfully", data: response });
+      .json({
+        message: "Order added and item removed from SkinStore successfully",
+        data: response,
+      });
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Failed to create order in Notion:", error.message);
-      res
-        .status(500)
-        .json({
-          error: "Failed to create order in Notion",
-          details: error.message,
-        });
+      console.error("Failed to process order in Notion:", error.message);
+      res.status(500).json({
+        error: "Failed to process order in Notion",
+        details: error.message,
+      });
     } else {
-      console.error("Failed to create order in Notion: Unknown error");
-      res
-        .status(500)
-        .json({
-          error: "Failed to create order in Notion",
-          details: "Unknown error",
-        });
+      console.error("Failed to process order in Notion: Unknown error");
+      res.status(500).json({
+        error: "Failed to process order in Notion",
+        details: "Unknown error",
+      });
     }
   }
 }
