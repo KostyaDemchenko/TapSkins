@@ -224,6 +224,13 @@ span {
   .Toastify__toast-container {
     width: 80dvw;
     -webkit-tap-highlight-color: transparent;
+
+    transition: 1s ease-in-out;
+
+    &:active {
+      transition: 1s ease-in-out;
+      transform: scale(1.1);
+    }
   }
 
   .Toastify__toast-container--top-right {
