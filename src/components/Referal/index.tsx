@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { ReferalCard } from "@/src/components/Carts";
 import Skeleton from "@mui/material/Skeleton";
 import RewardModal from "@/src/components/RevardModal";
+
 import "./style.scss";
+
 import { Reward, SuccessDisplay, User } from "@/src/utils/types";
 
 const ReferalList: React.FC<{
