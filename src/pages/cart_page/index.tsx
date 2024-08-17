@@ -30,6 +30,7 @@ const toastSettings: ToastOptions = {
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<Skin[] | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [tg, setTg] = useState<WebApp | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -80,15 +81,12 @@ export default function CartPage() {
     });
 
     try {
-      // Извлекаем tradeLink из localStorage
       const storedTradeLink = localStorage.getItem("tradeLink") || "";
 
-      // Получаем время последнего order_id из localStorage
       const lastOrderId = localStorage.getItem("lastOrderId");
       const lastOrderTimestamp = localStorage.getItem("lastOrderTimestamp");
       const currentTimestamp = Date.now();
 
-      // Если времени нет или оно больше 10 секунд, создаем новый order_id
       let orderId = currentTimestamp;
       if (
         lastOrderId &&
@@ -97,12 +95,13 @@ export default function CartPage() {
       ) {
         orderId = parseInt(lastOrderId);
       } else {
-        // Обновляем orderId и timestamp в localStorage
         localStorage.setItem("lastOrderId", orderId.toString());
         localStorage.setItem("lastOrderTimestamp", currentTimestamp.toString());
       }
 
-      const orderData = cartItems!.map((item) => ({
+      if (!cartItems) return;
+
+      const orderData = cartItems.map((item) => ({
         skin_name: item.skin_name,
         image_src: item.image_src,
         item_id: item.item_id,
@@ -113,7 +112,7 @@ export default function CartPage() {
         rarity: item.rarity,
         status: "In Progress",
         startrack: item.startrack,
-        user_trade_link: storedTradeLink, // Используем извлеченный tradeLink
+        user_trade_link: storedTradeLink,
       }));
 
       const promises = orderData.map(async (data) => {
@@ -135,7 +134,7 @@ export default function CartPage() {
 
       await Promise.all(promises);
 
-      userCart.current.clearCart();
+      userCart.current?.clearCart();
       setCartItems([]);
       setOpportunityToBuy({
         loading: false,
@@ -172,6 +171,7 @@ export default function CartPage() {
         setCartItems(items);
         setUser(userClass);
       }
+      setIsLoading(false);
     })();
   }, [tg]);
 
@@ -196,6 +196,8 @@ export default function CartPage() {
       closeOnClick: true,
     });
   }, [opportunityToBuy]);
+
+  const totalCartPrice = userCart.current?.getTotalPrice() || 0; // Добавлено безопасное получение цены
 
   return (
     <>
@@ -236,8 +238,9 @@ export default function CartPage() {
               History
             </a>
           </div>
-          {cartItems === null && userCart.current && (
-            <>
+
+          {isLoading ? (
+            <div className='skeleton-box'>
               {Array.from(new Array(3)).map((_, index) => (
                 <Skeleton
                   key={index}
@@ -250,18 +253,8 @@ export default function CartPage() {
                   }}
                 />
               ))}
-            </>
-          )}
-          {cartItems === null && (
-            <div className='empty-cart'>
-              <p>No items in the cart!</p>
-              <a className='btn-secondary-35' href='/skin_store_page'>
-                <span className='material-symbols-outlined'>shopping_cart</span>{" "}
-                To store
-              </a>
             </div>
-          )}
-          {cartItems !== null && cartItems.length > 0 && userCart.current && (
+          ) : cartItems && cartItems.length > 0 ? (
             <>
               {cartItems.map((el) => (
                 <SkinOrderCard
@@ -274,7 +267,7 @@ export default function CartPage() {
                 <div className='total-price-box'>
                   <p>Total</p>
                   <h4>
-                    {userCart.current.getTotalPrice().toLocaleString("RU-ru")}{" "}
+                    {totalCartPrice.toLocaleString("RU-ru")}{" "}
                     <Image
                       src={iconObj.purpleCoin}
                       width={12}
@@ -298,10 +291,8 @@ export default function CartPage() {
                 icon=''
                 disabled={(() => {
                   if (isDeleting) return true;
-                  if (!user) return false;
-                  return (
-                    user.getBalancePurple() < userCart.current.getTotalPrice()
-                  );
+                  if (!user || !userCart.current) return true; // Добавлена проверка на наличие корзины
+                  return user.getBalancePurple() < totalCartPrice;
                 })()}
                 id='tradeLinkValidation'
                 onClick={() => {
@@ -315,6 +306,14 @@ export default function CartPage() {
                 triggerId='tradeLinkValidation'
               />
             </>
+          ) : (
+            <div className='empty-cart'>
+              <p>No items in the cart!</p>
+              <a className='btn-secondary-35' href='/skin_store_page'>
+                <span className='material-symbols-outlined'>shopping_cart</span>{" "}
+                To store
+              </a>
+            </div>
           )}
         </div>
       </main>
