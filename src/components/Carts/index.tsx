@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
 import Modal from "@/src/components/Modal";
@@ -6,13 +6,28 @@ import Rare from "@/src/components/Rare";
 import Float from "@/src/components/Float";
 import Button from "@/src/components/Button";
 import SkinBackground from "@/src/components/SkinBackground";
+import ValidationModal from "@/src/components/ValidationModal";
+import { toast, Id, ToastOptions } from "react-toastify";
+
 import iconObj from "@/public/icons/utils";
 
 import { truncateName, truncateFloat } from "@/src/utils/functions";
-import { Cart, Skin } from "@/src/utils/types";
+import { Skin } from "@/src/utils/types";
 
 import "react-toastify/dist/ReactToastify.css";
 import "./style.scss";
+
+// Настройки для тостера
+const toastSettings: ToastOptions = {
+  position: "top-right",
+  autoClose: 3000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: false,
+  draggable: true,
+  progress: undefined,
+  theme: "dark",
+};
 
 // SkinCard
 interface SkinCardProps {
@@ -27,6 +42,77 @@ const SkinCard: React.FC<SkinCardProps> = ({
   addToCartHandle,
 }) => {
   const [modalId] = useState(`cartTrigger-${skin.item_id}`);
+  const [modalIdValidate] = useState(`validate-${skin.item_id}`);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [user, setUser] = useState<{ user_id: number } | null>(null);
+  const toastId = useRef<Id | null>(null);
+
+  useEffect(() => {
+    // Получаем данные пользователя через Telegram WebApp
+    const tg = global.window.Telegram.WebApp;
+    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+      setUser({
+        user_id: tg.initDataUnsafe.user.id,
+      });
+    }
+  }, []);
+
+  const handleBuyNow = async () => {
+    if (!user) {
+      toast.error(
+        "User data not available. Please try again later.",
+        toastSettings
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    // Показать тостер загрузки
+    toastId.current = toast.loading("Processing purchase...", toastSettings);
+
+    try {
+      const storedTradeLink = localStorage.getItem("tradeLink") || "";
+      const response = await fetch("/api/order_history/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          skin_name: skin.skin_name,
+          image_src: skin.image_src,
+          item_id: skin.item_id,
+          user_id: user.user_id, // Используем user_id из состояния
+          price: skin.price,
+          float: skin.float,
+          rarity: skin.rarity,
+          status: "In Progress",
+          startrack: skin.startrack,
+          user_trade_link: storedTradeLink,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to purchase item.");
+
+      // Обновляем тостер на успешное сообщение
+      toast.update(toastId.current!, {
+        render: "Purchase successful!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    } catch (error) {
+      // Обновляем тостер на сообщение об ошибке
+      toast.update(toastId.current!, {
+        render: "Failed to complete purchase. Please try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <>
@@ -65,10 +151,10 @@ const SkinCard: React.FC<SkinCardProps> = ({
 
           <div className='bottom-box'>
             <Button
-              label={`Buy`}
+              label={`Buy Now`}
               className='btn-primary-25'
               icon=''
-              onClick={() => {}}
+              id={modalIdValidate} // Используем ID для открытия модалки
             />
             <Button
               label={`Add to cart`}
@@ -79,6 +165,8 @@ const SkinCard: React.FC<SkinCardProps> = ({
           </div>
         </div>
       </div>
+
+      <ValidationModal triggerId={modalIdValidate} onConfirm={handleBuyNow} />
 
       <Modal
         modalTitle=''
