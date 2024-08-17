@@ -3,18 +3,16 @@ import Script from "next/script";
 import Image from "next/image";
 import Head from "next/head";
 
-import { SuccessDisplay, User } from "@/src/utils/types";
-
 import Nav from "@/src/components/Nav";
 import Button from "@/src/components/Button";
 import ValidationModal from "@/src/components/ValidationModal";
 import Skeleton from "@mui/material/Skeleton";
-
+import { SkinOrderCard } from "@/src/components/Carts";
 import { Id, ToastContainer, ToastOptions, toast } from "react-toastify";
+
 import iconObj from "@/public/icons/utils";
 
-import { Skin, Cart } from "@/src/utils/types";
-import { SkinOrderCard } from "@/src/components/Carts";
+import { Skin, Cart, SuccessDisplay, User } from "@/src/utils/types";
 
 import "@/src/app/globals.scss";
 import "./style.scss";
@@ -39,8 +37,6 @@ export default function CartPage() {
     success: false,
     message: "",
   });
-  const [tradeLink, setTradeLink] = useState<string>("");
-  const [orderId, setOrderId] = useState<number | null>(null); // Добавлено состояние для orderId
 
   const userCart = useRef<null | Cart>(null);
   const toastId = useRef<Id | null>(null);
