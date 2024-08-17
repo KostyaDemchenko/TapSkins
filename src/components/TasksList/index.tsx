@@ -115,16 +115,6 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
                 id={`rewardTrigger-${task.task_id}`}
               />
             ))}
-        <Skeleton
-          variant='rounded'
-          height={84}
-          animation='wave'
-          sx={{
-            bgcolor: "var(--color-surface)",
-            marginBottom: "5px",
-            width: "100%",
-          }}
-        />
       </div>
       {selectedTask && (
         <RewardModal
