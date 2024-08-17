@@ -19,7 +19,6 @@ interface TasksResponse {
     completed: number;
     total: number;
   };
-
 }
 
 const TasksList: React.FC<{ user: User }> = ({ user }) => {
@@ -27,8 +26,8 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
     unCompletedTasks: [],
     tasks: {
       completed: 0,
-      total: 0
-    }
+      total: 0,
+    },
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedTask, setSelectedTask] = useState<TaskProps | null>(null);
@@ -57,13 +56,12 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       console.log(`Join Telegram channel: ${formattedLink}`);
     } else {
       // Используем window.open с параметром "_blank"
-      window.open(task.link_to_join, '_blank');
+      window.open(task.link_to_join, "_blank");
     }
-  
+
     setSelectedTask(task);
     setShowModal(true);
   };
-  
 
   return (
     <>
@@ -75,7 +73,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         isLoading={loading} // Передаем состояние загрузки
       />
       <div className='tasks-list'>
-        {loading ?
+        {loading ? (
           <Skeleton
             variant='rounded'
             height={84}
@@ -86,35 +84,47 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
               width: "100%",
             }}
           />
-          :
-          (user && <DailyReward
-            lastTimeClicked={formatDate(user.last_daily_bonus_time_clicked)}
-            // lastTimeClicked={"05-08-2024 00:00:00"}
-            user={user}
-          />)
-        }
+        ) : (
+          user && (
+            <DailyReward
+              lastTimeClicked={formatDate(user.last_daily_bonus_time_clicked)}
+              // lastTimeClicked={"05-08-2024 00:00:00"}
+              user={user}
+            />
+          )
+        )}
         {loading
           ? Array.from(new Array(5)).map((_, index) => (
-            <Skeleton
-              key={index}
-              variant='rounded'
-              height={84}
-              animation='wave'
-              sx={{
-                bgcolor: "var(--color-surface)",
-                marginBottom: "5px",
-                width: "100%",
-              }}
-            />
-          ))
+              <Skeleton
+                key={index}
+                variant='rounded'
+                height={84}
+                animation='wave'
+                sx={{
+                  bgcolor: "var(--color-surface)",
+                  marginBottom: "5px",
+                  width: "100%",
+                }}
+              />
+            ))
           : tasks.unCompletedTasks.map((task) => (
-            <TaskCard
-              key={task.task_id}
-              task={task}
-              onClick={() => handleTaskClick(task)}
-              id={`rewardTrigger-${task.task_id}`}
-            />
-          ))}
+              <TaskCard
+                key={task.task_id}
+                task={task}
+                onClick={() => handleTaskClick(task)}
+                id={`rewardTrigger-${task.task_id}`}
+              />
+            ))}
+        <Skeleton
+          variant='rounded'
+          height={84}
+          animation='wave'
+          sx={{
+            bgcolor: "var(--color-surface)",
+            marginBottom: "5px",
+            width: "100%",
+          }}
+        />
       </div>
       {selectedTask && (
         <RewardModal

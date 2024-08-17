@@ -199,7 +199,10 @@ span {
 
 // Skeleton
 .MuiSkeleton-rounded,
-.MuiSkeleton-text {
+.MuiSkeleton-text,
+.MuiSkeleton-rectangular,
+.MuiSkeleton-root,
+.MuiSkeleton-circular {
   &::after,
   &::before {
     background: linear-gradient(
@@ -207,7 +210,7 @@ span {
       transparent,
       rgba(181, 181, 181, 0.04),
       transparent
-    );
+    ) !important;
   }
 }
 
