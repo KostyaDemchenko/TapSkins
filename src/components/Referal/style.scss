@@ -3,8 +3,13 @@
 .referal-list {
   @include flex(flex-start, center);
   @include f-direction(column);
+
   gap: 5px;
   width: 100%;
+  height: calc(100dvh - 280px);
+  padding-bottom: 50px;
+
+  overflow-y: scroll;
 }
 
 .btn-primary-50 {
