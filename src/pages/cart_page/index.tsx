@@ -101,38 +101,49 @@ export default function CartPage() {
 
       if (!cartItems) return;
 
-      const orderData = cartItems.map((item) => ({
-        skin_name: item.skin_name,
-        image_src: item.image_src,
-        item_id: item.item_id,
-        user_id: user.user_id,
-        order_id: orderId,
-        price: item.price,
-        float: item.float,
-        rarity: item.rarity,
-        status: "In Progress",
-        startrack: item.startrack,
-        user_trade_link: storedTradeLink,
-      }));
+      const purchaseStatus = await user.buySkins(orderId, currentTimestamp, storedTradeLink);
 
-      const promises = orderData.map(async (data) => {
-        const response = await fetch("/api/order_history/create", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "last-order-id": orderId.toString(),
-            "last-order-timestamp": currentTimestamp.toString(),
-          },
-          body: JSON.stringify(data),
+      if (!purchaseStatus.success) {
+        console.error(purchaseStatus);
+        setOpportunityToBuy({
+          loading: false,
+          message: purchaseStatus.message,
+          success: false,
         });
+        return;
+      }
+      // const orderData = cartItems.map((item) => ({
+      // skin_name: item.skin_name,
+      // image_src: item.image_src,
+      // item_id: item.item_id,
+      // user_id: user.user_id,
+      // order_id: orderId,
+      // price: item.price,
+      // float: item.float,
+      // rarity: item.rarity,
+      // status: "In Progress",
+      // startrack: item.startrack,
+      // user_trade_link: storedTradeLink,
+      // }));
 
-        if (!response.ok) {
-          throw new Error("Failed to submit order");
-        }
-        return await response.json();
-      });
+      // const promises = orderData.map(async (data) => {
+      //   const response = await fetch("/api/order_history/create", {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       "last-order-id": orderId.toString(),
+      //       "last-order-timestamp": currentTimestamp.toString(),
+      //     },
+      //     body: JSON.stringify(data),
+      //   });
 
-      await Promise.all(promises);
+      //   if (!response.ok) {
+      //     throw new Error("Failed to submit order");
+      //   }
+      //   return await response.json();
+      // });
+
+      // await Promise.all(promises);
 
       userCart.current?.clearCart();
       setCartItems([]);
@@ -200,8 +211,6 @@ export default function CartPage() {
       closeOnClick: true,
     });
   }, [opportunityToBuy]);
-
-  const totalCartPrice = userCart.current?.getTotalPrice() || 0; // Добавлено безопасное получение цены
 
   return (
     <>
@@ -271,7 +280,7 @@ export default function CartPage() {
                 <div className='total-price-box'>
                   <p>Total</p>
                   <h4>
-                      {getTotalPrice().toLocaleString("RU-ru")}{" "}
+                    {getTotalPrice().toLocaleString("RU-ru")}{" "}
                     <Image
                       src={iconObj.purpleCoin}
                       width={12}

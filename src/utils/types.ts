@@ -212,53 +212,74 @@ export class User {
 
     return await response.json();
   }
-  async buySkins(skins: Skin[]) {
-    const skinIds = skins.map((el) => el.item_id).join(",");
+  async buySkins(orderId: number, currentTimestamp: number, storedTradeLink: string): Promise<SuccessDisplay> {
+    const response = await fetch(`${this.backendAddress}/skins/buy`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        initData: this.initData,
+        last_order_id: orderId,
+        last_order_timestamp: currentTimestamp,
+        stored_trade_link: storedTradeLink,
+      }),
+    });
 
-    try {
-      const response = await fetch(`${this.backendAddress}/check-skins`, {
-        body: JSON.stringify({ skinIds, initData: this.initData }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.text();
-      if (data.trim() === "") {
-        return {
-          message: "We've received your order!",
-          success: true,
-          loading: false,
-        };
-      } else {
-        const productEnum = <string[]>[];
-        data.split(",").forEach((id) => {
-          const element = skins.find((el) => el.item_id === parseInt(id));
-          if (element) productEnum.push(element.skin_name);
-        });
-
-        return {
-          message: `We're sorry, but such skins has reserved:\n${productEnum.join(
-            ", "
-          )}`,
-          success: false,
-          loading: false,
-        };
-      }
-      // return data;
-    } catch (error) {
-      console.error("Error occurred while buying skins:", error);
-      return {
-        message: "Error to check",
-        success: false,
-        loading: false,
-      };
+    if (!response.ok) {
+      const data = await response.json();
+      console.error(data)
+      return data;
     }
+
+    return await response.json();
+
+    // const skinIds = skins.map((el) => el.item_id).join(",");
+
+    // try {
+    //   const response = await fetch(`${this.backendAddress}/check-skins`, {
+    //     body: JSON.stringify({ skinIds, initData: this.initData }),
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     method: "POST",
+    //   });
+
+    //   if (!response.ok) {
+    //     throw new Error(`HTTP error! Status: ${response.status}`);
+    //   }
+
+    //   const data = await response.text();
+    //   if (data.trim() === "") {
+    //     return {
+    //       message: "We've received your order!",
+    //       success: true,
+    //       loading: false,
+    //     };
+    //   } else {
+    //     const productEnum = <string[]>[];
+    //     data.split(",").forEach((id) => {
+    //       const element = skins.find((el) => el.item_id === parseInt(id));
+    //       if (element) productEnum.push(element.skin_name);
+    //     });
+
+    //     return {
+    //       message: `We're sorry, but such skins has reserved:\n${productEnum.join(
+    //         ", "
+    //       )}`,
+    //       success: false,
+    //       loading: false,
+    //     };
+    //   }
+    //   // return data;
+    // } catch (error) {
+    //   console.error("Error occurred while buying skins:", error);
+    //   return {
+    //     message: "Error to check",
+    //     success: false,
+    //     loading: false,
+    //   };
+    // }
   }
 
   async getReward(reward: Reward): Promise<SuccessDisplay> {
@@ -460,8 +481,6 @@ export class Cart {
     }
 
     const result = (await response.json()) as SuccessDisplay;
-
-    
 
     return result;
   }
