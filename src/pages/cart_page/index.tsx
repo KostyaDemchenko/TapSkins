@@ -151,6 +151,10 @@ export default function CartPage() {
     }
   };
 
+  const getTotalPrice = () => {
+    return cartItems!.reduce((accum, curVal) => accum + curVal.price, 0);
+  }
+
   // авторизация и инициализация корзины
   useEffect(() => {
     if (!tg) return;
@@ -267,7 +271,7 @@ export default function CartPage() {
                 <div className='total-price-box'>
                   <p>Total</p>
                   <h4>
-                    {totalCartPrice.toLocaleString("RU-ru")}{" "}
+                      {getTotalPrice().toLocaleString("RU-ru")}{" "}
                     <Image
                       src={iconObj.purpleCoin}
                       width={12}
@@ -292,7 +296,7 @@ export default function CartPage() {
                 disabled={(() => {
                   if (isDeleting) return true;
                   if (!user || !userCart.current) return true; // Добавлена проверка на наличие корзины
-                  return user.getBalancePurple() < totalCartPrice;
+                  return user.getBalancePurple() < getTotalPrice();
                 })()}
                 id='tradeLinkValidation'
                 onClick={() => {

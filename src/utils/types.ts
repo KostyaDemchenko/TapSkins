@@ -461,12 +461,14 @@ export class Cart {
 
     const result = (await response.json()) as SuccessDisplay;
 
+    
+
     return result;
   }
 
   clearCart() {
-    this.skins = [];
-    this.storage.removeItem(this.storageKey);
+    // this.skins = [];
+    // this.storage.removeItem(this.storageKey);
   }
 
   getTotalPrice() {
