@@ -127,7 +127,6 @@ export class User {
 
     return data;
   }
-
   checkSubscription(channelId: `@${string}`) {
     const { user_id } = this;
     return new Promise(async (res, rej) => {
@@ -152,7 +151,6 @@ export class User {
       res(data.subscribed);
     });
   }
-
   protected setUser(obj: User) {
     this.user_id = obj.user_id;
     this.balance_purple = obj.balance_purple;
@@ -170,34 +168,6 @@ export class User {
       this.balance_common += this.balance_icnrease_amnt;
     }
   }
-
-  // addPassiveStamina() {
-  //   const secondsScinceLastClick = Math.floor(
-  //     (Date.now() - this.last_click) / 1000
-  //   );
-  //   const totalStamina = this.staminaStep * secondsScinceLastClick;
-
-  //   this.stamina += totalStamina;
-  //   if (this.stamina > this.max_stamina) this.stamina = this.max_stamina;
-  // }
-  // dereaseStamina() {
-  //   if (this.stamina - this.staminaDecrease < 0) return;
-  //   if (this.stamina - this.staminaDecrease >= 0) {
-  //     this.stamina -= this.staminaDecrease;
-  //   } else this.stamina = 0;
-  // }
-  // increaseStamina() {
-  //   const current_time = Date.now();
-  //   const difTime = Math.abs(current_time - this.last_click);
-  //   const passiveStamina = Math.floor(difTime / 1000);
-
-  //   // добавляем пассивную стамину
-  //   return this.stamina + passiveStamina > 1000
-  //     ? 1000
-  //     : this.stamina + passiveStamina;
-  //   // this.stamina += this.staminaStep;
-  //   // if (this.stamina > this.max_stamina) this.stamina = this.max_stamina;
-  // }
 
   getBalanceCommon() {
     return this.balance_common;
@@ -386,6 +356,22 @@ export class User {
       success: true,
       message: referalLink,
     };
+  }
+
+  async buyNowSkin(skin_id: number, user_trade_link: string): Promise<SuccessDisplay> {
+    const response = await postFetch(
+      `${this.backendAddress}/skins/${skin_id}`,
+      { initData: this.initData, user_trade_link }
+    );
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error(data);
+      return data;
+    }
+
+
+    return data;
   }
 }
 

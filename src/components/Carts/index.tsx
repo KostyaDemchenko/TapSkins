@@ -12,7 +12,7 @@ import { toast, Id, ToastOptions } from "react-toastify";
 import iconObj from "@/public/icons/utils";
 
 import { truncateName, truncateFloat } from "@/src/utils/functions";
-import { Skin } from "@/src/utils/types";
+import { Skin, User } from "@/src/utils/types";
 
 import "react-toastify/dist/ReactToastify.css";
 import "./style.scss";
@@ -34,30 +34,21 @@ interface SkinCardProps {
   skin: Skin;
   className?: string;
   addToCartHandle: (skin: Skin) => void;
+  user: User | null;
 }
 
 const SkinCard: React.FC<SkinCardProps> = ({
   skin,
   className = "",
   addToCartHandle,
+  user
 }) => {
   const [modalId] = useState(`cartTrigger-${skin.item_id}`);
   const [modalIdValidate] = useState(`validate-${skin.item_id}`);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [user, setUser] = useState<{ user_id: number } | null>(null);
   const toastId = useRef<Id | null>(null);
 
-  useEffect(() => {
-    // Получаем данные пользователя через Telegram WebApp
-    const tg = global.window.Telegram.WebApp;
-    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-      setUser({
-        user_id: tg.initDataUnsafe.user.id,
-      });
-    }
-  }, []);
-
-  const handleBuyNow = async () => {
+  const handleBuyNow = async (skin_id: number) => {
     if (!user) {
       toast.error(
         "User data not available. Please try again later.",
@@ -65,39 +56,18 @@ const SkinCard: React.FC<SkinCardProps> = ({
       );
       return;
     }
-
-    setIsSubmitting(true);
-
-    // Показать тостер загрузки
-    toastId.current = toast.loading("Processing purchase...", toastSettings);
-
     try {
-      const storedTradeLink = localStorage.getItem("tradeLink") || "";
-      const response = await fetch("/api/order_history/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          skin_name: skin.skin_name,
-          image_src: skin.image_src,
-          item_id: skin.item_id,
-          user_id: user.user_id, // Используем user_id из состояния
-          price: skin.price,
-          float: skin.float,
-          rarity: skin.rarity,
-          status: "In Progress",
-          startrack: skin.startrack,
-          user_trade_link: storedTradeLink,
-        }),
-      });
+      // Показать тостер загрузки
+      toastId.current = toast.loading("Processing purchase...", toastSettings);
+      setIsSubmitting(true);
 
-      if (!response.ok) throw new Error("Failed to purchase item.");
+      const storedTradeLink = localStorage.getItem("tradeLink") || "";
+      const response = await user.buyNowSkin(skin_id, storedTradeLink);
 
       // Обновляем тостер на успешное сообщение
       toast.update(toastId.current!, {
-        render: "Purchase successful!",
-        type: "success",
+        render: response.message,
+        type: response.success ? "success" : "error",
         isLoading: false,
         autoClose: 3000,
       });
@@ -166,7 +136,7 @@ const SkinCard: React.FC<SkinCardProps> = ({
         </div>
       </div>
 
-      <ValidationModal triggerId={modalIdValidate} onConfirm={handleBuyNow} />
+      <ValidationModal triggerId={modalIdValidate} onConfirm={() => handleBuyNow(skin.item_id)} />
 
       <Modal
         modalTitle=''
@@ -177,7 +147,7 @@ const SkinCard: React.FC<SkinCardProps> = ({
             label={`Buy Now`}
             className='btn-primary-50'
             icon=''
-            onClick={() => {}}
+            onClick={() => { }}
           />
         }
       >

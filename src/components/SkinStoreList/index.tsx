@@ -145,6 +145,7 @@ const SkinStore: React.FC<SkinStoreProps> = ({
       <div className='skin-store-container'>
         {filteredSkins.map((skin) => (
           <SkinCard
+            user={user}
             addToCartHandle={addToCartHandle}
             skin={skin}
             key={skin.item_id}
