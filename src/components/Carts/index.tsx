@@ -41,10 +41,11 @@ const SkinCard: React.FC<SkinCardProps> = ({
   skin,
   className = "",
   addToCartHandle,
-  user
+  user,
 }) => {
   const [modalId] = useState(`cartTrigger-${skin.item_id}`);
   const [modalIdValidate] = useState(`validate-${skin.item_id}`);
+  const [subModalIdValidate] = useState(`sub-validate-${skin.item_id}`);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const toastId = useRef<Id | null>(null);
 
@@ -136,21 +137,12 @@ const SkinCard: React.FC<SkinCardProps> = ({
         </div>
       </div>
 
-      <ValidationModal triggerId={modalIdValidate} onConfirm={() => handleBuyNow(skin.item_id)} />
+      <ValidationModal
+        triggerId={modalIdValidate}
+        onConfirm={() => handleBuyNow(skin.item_id)}
+      />
 
-      <Modal
-        modalTitle=''
-        height='77dvh'
-        triggerId={modalId}
-        closeElement={
-          <Button
-            label={`Buy Now`}
-            className='btn-primary-50'
-            icon=''
-            onClick={() => { }}
-          />
-        }
-      >
+      <Modal modalTitle='' height='90dvh' triggerId={modalId}>
         <div className='skin-full-details'>
           <SkinBackground
             imageSrc={skin.image_src}
@@ -191,7 +183,20 @@ const SkinCard: React.FC<SkinCardProps> = ({
               />
             </div>
           </div>
+          <Button
+            label={`Buy Now`}
+            className='btn-primary-50'
+            icon=''
+            id={subModalIdValidate}
+            onClick={() => {}}
+          />
         </div>
+        <ValidationModal
+          fade={false}
+          subModal={true}
+          triggerId={subModalIdValidate}
+          onConfirm={() => handleBuyNow(skin.item_id)}
+        />
       </Modal>
     </>
   );
