@@ -72,7 +72,7 @@ const ValidationModal: React.FC<{
   return (
     <Modal
       modalTitle='Enter Steam Trade Link'
-      height='60dvh'
+      height='100dvh'
       triggerId={triggerId}
       className='validation-modal'
       closeElement={
