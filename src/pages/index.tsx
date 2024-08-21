@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Script from "next/script";
 import Head from "next/head";
-import { ToastContainer, ToastOptions, toast } from "react-toastify";
 
 import Nav from "@/src/components/Nav";
+import UserBalance from "@/src/components/UserBalance";
+import Preloader from "@/src/components/MainPreloader";
+
 import { registerUserResponse, User } from "../utils/types";
-import UserBalance from "../components/UserBalance";
 
 import "@/src/app/globals.scss";
 
@@ -13,7 +14,7 @@ const webSocketAddress = process.env.NEXT_PUBLIC_WEBSOCKET_ADDRESS!;
 
 export default function Home() {
   const [tg, setTg] = React.useState<WebApp | null>();
-  // нужно добавить еще одно состояние, undefined, которое бы значило что аворизация провалилась
+  // нужно добавить еще одно состояние, undefined, которое бы значило что авторизация провалилась
   // null - еще пользователя нету, то есть был послан запрос с авторизацией
   const [user, setUser] = React.useState<User | null>(null);
   // boolean - подписан\неподписан
@@ -24,7 +25,36 @@ export default function Home() {
   >(undefined);
   const wss = React.useRef<null | WebSocket>(null);
 
-  React.useEffect(() => {
+  // Состояние для отображения прелоадера
+  const [showPreloader, setShowPreloader] = useState(false);
+  const [authCompleted, setAuthCompleted] = useState(false); // Новое состояние для завершения авторизации
+
+  const preloaderDuration = 3000; // Переменная для задания времени отображения прелоадера
+
+  useEffect(() => {
+    // Проверяем, отображался ли прелоадер ранее
+    const hasSeenPreloader = sessionStorage.getItem("hasSeenPreloader");
+
+    if (!hasSeenPreloader) {
+      setShowPreloader(true);
+      sessionStorage.setItem("hasSeenPreloader", "true");
+    } else {
+      setShowPreloader(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Прелоадер скрывается после указанного времени, но только если авторизация завершена
+    const preloaderTimeout = setTimeout(() => {
+      if (authCompleted) {
+        setShowPreloader(false);
+      }
+    }, preloaderDuration);
+
+    return () => clearTimeout(preloaderTimeout);
+  }, [authCompleted, preloaderDuration]);
+
+  useEffect(() => {
     if (!tg) return;
 
     tg.expand();
@@ -50,17 +80,19 @@ export default function Home() {
         userClass.getRewardsForCompletedTasks();
         setUser(userClass);
       }
+
+      // Устанавливаем состояние завершения авторизации
+      setAuthCompleted(true);
     })();
   }, [tg]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     try {
       console.log("Connecting...");
       const ws = new WebSocket(`${webSocketAddress}?${user?.getInitData()}`);
       wss.current = ws;
       ws.onopen = () => {
         console.log("Connected");
-        // setIsWsConnected(true);
       };
     } catch (e) {
       console.error(e);
@@ -120,17 +152,23 @@ export default function Home() {
           setTg(global.window.Telegram.WebApp);
         }}
       />
-      <main
-        style={{
-          display: "flex",
-          gap: "15px",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        {!user && <UserBalance />}
-        {user && wss.current && <UserBalance user={user} wss={wss.current} />}
-      </main>
+
+      {showPreloader ? (
+        <Preloader duration={preloaderDuration} /> // Передаем переменную времени отображения прелоадера
+      ) : (
+        <main
+          style={{
+            display: "flex",
+            gap: "15px",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          {!user && <UserBalance />}
+          {user && wss.current && <UserBalance user={user} wss={wss.current} />}
+        </main>
+      )}
+
       <Nav />
     </>
   );

@@ -1,0 +1,42 @@
+@import "@/src/app/shortSyles.scss";
+
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #080918;
+  z-index: 9999;
+
+  .preloader-content {
+    @include flex(center, center);
+    @include f-direction(column);
+
+    width: 100%;
+
+    img {
+      height: calc(100dvh - 8px);
+      width: 100%;
+
+      object-fit: cover;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 0;
+      overflow: hidden;
+    }
+  }
+}
+
+.progress {
+  height: 100%;
+  background-color: #ffcc00;
+  transition: width 0.2s ease-in-out;
+}
