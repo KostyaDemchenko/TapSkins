@@ -53,13 +53,34 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
   const handleTaskClick = async (task: TaskProps) => {
     const completeStatus = await user.completeTask(task.task_id);
     console.log("Complete status:", completeStatus);
+
+    if (!completeStatus.success) {
+      console.error(completeStatus.details);
+      return;
+    }
+
     if (task.platform_type === "Telegram") {
+      // вернет по сути, есть ли уже награда за подписку на тг канал
+      const completedTask = await user.getRewardsForCompletedTasks();
+      const reward = completedTask.rewardsClaimed;
+
+      if (reward.purple || reward.yellow) {
+        // значит подписка была сделана, показываем модалку, награда получена
+        setSelectedTask(task);
+        setShowModal(true);
+        return;
+      }
+      // подписки не было
+
       // тут записываем в localstorage что был кликнут таск с тг
       let tgTasks: (string | number[]) = global.window.localStorage.getItem("tgTasks") as string;
       if (tgTasks) tgTasks = JSON.parse(tgTasks) as number[];
       else tgTasks = [] as number[];
       tgTasks.push(task.task_id);
       window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
+
+      window.open(task.link_to_join, "_blank");
+      return;
     }
     const completedTask = await user.getRewardsForCompletedTasks();
     const rewards = completedTask.rewardsClaimed;
@@ -68,11 +89,6 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
     if (rewards.purple || rewards.yellow) {
       setSelectedTask(task);
       setShowModal(true);
-      // если награда получена, но платформа не тг
-      if (task.platform_type === "Any") window.open(task.link_to_join, "_blank");
-    }
-    else {
-      // если награда не получена еще
       window.open(task.link_to_join, "_blank");
     }
   };
