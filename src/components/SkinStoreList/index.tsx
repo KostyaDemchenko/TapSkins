@@ -113,30 +113,46 @@ const SkinStore: React.FC<SkinStoreProps> = ({
   }
 
   const addToCartHandle = async (skin: Skin) => {
-    if (addingToCart.current) return
+    if (addingToCart.current) return;
     addingToCart.current = true;
-    toastId.current = toast.loading("Checking skin for availability...", toastSettings);
+    toastId.current = toast.loading(
+      "Checking skin for availability...",
+      toastSettings
+    );
     if (!user) {
       toast.update(toastId.current, {
-        render: "Error occured! Reload page please!",
+        render: "Error occurred! Reload page please!",
         type: "error",
         isLoading: false,
         hideProgressBar: false,
-        autoClose: 3000
+        autoClose: 3000,
       });
       return;
     }
-    const status = (await userCart.current!.addToCart(skin, user.getInitData())) as SuccessDisplay;
-    
+    const status = (await userCart.current!.addToCart(
+      skin,
+      user.getInitData()
+    )) as SuccessDisplay;
+
     addingToCart.current = false;
     toast.update(toastId.current, {
       render: status.message,
       type: status.success ? "success" : "error",
       isLoading: false,
       hideProgressBar: false,
-      autoClose: 3000
+      autoClose: 3000,
     });
 
+    if (status.success) {
+      // Удаляем скин из списка после успешного добавления в корзину
+      removeSkinFromList(skin.item_id);
+    }
+  };
+
+  const removeSkinFromList = (skinId: number) => {
+    setFilteredSkins((prevSkins) =>
+      prevSkins.filter((skin) => skin.item_id !== skinId)
+    );
   };
 
   return (
@@ -149,6 +165,7 @@ const SkinStore: React.FC<SkinStoreProps> = ({
             addToCartHandle={addToCartHandle}
             skin={skin}
             key={skin.item_id}
+            onSkinActionComplete={removeSkinFromList} // Передаем функцию удаления
           />
         ))}
       </div>

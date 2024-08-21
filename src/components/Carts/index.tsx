@@ -35,6 +35,7 @@ interface SkinCardProps {
   className?: string;
   addToCartHandle: (skin: Skin) => void;
   user: User | null;
+  onSkinActionComplete: (skinId: number) => void; // Добавляем новый пропс
 }
 
 const SkinCard: React.FC<SkinCardProps> = ({
@@ -42,6 +43,7 @@ const SkinCard: React.FC<SkinCardProps> = ({
   className = "",
   addToCartHandle,
   user,
+  onSkinActionComplete, // Пропс для удаления скина из списка
 }) => {
   const [modalId] = useState(`cartTrigger-${skin.item_id}`);
   const [modalIdValidate] = useState(`validate-${skin.item_id}`);
@@ -72,6 +74,11 @@ const SkinCard: React.FC<SkinCardProps> = ({
         isLoading: false,
         autoClose: 3000,
       });
+
+      if (response.success) {
+        // Удаляем скин из списка после успешной покупки
+        onSkinActionComplete(skin_id);
+      }
     } catch (error) {
       // Обновляем тостер на сообщение об ошибке
       toast.update(toastId.current!, {

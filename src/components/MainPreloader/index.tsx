@@ -33,7 +33,12 @@ const Preloader: React.FC<{ duration?: number }> = ({ duration = 3000 }) => {
           <p>N</p>
           <p>S</p>
         </div>
-        <Image src={imgObj.preloader} alt='App Prototype' />
+        <Image
+          src={imgObj.preloader}
+          alt='App Prototype'
+          placeholder='blur'
+          priority
+        />
         <ProgressBar titleVisible={false} total={100} completed={progress} />
       </div>
     </div>
