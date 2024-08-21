@@ -162,7 +162,13 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
           isVisible={showModal}
           onClose={() => {
             setShowModal(false);
-            window.location.reload();
+            const index = tasks.unCompletedTasks.findIndex(el => el.task_id === selectedTask.task_id);
+            if (index !== -1) {
+              tasks.unCompletedTasks.splice(index, 1);
+              tasks.tasks.completed += 1;
+              setTasks({...tasks});
+            }
+            setSelectedTask(null);
           }}
           rewardAmount={selectedTask.reward}
           rewardName={selectedTask.task_name}
