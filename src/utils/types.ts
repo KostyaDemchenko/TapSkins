@@ -34,7 +34,7 @@ export class User {
   } | null = null;
 
   private backendAddress: string = process.env.NEXT_PUBLIC_BACKEND_ADDRESS!;
-  private staminaStep = 3; // сколько стамины в периоде будет добавляться
+  public staminaStep = 3; // сколько стамины в периоде будет добавляться
   private balance_icnrease_amnt: number = 1000;
   private staminaDecrease = 5;
   public staminaDelay = 500; // период добавления стамины в секундах
@@ -176,13 +176,16 @@ export class User {
     return this.balance_purple;
   }
 
-  // потом тип поменяешь аргумента
   async getSkins() {
     const response = await fetch(`${this.backendAddress}/skins`);
 
     return await response.json();
   }
-  async buySkins(orderId: number, currentTimestamp: number, storedTradeLink: string): Promise<SuccessDisplay> {
+  async buySkins(
+    orderId: number,
+    currentTimestamp: number,
+    storedTradeLink: string
+  ): Promise<SuccessDisplay> {
     const response = await fetch(`${this.backendAddress}/skins/buy`, {
       method: "POST",
       headers: {
@@ -198,63 +201,17 @@ export class User {
 
     if (!response.ok) {
       const data = await response.json();
-      console.error(data)
+      console.error(data);
       return data;
     }
 
     return await response.json();
-
-    // const skinIds = skins.map((el) => el.item_id).join(",");
-
-    // try {
-    //   const response = await fetch(`${this.backendAddress}/check-skins`, {
-    //     body: JSON.stringify({ skinIds, initData: this.initData }),
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     method: "POST",
-    //   });
-
-    //   if (!response.ok) {
-    //     throw new Error(`HTTP error! Status: ${response.status}`);
-    //   }
-
-    //   const data = await response.text();
-    //   if (data.trim() === "") {
-    //     return {
-    //       message: "We've received your order!",
-    //       success: true,
-    //       loading: false,
-    //     };
-    //   } else {
-    //     const productEnum = <string[]>[];
-    //     data.split(",").forEach((id) => {
-    //       const element = skins.find((el) => el.item_id === parseInt(id));
-    //       if (element) productEnum.push(element.skin_name);
-    //     });
-
-    //     return {
-    //       message: `We're sorry, but such skins has reserved:\n${productEnum.join(
-    //         ", "
-    //       )}`,
-    //       success: false,
-    //       loading: false,
-    //     };
-    //   }
-    //   // return data;
-    // } catch (error) {
-    //   console.error("Error occurred while buying skins:", error);
-    //   return {
-    //     message: "Error to check",
-    //     success: false,
-    //     loading: false,
-    //   };
-    // }
   }
 
+  // получение награды за приглашенных пользователей
   async getReward(reward: Reward): Promise<SuccessDisplay> {
     const response = await fetch(
-      `${this.backendAddress}/reward/${reward.reward_id}`,
+      `${this.backendAddress}/reward/invited-users/${reward.reward_id}`,
       {
         method: "POST",
         headers: {
@@ -323,13 +280,43 @@ export class User {
     const data = await response.json();
     return data;
   }
+  async completeTask(task_id: number): Promise<SuccessDisplay> {
+    const res = await postFetch(`${this.backendAddress}/tasks/${task_id}`, {
+      initData: this.initData,
+    });
+
+    if(!res.ok) {
+      console.error("Some error occured with completing task...");
+      return {
+        success: false,
+        message: ""
+      }
+    }
+
+    try {
+      return await res.json();
+    }
+    catch(e) {
+      console.error(e);
+      return {
+        success: false,
+        message: ""
+      }
+
+    }
+  }
 
   async getRewardsForCompletedTasks() {
-    fetch(`${this.backendAddress}/tasks/completed?${this.initData}`)
-      .then((d) => d.json())
-      .then((d) => {
-        console.log(d);
-      });
+    const res = await fetch(`${this.backendAddress}/tasks/completed?${this.initData}`);
+
+    if (!res.ok) {
+      console.error(res);
+      return {
+        success: false,
+      }
+    }
+
+    return await res.json();
   }
 
   async assemblyReferalLink(): Promise<SuccessDisplay> {
@@ -402,28 +389,13 @@ export type Reward = {
 // - получение элементов из локального хранилища
 // - удаление элементов из локального хранилища
 export class Cart {
-  private skins: Skin[] | null = null;
   public userBalance: number = 0;
-  private storage;
-  private storageKey = "skins-cart";
   private backendAddress: string = process.env.NEXT_PUBLIC_BACKEND_ADDRESS!;
   private totalPrice: number = 0;
 
   // передаем баланс юзера сюда
   constructor(userBalance: number = 0) {
-    this.storage = global.window.localStorage;
     this.userBalance = userBalance;
-
-    // this.checkLocalStorage();
-  }
-
-  // берем все что в localStorage хранится и записываем себе
-  private checkLocalStorage() {
-    if (this.storage.getItem("skins-cart")) {
-      this.skins = JSON.parse(this.storage.getItem(this.storageKey)!) as Skin[];
-    } else {
-      this.skins = [];
-    }
   }
 
   // Возвращает объект:

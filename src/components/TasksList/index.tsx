@@ -53,16 +53,47 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
     fetchTasks();
   }, [lastDailyClick]); // Обновляем задачи при изменении lastDailyClick
 
-  const handleTaskClick = (task: TaskProps) => {
-    if (task.platform_type === "Telegram") {
-      const formattedLink = task.link_to_join.replace("https://t.me/", "@");
-      console.log(`Join Telegram channel: ${formattedLink}`);
-    } else {
-      window.open(task.link_to_join, "_blank");
+  const handleTaskClick = async (task: TaskProps) => {
+    const completeStatus = await user.completeTask(task.task_id);
+    console.log("Complete status:", completeStatus);
+
+    if (!completeStatus.success) {
+      console.error(completeStatus.details);
+      return;
     }
 
-    setSelectedTask(task);
-    setShowModal(true);
+    if (task.platform_type === "Telegram") {
+      // вернет по сути, есть ли уже награда за подписку на тг канал
+      const completedTask = await user.getRewardsForCompletedTasks();
+      const reward = completedTask.rewardsClaimed;
+
+      if (reward.purple || reward.yellow) {
+        // значит подписка была сделана, показываем модалку, награда получена
+        setSelectedTask(task);
+        setShowModal(true);
+        return;
+      }
+      // подписки не было
+
+      // тут записываем в localstorage что был кликнут таск с тг
+      let tgTasks: (string | number[]) = global.window.localStorage.getItem("tgTasks") as string;
+      if (tgTasks) tgTasks = JSON.parse(tgTasks) as number[];
+      else tgTasks = [] as number[];
+      tgTasks.push(task.task_id);
+      window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
+
+      window.open(task.link_to_join, "_blank");
+      return;
+    }
+    const completedTask = await user.getRewardsForCompletedTasks();
+    const rewards = completedTask.rewardsClaimed;
+
+
+    if (rewards.purple || rewards.yellow) {
+      setSelectedTask(task);
+      setShowModal(true);
+      window.open(task.link_to_join, "_blank");
+    }
   };
 
   return (
@@ -99,26 +130,31 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         )}
         {loading
           ? Array.from(new Array(5)).map((_, index) => (
-              <Skeleton
-                key={index}
-                variant='rounded'
-                height={84}
-                animation='wave'
-                sx={{
-                  bgcolor: "var(--color-surface)",
-                  marginBottom: "5px",
-                  width: "100%",
-                }}
-              />
-            ))
-          : tasks.unCompletedTasks.map((task) => (
-              <TaskCard
-                key={task.task_id}
-                task={task}
-                onClick={() => handleTaskClick(task)}
-                id={`rewardTrigger-${task.task_id}`}
-              />
-            ))}
+            <Skeleton
+              key={index}
+              variant='rounded'
+              height={84}
+              animation='wave'
+              sx={{
+                bgcolor: "var(--color-surface)",
+                marginBottom: "5px",
+                width: "100%",
+              }}
+            />
+          ))
+          : tasks.unCompletedTasks.map((task) => {
+            let tgTasks: string | null | number[] = global.window.localStorage.getItem("tgTasks");
+            if (tgTasks) tgTasks = JSON.parse(tgTasks);
+            return <TaskCard
+              key={task.task_id}
+              task={task}
+              // если находим в localstorage запись о том что уже кликнули по таске, то 
+              // вешаем класс, который отобразит типа кнопку "Проверить"
+              className={tgTasks ? (tgTasks as number[]).find(el => el === task.task_id) ? "tg-status-check" : "" : ""}
+              onClick={() => handleTaskClick(task)}
+              id={`rewardTrigger-${task.task_id}`}
+            />
+          })}
       </div>
       {selectedTask && (
         <RewardModal
