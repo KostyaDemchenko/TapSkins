@@ -17,12 +17,31 @@ function extractMultiSelectNames(options: {
   return options.multi_select.map((option) => option.name).join(", ");
 }
 
+// Функция для получения всех данных с учетом пагинации
+async function fetchAllData(databaseId: string) {
+  let allResults: any[] = [];
+  let hasMore = true;
+  let startCursor: string | undefined = undefined;
+
+  while (hasMore) {
+    const response = await notion.databases.query({
+      database_id: databaseId,
+      start_cursor: startCursor,
+    });
+
+    allResults = [...allResults, ...response.results];
+    hasMore = response.has_more;
+    startCursor = response.next_cursor ?? undefined;
+  }
+
+  return allResults;
+}
+
 // Обработка запроса
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // Обработка CORS заголовков
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader(
@@ -30,51 +49,40 @@ export default async function handler(
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  // Обработка предварительных запросов (OPTIONS)
   if (req.method === "OPTIONS") {
     res.status(200).end();
     return;
   }
 
-  // Проверка наличия необходимых переменных окружения
   if (!notionSecret || !notionStoreDataBaseld) {
     res.status(500).json({ error: "Missing notion secret or DB-ID." });
     return;
   }
 
   try {
-    const query = await notion.databases.query({
-      database_id: notionStoreDataBaseld,
-    });
+    // Получаем все данные с учетом пагинации
+    const queryResults = await fetchAllData(notionStoreDataBaseld);
 
     // @ts-ignore
-    const rows = query.results.map((res) => res.properties) as RowSkinStore[];
+    const rows = queryResults.map((res) => res.properties) as RowSkinStore[];
     const storeDataStructured: SkinStoreDataStructured[] = rows.map((row) => ({
-      // for id
       item_id: row.item_id.unique_id.number || 0,
-
-      // for name
       skin_name: row.skin_name.title?.[0]?.text?.content ?? "Default Name",
-
-      // for rich_text
       weapon_name:
         row.weapon_name.rich_text
           .map((richText) => richText.text.content)
           .filter((content) => content.trim() !== "")
           .join(" ") || "Default Description",
-
-      // for url
       image_src: row.image_src?.url ?? "URL not available",
-
-      // for number
       price: row.price.number || 0,
       float: parseFloat(row.float.number.toFixed(5)) || 0,
-
-      // for multi_select
       rarity: extractMultiSelectNames(row.rarity),
       weapon_type: extractMultiSelectNames(row.weapon_type),
       startrack: extractMultiSelectNames(row.startrack),
     }));
+
+    // Сортировка по item_id от меньшего к большему
+    storeDataStructured.sort((a, b) => a.item_id - b.item_id);
 
     res.status(200).json({ storeDataStructured });
   } catch (error) {

@@ -123,7 +123,7 @@ const SkinCard: React.FC<SkinCardProps> = ({
                   alt='Purple coin'
                 />
               </div>
-              <p className='float'>Float {truncateFloat(skin.float, 6)}</p>
+              <p className='float'>Float {truncateFloat(skin.float, 4)}</p>
             </div>
           </div>
 
