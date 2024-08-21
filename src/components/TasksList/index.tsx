@@ -32,6 +32,9 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedTask, setSelectedTask] = useState<TaskProps | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [lastDailyClick, setLastDailyClick] = useState<string>(
+    formatDate(user.last_daily_bonus_time_clicked)
+  ); // Добавлено состояние для отслеживания последнего клика
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -48,7 +51,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
     };
 
     fetchTasks();
-  }, []);
+  }, [lastDailyClick]); // Обновляем задачи при изменении lastDailyClick
 
   const handleTaskClick = async (task: TaskProps) => {
     const completeStatus = await user.completeTask(task.task_id);
@@ -117,9 +120,11 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         ) : (
           user && (
             <DailyReward
-              lastTimeClicked={formatDate(user.last_daily_bonus_time_clicked)}
-              // lastTimeClicked={"05-08-2024 00:00:00"}
+              lastTimeClicked={lastDailyClick} // Используем состояние
               user={user}
+              onRewardClaimed={(newLastClick) =>
+                setLastDailyClick(newLastClick)
+              } // Обновляем состояние при получении награды
             />
           )
         )}

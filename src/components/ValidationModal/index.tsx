@@ -43,8 +43,10 @@ const urlSchema = z
 
 const ValidationModal: React.FC<{
   triggerId: string;
+  fade?: boolean;
+  subModal?: boolean;
   onConfirm: () => void; // Теперь это просто функция подтверждения
-}> = ({ triggerId, onConfirm }) => {
+}> = ({ triggerId, onConfirm, fade = true, subModal = false }) => {
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -72,9 +74,11 @@ const ValidationModal: React.FC<{
   return (
     <Modal
       modalTitle='Enter Steam Trade Link'
-      height='60dvh'
+      height='100dvh'
       triggerId={triggerId}
       className='validation-modal'
+      fade={fade}
+      subModal={subModal}
       closeElement={
         <Button
           label={`Confirm`}

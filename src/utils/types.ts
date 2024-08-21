@@ -127,7 +127,6 @@ export class User {
 
     return data;
   }
-
   checkSubscription(channelId: `@${string}`) {
     const { user_id } = this;
     return new Promise(async (res, rej) => {
@@ -152,7 +151,6 @@ export class User {
       res(data.subscribed);
     });
   }
-
   protected setUser(obj: User) {
     this.user_id = obj.user_id;
     this.balance_purple = obj.balance_purple;
@@ -345,6 +343,22 @@ export class User {
       success: true,
       message: referalLink,
     };
+  }
+
+  async buyNowSkin(skin_id: number, user_trade_link: string): Promise<SuccessDisplay> {
+    const response = await postFetch(
+      `${this.backendAddress}/skins/${skin_id}`,
+      { initData: this.initData, user_trade_link }
+    );
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error(data);
+      return data;
+    }
+
+
+    return data;
   }
 }
 

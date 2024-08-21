@@ -1,32 +1,43 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-
 import RewardModal from "@/src/components/RevardModal";
-
 import { User } from "@/src/utils/types";
 import iconObj from "@/public/icons/utils";
 import imgObj from "@/public/img/utils";
 import { formatDate } from "@/src/utils/functions";
+import { toast, ToastOptions } from "react-toastify";
 
 import "./style.scss";
 
 interface DailyRewardProps {
   className?: string;
-  onClick?: () => void;
-  lastTimeClicked: string; // Дата последнего клика в формате строки
+  lastTimeClicked: string;
   user: User;
+  onRewardClaimed: (newLastClick: string) => void;
 }
+
+const toastSettings: ToastOptions = {
+  position: "top-right",
+  autoClose: 3000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: false,
+  draggable: true,
+  progress: undefined,
+  theme: "dark",
+};
 
 const DailyReward: React.FC<DailyRewardProps> = ({
   className,
   lastTimeClicked,
-  onClick,
   user,
+  onRewardClaimed,
 }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [canClaimReward, setCanClaimReward] = useState<boolean>(false);
   const [timeRemaining, setTimeRemaining] = useState<string>("");
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   function getCurrentDateInUTC() {
     const now = new Date();
@@ -101,15 +112,28 @@ const DailyReward: React.FC<DailyRewardProps> = ({
   }, [lastTimeClicked, currentTime]);
 
   const handleClick = async () => {
-    if (!canClaimReward) return; // предотвращаем выполнение если награду нельзя получить
+    if (!canClaimReward) return;
 
-    console.log("Trying to get daily reward...");
+    // Показать тостер загрузки
+    toast.loading("Claiming reward...", toastSettings);
+
+    setIsLoading(true); // Устанавливаем состояние загрузки
     const posibilityToClaimReward = await user.getDailyReward();
-    if (canClaimReward && onClick && posibilityToClaimReward.success) {
-      console.log("Claiming...");
+
+    if (posibilityToClaimReward.success) {
       setCanClaimReward(false);
-      lastTimeClicked = formatDate(Date.now());
+      const newLastClick = formatDate(Date.now());
+      onRewardClaimed(newLastClick); // Обновляем родительский компонент
+
+      // Скрыть тостер и затем показать модалку
+      toast.dismiss(); // Убираем тостер загрузки
+      setShowModal(true); // Отображаем модалку
+    } else {
+      // Убираем тостер в случае ошибки
+      toast.dismiss();
     }
+
+    setIsLoading(false); // Останавливаем индикацию загрузки
   };
 
   return (
@@ -155,8 +179,7 @@ const DailyReward: React.FC<DailyRewardProps> = ({
       </button>
       <RewardModal
         triggerId='rewardModalTrigger'
-        // isVisible ничего не делает
-        isVisible={false}
+        isVisible={showModal}
         onClose={() => setShowModal(false)}
         rewardAmount={5000}
         rewardName='Daily Reward'
