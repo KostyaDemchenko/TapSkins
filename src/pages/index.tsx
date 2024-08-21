@@ -29,7 +29,7 @@ export default function Home() {
   const [showPreloader, setShowPreloader] = useState(false);
   const [authCompleted, setAuthCompleted] = useState(false); // Новое состояние для завершения авторизации
 
-  const preloaderDuration = 3000; // Переменная для задания времени отображения прелоадера
+  const preloaderDuration = 1000000; // Переменная для задания времени отображения прелоадера
 
   useEffect(() => {
     // Проверяем, отображался ли прелоадер ранее

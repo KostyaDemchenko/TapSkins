@@ -18,6 +18,30 @@
 
     width: 100%;
 
+    position: relative;
+
+    .app-name {
+      @include flex(center, center);
+      @include f-direction(column);
+
+      position: absolute;
+
+      top: 0;
+      right: 0;
+
+      z-index: -1;
+
+      p {
+        font-size: 55px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 125%;
+        text-transform: uppercase;
+        color: var(--color-text-primary);
+        opacity: 0.5;
+      }
+    }
+
     img {
       height: calc(100dvh - 8px);
       width: 100%;
