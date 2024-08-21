@@ -62,6 +62,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       return;
     }
 
+    //* таска телеграм
     if (task.platform_type === "Telegram") {
       // вернет по сути, есть ли уже награда за подписку на тг канал
       const completedTask = await user.getRewardsForCompletedTasks();
@@ -73,8 +74,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         setShowModal(true);
         return;
       }
-      // подписки не было
-
+      //* таска не телеграм
       // тут записываем в localstorage что был кликнут таск с тг
       let tgTasks: (string | number[]) = global.window.localStorage.getItem("tgTasks") as string;
       if (tgTasks) tgTasks = JSON.parse(tgTasks) as number[];
@@ -160,7 +160,10 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         <RewardModal
           triggerId={`rewardTrigger-${selectedTask.task_id}`}
           isVisible={showModal}
-          onClose={() => setShowModal(false)}
+          onClose={() => {
+            setShowModal(false);
+            window.location.reload();
+          }}
           rewardAmount={selectedTask.reward}
           rewardName={selectedTask.task_name}
           rewardType={selectedTask.reward_type}
