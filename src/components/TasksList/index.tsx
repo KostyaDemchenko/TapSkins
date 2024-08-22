@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 // Component import
 import ProgressBar from "@/src/components/ProgressBar";
@@ -12,6 +12,7 @@ import "./style.scss";
 
 import { TaskProps, User } from "@/src/utils/types";
 import { formatDate } from "@/src/utils/functions";
+import { Id, ToastContainer, ToastOptions, TypeOptions, UpdateOptions, toast } from "react-toastify";
 
 interface TasksResponse {
   unCompletedTasks: TaskProps[];
@@ -19,6 +20,28 @@ interface TasksResponse {
     completed: number;
     total: number;
   };
+}
+
+const toastSettings: ToastOptions = {
+  position: "top-right",
+  autoClose: 3000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: false,
+  draggable: true,
+  progress: undefined,
+  theme: "dark",
+};
+
+const toastReceivedSettings = (type: TypeOptions, text: string): UpdateOptions => {
+  return {
+    render: text,
+    isLoading: false,
+    type: type,
+    pauseOnHover: true,
+    closeOnClick: true,
+    autoClose: 3000
+  }
 }
 
 const TasksList: React.FC<{ user: User }> = ({ user }) => {
@@ -35,6 +58,9 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
   const [lastDailyClick, setLastDailyClick] = useState<string>(
     formatDate(user.last_daily_bonus_time_clicked)
   ); // Добавлено состояние для отслеживания последнего клика
+
+  const toasterId = useRef<Id>();
+  const [isClaimingReward, setIsClaimingReward] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -54,11 +80,15 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
   }, [lastDailyClick]); // Обновляем задачи при изменении lastDailyClick
 
   const handleTaskClick = async (task: TaskProps) => {
+    if (isClaimingReward) return;
+    setIsClaimingReward(true);
+    toasterId.current = toast.loading("Getting reward...", toastSettings);
     const completeStatus = await user.completeTask(task.task_id);
     console.log("Complete status:", completeStatus);
 
     if (!completeStatus.success) {
       console.error(completeStatus.details);
+      toast.update(toasterId.current, toastReceivedSettings("error", "Some error occured"));
       return;
     }
 
@@ -70,11 +100,12 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
 
       if (reward.purple || reward.yellow) {
         // значит подписка была сделана, показываем модалку, награда получена
+        toast.done(toasterId.current);
+        setIsClaimingReward(false);
         setSelectedTask(task);
         setShowModal(true);
         return;
       }
-      //* таска не телеграм
       // тут записываем в localstorage что был кликнут таск с тг
       let tgTasks: (string | number[]) = global.window.localStorage.getItem("tgTasks") as string;
       if (tgTasks) tgTasks = JSON.parse(tgTasks) as number[];
@@ -83,17 +114,25 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
 
       window.open(task.link_to_join, "_blank");
+      setIsClaimingReward(false);
       return;
     }
+    //* таска не телеграммная
     const completedTask = await user.getRewardsForCompletedTasks();
     const rewards = completedTask.rewardsClaimed;
 
 
     if (rewards.purple || rewards.yellow) {
+      toast.done(toasterId.current);
       setSelectedTask(task);
       setShowModal(true);
+      setIsClaimingReward(false);
       window.open(task.link_to_join, "_blank");
     }
+    else {
+      toast.update(toasterId.current, toastReceivedSettings("error", "Some error occured!"));
+    }
+    setIsClaimingReward(false);
   };
 
   return (
@@ -166,7 +205,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
             if (index !== -1) {
               tasks.unCompletedTasks.splice(index, 1);
               tasks.tasks.completed += 1;
-              setTasks({...tasks});
+              setTasks({ ...tasks });
             }
             setSelectedTask(null);
           }}
