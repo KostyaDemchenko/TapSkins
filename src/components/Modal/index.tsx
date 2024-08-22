@@ -10,15 +10,12 @@ interface ModalProps {
   className?: string;
   modalBg?: string;
   triggerId?: string;
-
   fade?: boolean;
   subModal?: boolean;
   blockClosing?: boolean;
   isVisible?: boolean;
-
   children: React.ReactNode;
   closeElement?: React.ReactNode;
-
   onClose?: () => void;
 }
 
@@ -74,6 +71,21 @@ const Modal: React.FC<ModalProps> = ({
       document.body.style.overflow = "auto";
     };
   }, [visible]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (modalRef.current) {
+        const initialTop = 100 - parseFloat(height);
+        setTop(`${initialTop}dvh`);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [height]);
 
   const show = () => {
     const initialTop = 100 - parseFloat(height);
