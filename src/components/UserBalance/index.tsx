@@ -194,8 +194,8 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
 
     const deltaX = clientX - centerX;
     const deltaY = clientY - centerY;
-    const angleX = (deltaY / rect.height) * 30;
-    const angleY = -(deltaX / rect.width) * 30;
+    const angleX = (deltaY / rect.height) * 50;
+    const angleY = -(deltaX / rect.width) * 50;
 
     setTiltStyle({ transform: `rotateX(${angleX}deg) rotateY(${angleY}deg)` });
   };

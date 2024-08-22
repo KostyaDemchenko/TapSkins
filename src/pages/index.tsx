@@ -108,24 +108,6 @@ export default function Home() {
     }
   }, [wss.current]);
 
-  const getSubsMsg = () => {
-    switch (true) {
-      case userSubscribed === undefined:
-        return "Check if you are subscribed";
-      case userSubscribed === null:
-        console.log("error");
-        return "Error :(";
-      case userSubscribed:
-        console.log("yes");
-        return "Yes, you are!";
-      case !userSubscribed:
-        console.log("no");
-        return "No, you aren't :(";
-      default:
-        return "Some error occured :(";
-    }
-  };
-
   return (
     <>
       <Head>
