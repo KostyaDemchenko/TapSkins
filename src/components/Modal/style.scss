@@ -81,6 +81,8 @@ body.no-scroll {
       height: 100%;
       gap: 30px;
 
+      transition: 0.3s ease-in-out;
+
       .header-box {
         @include flex(center, center);
         @include f-direction(row);
@@ -127,6 +129,8 @@ body.no-scroll {
         height: 100%;
         gap: 25px;
         overflow-y: scroll;
+
+        transition: 0.3s ease-in-out;
 
         &::-webkit-scrollbar {
           width: 0px;
