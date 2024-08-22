@@ -48,6 +48,7 @@
         @include f-direction(row);
 
         width: 100%;
+        gap: 5px;
 
         .price {
           @include flex(flex-start, center);

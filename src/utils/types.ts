@@ -285,35 +285,35 @@ export class User {
       initData: this.initData,
     });
 
-    if(!res.ok) {
+    if (!res.ok) {
       console.error("Some error occured with completing task...");
       return {
         success: false,
-        message: ""
-      }
+        message: "",
+      };
     }
 
     try {
       return await res.json();
-    }
-    catch(e) {
+    } catch (e) {
       console.error(e);
       return {
         success: false,
-        message: ""
-      }
-
+        message: "",
+      };
     }
   }
 
   async getRewardsForCompletedTasks() {
-    const res = await fetch(`${this.backendAddress}/tasks/completed?${this.initData}`);
+    const res = await fetch(
+      `${this.backendAddress}/tasks/completed?${this.initData}`
+    );
 
     if (!res.ok) {
       console.error(res);
       return {
         success: false,
-      }
+      };
     }
 
     return await res.json();
@@ -345,10 +345,17 @@ export class User {
     };
   }
 
-  async buyNowSkin(skin_id: number, user_trade_link: string): Promise<SuccessDisplay> {
+  async buyNowSkin(
+    skin_id: number,
+    user_trade_link: string
+  ): Promise<SuccessDisplay> {
     const response = await postFetch(
       `${this.backendAddress}/skins/${skin_id}`,
-      { initData: this.initData, user_trade_link }
+      {
+        initData: this.initData,
+        user_trade_link,
+        status: "In Progress", // Добавляем статус в тело запроса
+      }
     );
     const data = await response.json();
 
@@ -356,7 +363,6 @@ export class User {
       console.error(data);
       return data;
     }
-
 
     return data;
   }

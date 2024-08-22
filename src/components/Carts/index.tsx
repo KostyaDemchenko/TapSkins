@@ -35,7 +35,7 @@ interface SkinCardProps {
   className?: string;
   addToCartHandle: (skin: Skin) => void;
   user: User | null;
-  onSkinActionComplete: (skinId: number) => void; // Добавляем новый пропс
+  onSkinActionComplete: (skinId: number) => void;
 }
 
 const SkinCard: React.FC<SkinCardProps> = ({
@@ -43,7 +43,7 @@ const SkinCard: React.FC<SkinCardProps> = ({
   className = "",
   addToCartHandle,
   user,
-  onSkinActionComplete, // Пропс для удаления скина из списка
+  onSkinActionComplete,
 }) => {
   const [modalId] = useState(`cartTrigger-${skin.item_id}`);
   const [modalIdValidate] = useState(`validate-${skin.item_id}`);
@@ -123,7 +123,7 @@ const SkinCard: React.FC<SkinCardProps> = ({
                   alt='Purple coin'
                 />
               </div>
-              <p className='float'>Float {truncateFloat(skin.float, 6)}</p>
+              <p className='float'>Float {truncateFloat(skin.float, 4)}</p>
             </div>
           </div>
 
@@ -132,7 +132,7 @@ const SkinCard: React.FC<SkinCardProps> = ({
               label={`Buy Now`}
               className='btn-primary-25'
               icon=''
-              id={modalIdValidate} // Используем ID для открытия модалки
+              id={modalIdValidate}
             />
             <Button
               label={`Add to cart`}
