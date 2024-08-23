@@ -73,7 +73,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   });
 
   React.useEffect(() => {
-    if (!wss || wss.readyState === wss.CONNECTING) return;
+    if (!wss || wss.readyState !== wss.OPEN) return;
     wss.onmessage = (e) => {
       const response = JSON.parse(e.data);
       if (response.success && user) {
