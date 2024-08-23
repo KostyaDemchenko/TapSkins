@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+
 import "rodal/lib/rodal.css";
 import "./style.scss";
 
@@ -8,29 +9,29 @@ interface ModalProps {
   height?: string;
   className?: string;
   modalBg?: string;
+  triggerId?: string;
   fade?: boolean;
   subModal?: boolean;
+  blockClosing?: boolean;
+  isVisible?: boolean;
   children: React.ReactNode;
   closeElement?: React.ReactNode;
   onClose?: () => void;
-  blockClosing?: boolean;
-  triggerId?: string;
-  isVisible?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
   modalTitle,
-  children,
-  className = "",
   height = "70dvh",
-  onClose,
+  className = "",
+  modalBg = "var(--color-surface)",
+  triggerId,
   fade = true,
   subModal = false,
-  closeElement,
-  modalBg = "var(--color-surface)",
   blockClosing,
-  triggerId,
   isVisible = false,
+  children,
+  closeElement,
+  onClose,
 }) => {
   const [top, setTop] = useState("100dvh");
   const modalRef = useRef<HTMLDivElement>(null);
@@ -70,6 +71,21 @@ const Modal: React.FC<ModalProps> = ({
       document.body.style.overflow = "auto";
     };
   }, [visible]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (modalRef.current) {
+        const initialTop = 100 - parseFloat(height);
+        setTop(`${initialTop}dvh`);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [height]);
 
   const show = () => {
     const initialTop = 100 - parseFloat(height);

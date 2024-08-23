@@ -18,7 +18,7 @@ body.no-scroll {
   z-index: 99;
   visibility: hidden;
   opacity: 0;
-  transition: 0.5s all;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
   overflow: hidden;
 
   .drag-zone {
@@ -54,7 +54,7 @@ body.no-scroll {
     position: absolute;
     width: 100%;
     top: 100dvh;
-    transition: 0.5s;
+    transition: top 0.3s ease-in-out, height 0.3s ease-in-out;
     padding: 0;
 
     background: var(--color-surface);
@@ -80,6 +80,8 @@ body.no-scroll {
       padding: 33px 20px 15px 20px;
       height: 100%;
       gap: 30px;
+
+      transition: all 0.3s ease-in-out;
 
       .header-box {
         @include flex(center, center);
@@ -127,6 +129,8 @@ body.no-scroll {
         height: 100%;
         gap: 25px;
         overflow-y: scroll;
+
+        transition: all 0.3s ease-in-out;
 
         &::-webkit-scrollbar {
           width: 0px;

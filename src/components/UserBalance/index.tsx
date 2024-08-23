@@ -285,6 +285,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
                 width={279}
                 height={279}
                 alt='bomb button'
+                priority
               />
             ) : (
               <Skeleton
