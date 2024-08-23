@@ -73,7 +73,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   });
 
   React.useEffect(() => {
-    if (!wss) return;
+    if (!wss || wss.readyState === wss.CONNECTING) return;
     wss.onmessage = (e) => {
       const response = JSON.parse(e.data);
       if (response.success && user) {
@@ -83,6 +83,10 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
         setLastClick(response.last_click);
       } else {
         console.error("Money wasn't increased");
+        if (response.details) {
+          console.error(response.details);
+        }
+        toast.error(response.message, toastifyOptions);
       }
     };
   }, [wss, user, setStamina, setLastClick]);
@@ -154,7 +158,13 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     if (exchangeStatus?.loading) return;
     if (!user) return;
 
+    
     if (user && wss) {
+      if (wss.readyState === wss.CONNECTING) {
+        toast.error("Connecting...please wait", toastifyOptions);
+        console.log("Still connecting with wwebsocket");
+        return;
+      }
       user.increaseBalance();
       wss.send(
         JSON.stringify({
