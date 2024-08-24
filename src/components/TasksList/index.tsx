@@ -79,12 +79,32 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
     fetchTasks();
   }, [lastDailyClick]); // Обновляем задачи при изменении lastDailyClick
 
+  // удаляем из локального хранилища таски, которых нету
+  useEffect(() => {
+    if (tasks.unCompletedTasks) {
+      const localStorage = global.window.localStorage.getItem("tgTasks");
+      if (!localStorage) return;
+
+      try {
+        const parsedStor = JSON.parse(localStorage) as number[];
+        if (!parsedStor.length) return;
+
+        const actualIds = parsedStor.filter(id => {
+          return tasks.unCompletedTasks.find(el => el.task_id === id);
+        });
+
+        global.window.localStorage.setItem("tgTasks", JSON.stringify(actualIds));
+      } catch (error) {
+        console.error("Something wrong with local storage");
+      }
+    }
+  }, [tasks]);
+
   const handleTaskClick = async (task: TaskProps) => {
     if (isClaimingReward) return;
     setIsClaimingReward(true);
-    toasterId.current = toast.loading("Getting reward...", toastSettings);
+    toasterId.current = toast.loading("Checking for reward...", toastSettings);
     const completeStatus = await user.completeTask(task.task_id);
-    console.log("Complete status:", completeStatus);
 
     if (!completeStatus.success) {
       console.error(completeStatus.details);
@@ -97,24 +117,33 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       // вернет по сути, есть ли уже награда за подписку на тг канал
       const completedTask = await user.getRewardsForCompletedTasks();
       const reward = completedTask.rewardsClaimed;
-
+      
+      // тут записываем в localstorage что был кликнут таск с тг
+      let tgTasks: (string | number[]) = global.window.localStorage.getItem("tgTasks") as string;
+      if (tgTasks) tgTasks = JSON.parse(tgTasks) as number[];
+      else tgTasks = [] as number[];
+      const taskIndex = tgTasks.findIndex(el => el === task.task_id);
       if (reward.purple || reward.yellow) {
         // значит подписка была сделана, показываем модалку, награда получена
         toast.done(toasterId.current);
         setIsClaimingReward(false);
         setSelectedTask(task);
         setShowModal(true);
+
+        if (tgTasks.length && tgTasks.find(el => el === task.task_id)) {
+          // удаляем из локального хранилища таску
+          if (taskIndex === -1) return;
+          tgTasks.splice(taskIndex, 1);
+          window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
+        }
         return;
       }
-      // тут записываем в localstorage что был кликнут таск с тг
-      let tgTasks: (string | number[]) = global.window.localStorage.getItem("tgTasks") as string;
-      if (tgTasks) tgTasks = JSON.parse(tgTasks) as number[];
-      else tgTasks = [] as number[];
-      tgTasks.push(task.task_id);
+      if (taskIndex === -1) tgTasks.push(task.task_id);
       window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
 
       window.open(task.link_to_join, "_blank");
       setIsClaimingReward(false);
+      toast.update(toasterId.current, {...toastReceivedSettings("info", "Check subscription again") });
       return;
     }
     //* таска не телеграммная

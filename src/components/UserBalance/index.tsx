@@ -34,37 +34,45 @@ const calculateStamina = (last_click: number) => {
   return passiveStamina;
 };
 
-const useStamina = (user: User | undefined) => {
+const useStamina = (user: User | undefined, wss: WebSocket | undefined) => {
   const [stamina, setStamina] = React.useState<number>(user ? user.stamina : 0);
-  const [lastClick, setLastClick] = React.useState<number>(
-    user ? user.last_click : Date.now()
-  );
+  // const [lastClick, setLastClick] = React.useState<number>(
+  //   user ? user.last_click : Date.now()
+  // );
 
   React.useEffect(() => {
     if (!user) return;
 
     const intervalId = setInterval(() => {
-      const receivedPassiveStamina = calculateStamina(lastClick);
-      setStamina((prevStamina) => {
-        const newStamina = Math.min(
-          user.max_stamina,
-          prevStamina + receivedPassiveStamina
-        );
-        if (newStamina > prevStamina) {
-          setLastClick(Date.now());
-        }
-        return newStamina;
-      });
+      // const receivedPassiveStamina = calculateStamina(lastClick);
+      if (wss && wss.readyState === wss.OPEN) {
+        wss.send(JSON.stringify({
+          type: "stamina",
+          user: user.getInitData()
+        }));
+      }
+      // setStamina((prevStamina) => {
+      //   const newStamina = Math.min(
+      //     user.max_stamina,
+      //     prevStamina + receivedPassiveStamina
+      //   );
+      //   if (newStamina > prevStamina) {
+      //     setLastClick(Date.now());
+      //   }
+      //   return newStamina;
+      // });
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [user, lastClick]);
+  }, [user, wss?.readyState]);
 
-  return [stamina, setStamina, setLastClick] as const;
+  // return [stamina, setStamina, setLastClick] as const;
+  return [stamina, setStamina] as const;
 };
 
 const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
-  const [stamina, setStamina, setLastClick] = useStamina(user);
+  // const [stamina, setStamina, setLastClick] = useStamina(user, wss);
+  const [stamina, setStamina] = useStamina(user, wss);
   const [exchangeStatus, setExchangeStatus] =
     React.useState<SuccessDisplay | null>();
   const toastElement = React.useRef<Id>();
@@ -76,11 +84,12 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     if (!wss || wss.readyState !== wss.OPEN) return;
     wss.onmessage = (e) => {
       const response = JSON.parse(e.data);
+      // toast.info(`Info:\n${JSON.stringify(response)}`, toastifyOptions);
       if (response.success && user) {
         user.stamina = response.stamina;
         user.last_click = response.last_click;
         setStamina(response.stamina);
-        setLastClick(response.last_click);
+        // setLastClick(response.last_click);
       } else {
         console.error("Money wasn't increased");
         if (response.details) {
@@ -89,7 +98,8 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
         toast.error(response.message, toastifyOptions);
       }
     };
-  }, [wss, user, setStamina, setLastClick]);
+  }, [wss, user, setStamina]);
+  // }, [wss, user, setStamina, setLastClick]);
 
   React.useEffect(() => {
     if (!exchangeStatus) return;
@@ -158,7 +168,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     if (exchangeStatus?.loading) return;
     if (!user) return;
 
-    
+
     if (user && wss) {
       if (wss.readyState === wss.CONNECTING) {
         toast.error("Connecting...please wait", toastifyOptions);

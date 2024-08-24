@@ -106,6 +106,7 @@
     .task-name {
       @include p-montserrat-14-125-medium;
       color: var(--color-text-primary);
+      max-width: 200px;
     }
 
     .reward-count-box {
