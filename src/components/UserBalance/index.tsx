@@ -50,7 +50,7 @@ const useStamina = (user: User | undefined, wss: WebSocket | undefined) => {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [user]);
+  }, [user, wss]);
 
   return [stamina, setStamina] as const;
 };
@@ -150,6 +150,8 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     if (!user) return;
 
 
+    // Используем легкое тактильное воздействие при нажатии
+    triggerHapticFeedback("light");
     if (user && wss) {
       if (wss.readyState === wss.CONNECTING) {
         toast.error("Connecting...please wait", toastifyOptions);
@@ -163,9 +165,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
         })
       );
     }
-
-    // Используем легкое тактильное воздействие при нажатии
-    triggerHapticFeedback("light");
   };
 
   const touchEnd = () => {
