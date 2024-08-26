@@ -65,10 +65,9 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   });
 
   React.useEffect(() => {
-    if (!wss || wss.readyState !== wss.OPEN) return;
+    if (!wss) return;
     wss.onmessage = (e) => {
       const response = JSON.parse(e.data);
-      console.log("Receiving...", response);
       if (response.success && user) {
         user.stamina = Math.min(response.stamina + calculateStamina(response.last_click), user.max_stamina);
         user.last_click = response.last_click;
@@ -173,14 +172,33 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   };
 
   const touchStart = (
-    e:
-      | React.MouseEvent<HTMLDivElement, MouseEvent>
-      | React.TouchEvent<HTMLDivElement>
+    e: React.TouchEvent<HTMLDivElement>
   ) => {
+
     const event = e as
       | React.MouseEvent<HTMLDivElement, MouseEvent>
       | React.TouchEvent<HTMLDivElement>;
     const isTouch = event.type === "touchstart";
+
+    if (!user) return;
+    if (exchangeStatus && exchangeStatus.loading) return;
+
+    // Используем легкое тактильное воздействие при нажатии
+    triggerHapticFeedback("medium");
+    if (user && wss) {
+      if (wss.readyState === wss.CONNECTING) {
+        toast.error("Connecting...please wait", toastifyOptions);
+        console.log("Still connecting with websocket");
+        return;
+      }
+      user.increaseBalance();
+      wss.send(
+        JSON.stringify({
+          user: user.getInitData(),
+        })
+      );
+    }
+
 
     const clientX = isTouch
       ? (event as React.TouchEvent<HTMLDivElement>).touches[0].clientX
