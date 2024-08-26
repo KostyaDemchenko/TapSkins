@@ -15,7 +15,7 @@ import { formatDate } from "@/src/utils/functions";
 import { Id, ToastContainer, ToastOptions, TypeOptions, UpdateOptions, toast } from "react-toastify";
 
 interface TasksResponse {
-  unCompletedTasks: TaskProps[];
+  unCompletedTasks: TaskProps[] | null;
   tasks: {
     completed: number;
     total: number;
@@ -46,7 +46,7 @@ const toastReceivedSettings = (type: TypeOptions, text: string): UpdateOptions =
 
 const TasksList: React.FC<{ user: User }> = ({ user }) => {
   const [tasks, setTasks] = useState<TasksResponse>({
-    unCompletedTasks: [],
+    unCompletedTasks: null,
     tasks: {
       completed: 0,
       total: 0,
@@ -88,10 +88,12 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       try {
         const parsedStor = JSON.parse(localStorage) as number[];
         if (!parsedStor.length) return;
-
+        
+        console.log(parsedStor, tasks.unCompletedTasks);
         const actualIds = parsedStor.filter(id => {
-          return tasks.unCompletedTasks.find(el => el.task_id === id);
+          return tasks.unCompletedTasks!.find(el => el.task_id === id);
         });
+
 
         global.window.localStorage.setItem("tgTasks", JSON.stringify(actualIds));
       } catch (error) {
@@ -210,7 +212,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
               }}
             />
           ))
-          : tasks.unCompletedTasks.map((task) => {
+          : (tasks.unCompletedTasks ? tasks.unCompletedTasks : []).map((task) => {
             let tgTasks: string | null | number[] = global.window.localStorage.getItem("tgTasks");
             if (tgTasks) tgTasks = JSON.parse(tgTasks);
             return <TaskCard
@@ -229,6 +231,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
           triggerId={`rewardTrigger-${selectedTask.task_id}`}
           isVisible={showModal}
           onClose={() => {
+            if (!tasks.unCompletedTasks) return;
             setShowModal(false);
             const index = tasks.unCompletedTasks.findIndex(el => el.task_id === selectedTask.task_id);
             if (index !== -1) {

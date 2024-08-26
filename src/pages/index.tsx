@@ -20,10 +20,8 @@ export default function Home() {
   // boolean - подписан\неподписан
   // undefined - еще ничего не отправлено
   // null - ошибка какая-то
-  const [userSubscribed, setUserSubscribed] = React.useState<
-    boolean | null | undefined
-  >(undefined);
-  const wss = React.useRef<null | WebSocket>(null);
+  const [wss, setWss] = React.useState<null | WebSocket>(null);
+  // const wss = React.useRef<null | WebSocket>(null);
 
   // Состояние для отображения прелоадера
   const [showPreloader, setShowPreloader] = useState(false);
@@ -57,7 +55,7 @@ export default function Home() {
   useEffect(() => {
     if (!tg) return;
 
-    tg.expand();
+    tg.expand()
     tg.setHeaderColor("#080918");
 
     (async () => {
@@ -76,9 +74,25 @@ export default function Home() {
       // пока не будет это выполнено, никаких нахуй дальше действий
       if (response.success) {
         userClass.receivedBonus = response.bonus ? response.bonus : null;
-        // отобразить модалку о получении награды, если там стоимость награды какая-то была
+        // отобразить модалку о получении награды, если там награда какая-то была
         // userClass.getRewardsForCompletedTasks();
         setUser(userClass);
+        try {
+          console.log("Connecting...");
+          const ws = new WebSocket(`${webSocketAddress}?${user?.getInitData()}`);
+          setWss(ws);
+          ws.onclose = (event) => {
+            console.log(
+              `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
+            );
+            global.window.location.reload();
+          };
+          ws.onopen = () => {
+            console.log("Connected");
+          };
+        } catch (e) {
+          console.error(e);
+        }
       }
 
       // Устанавливаем состояние завершения авторизации
@@ -86,27 +100,27 @@ export default function Home() {
     })();
   }, [tg]);
 
-  useEffect(() => {
-    try {
-      console.log("Connecting...");
-      const ws = new WebSocket(`${webSocketAddress}?${user?.getInitData()}`);
-      wss.current = ws;
-      ws.onopen = () => {
-        console.log("Connected");
-      };
-    } catch (e) {
-      console.error(e);
-    }
+  // useEffect(() => {
+  //   try {
+  //     console.log("Connecting...");
+  //     const ws = new WebSocket(`${webSocketAddress}?${user?.getInitData()}`);
+  //     setWss(ws);
+  //     ws.onopen = () => {
+  //       console.log("Connected");
+  //     };
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
 
-    if (user && wss.current) {
-      wss.current.onclose = (event) => {
-        console.log(
-          `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
-        );
-        global.window.location.reload();
-      };
-    }
-  }, [wss.current]);
+  //   if (user && wss) {
+  //     wss.onclose = (event) => {
+  //       console.log(
+  //         `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
+  //       );
+  //       global.window.location.reload();
+  //     };
+  //   }
+  // }, [wss]);
 
   return (
     <>
@@ -146,8 +160,8 @@ export default function Home() {
             alignItems: "center",
           }}
         >
-          {!user && <UserBalance />}
-          {user && wss.current && <UserBalance user={user} wss={wss.current} />}
+          {/* {!user && <UserBalance />} */}
+          {user && wss && <UserBalance user={user} wss={wss} />}
         </main>
       )}
 
