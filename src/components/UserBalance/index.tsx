@@ -68,6 +68,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     if (!wss || wss.readyState !== wss.OPEN) return;
     wss.onmessage = (e) => {
       const response = JSON.parse(e.data);
+      console.log("Receiving...", response);
       if (response.success && user) {
         user.stamina = Math.min(response.stamina + calculateStamina(response.last_click), user.max_stamina);
         user.last_click = response.last_click;
@@ -146,16 +147,16 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   const clickerButtonHandler = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
-    if (exchangeStatus?.loading) return;
     if (!user) return;
+    if (exchangeStatus && exchangeStatus.loading) return;
 
 
     // Используем легкое тактильное воздействие при нажатии
-    triggerHapticFeedback("light");
+    triggerHapticFeedback("medium");
     if (user && wss) {
       if (wss.readyState === wss.CONNECTING) {
         toast.error("Connecting...please wait", toastifyOptions);
-        console.log("Still connecting with wwebsocket");
+        console.log("Still connecting with websocket");
         return;
       }
       user.increaseBalance();

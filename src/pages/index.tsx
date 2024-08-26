@@ -76,7 +76,7 @@ export default function Home() {
       // пока не будет это выполнено, никаких нахуй дальше действий
       if (response.success) {
         userClass.receivedBonus = response.bonus ? response.bonus : null;
-        // отобразить модалку о получении награды, если там стоимость награды какая-то была
+        // отобразить модалку о получении награды, если там награда какая-то была
         // userClass.getRewardsForCompletedTasks();
         setUser(userClass);
       }
