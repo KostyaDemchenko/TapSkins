@@ -79,7 +79,7 @@ export default function Home() {
         setUser(userClass);
         try {
           console.log("Connecting...");
-          const ws = new WebSocket(`${webSocketAddress}?${user?.getInitData()}`);
+          const ws = new WebSocket(`${webSocketAddress}?${userClass.getInitData()}`);
           setWss(ws);
           ws.onclose = (event) => {
             console.log(
@@ -99,28 +99,6 @@ export default function Home() {
       setAuthCompleted(true);
     })();
   }, [tg]);
-
-  // useEffect(() => {
-  //   try {
-  //     console.log("Connecting...");
-  //     const ws = new WebSocket(`${webSocketAddress}?${user?.getInitData()}`);
-  //     setWss(ws);
-  //     ws.onopen = () => {
-  //       console.log("Connected");
-  //     };
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-
-  //   if (user && wss) {
-  //     wss.onclose = (event) => {
-  //       console.log(
-  //         `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
-  //       );
-  //       global.window.location.reload();
-  //     };
-  //   }
-  // }, [wss]);
 
   return (
     <>
