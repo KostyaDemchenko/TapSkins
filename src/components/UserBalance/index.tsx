@@ -284,7 +284,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
           onTouchStart={touchStart}
           onTouchEnd={touchEnd}
           style={tiltStyle}
-          onClick={clickerButtonHandler}
+          // onClick={clickerButtonHandler}
         >
           <div className='clicker-button-border'></div>
           <div className='clicker-button'>
