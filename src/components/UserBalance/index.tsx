@@ -38,9 +38,8 @@ const useStamina = (user: User | undefined, wss: WebSocket | undefined) => {
   const [stamina, setStamina] = React.useState<number>(user ? user.stamina : 0);
 
   React.useEffect(() => {
-    if (!user) return;
-
     const intervalId = setInterval(() => {
+      if (!user) return;
       if (wss && wss.readyState === wss.OPEN) {
         wss.send(
           JSON.stringify({
@@ -156,6 +155,10 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   const clickerButtonHandler = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
+
+    const platform = window.Telegram.WebApp.platform;
+    if (platform === "tdesktop") return;
+    console.log(window.Telegram.WebApp);
     if (!user) return;
     if (exchangeStatus && exchangeStatus.loading) return;
 
