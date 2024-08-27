@@ -143,29 +143,29 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     }
   };
 
-  const clickerButtonHandler = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
-    if (!user) return;
-    if (exchangeStatus && exchangeStatus.loading) return;
+  // const clickerButtonHandler = (
+  //   e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  // ) => {
+  //   if (!user) return;
+  //   if (exchangeStatus && exchangeStatus.loading) return;
 
 
-    // Используем легкое тактильное воздействие при нажатии
-    triggerHapticFeedback("medium");
-    if (user && wss) {
-      if (wss.readyState === wss.CONNECTING) {
-        toast.error("Connecting...please wait", toastifyOptions);
-        console.log("Still connecting with websocket");
-        return;
-      }
-      user.increaseBalance();
-      wss.send(
-        JSON.stringify({
-          user: user.getInitData(),
-        })
-      );
-    }
-  };
+  //   // Используем легкое тактильное воздействие при нажатии
+  //   triggerHapticFeedback("medium");
+  //   if (user && wss) {
+  //     if (wss.readyState === wss.CONNECTING) {
+  //       toast.error("Connecting...please wait", toastifyOptions);
+  //       console.log("Still connecting with websocket");
+  //       return;
+  //     }
+  //     user.increaseBalance();
+  //     wss.send(
+  //       JSON.stringify({
+  //         user: user.getInitData(),
+  //       })
+  //     );
+  //   }
+  // };
 
   const touchEnd = () => {
     setTiltStyle({ transform: `rotateX(${0}deg) rotateY(${0}deg)` });
