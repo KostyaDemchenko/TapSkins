@@ -9,7 +9,7 @@ import { Cart, Skin, SuccessDisplay, User } from "@/src/utils/types";
 import "./style.scss";
 
 const toastSettings: ToastOptions = {
-  position: "top-right",
+  position: "top-center",
   autoClose: 3000,
   hideProgressBar: false,
   closeOnClick: true,

@@ -21,7 +21,7 @@ const userBalanceStore: React.FC<userBalanceStoreProps> = ({ user }) => {
 
   React.useEffect(() => {
     const toastifyOptions: ToastOptions = {
-      position: "top-right",
+      position: "top-center",
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: false,
@@ -49,13 +49,17 @@ const userBalanceStore: React.FC<userBalanceStoreProps> = ({ user }) => {
         <p className='title'>Balance</p>
         <div className='amount'>
           <p className='balance'>
-            {user ? user.getBalancePurple().toLocaleString("RU-ru") : <Skeleton
-              variant='rounded'
-              width={24}
-              height={24}
-              animation='wave'
-              sx={{ bgcolor: "var(--color-surface)" }}
-            />}
+            {user ? (
+              user.getBalancePurple().toLocaleString("RU-ru")
+            ) : (
+              <Skeleton
+                variant='rounded'
+                width={24}
+                height={24}
+                animation='wave'
+                sx={{ bgcolor: "var(--color-surface)" }}
+              />
+            )}
           </p>
           <Image src={iconObj.purpleCoin} alt='Purple Coin' />
         </div>

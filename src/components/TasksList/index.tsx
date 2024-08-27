@@ -12,7 +12,14 @@ import "./style.scss";
 
 import { TaskProps, User } from "@/src/utils/types";
 import { formatDate } from "@/src/utils/functions";
-import { Id, ToastContainer, ToastOptions, TypeOptions, UpdateOptions, toast } from "react-toastify";
+import {
+  Id,
+  ToastContainer,
+  ToastOptions,
+  TypeOptions,
+  UpdateOptions,
+  toast,
+} from "react-toastify";
 
 interface TasksResponse {
   unCompletedTasks: TaskProps[] | null;
@@ -23,7 +30,7 @@ interface TasksResponse {
 }
 
 const toastSettings: ToastOptions = {
-  position: "top-right",
+  position: "top-center",
   autoClose: 3000,
   hideProgressBar: false,
   closeOnClick: true,
@@ -33,16 +40,19 @@ const toastSettings: ToastOptions = {
   theme: "dark",
 };
 
-const toastReceivedSettings = (type: TypeOptions, text: string): UpdateOptions => {
+const toastReceivedSettings = (
+  type: TypeOptions,
+  text: string
+): UpdateOptions => {
   return {
     render: text,
     isLoading: false,
     type: type,
     pauseOnHover: true,
     closeOnClick: true,
-    autoClose: 3000
-  }
-}
+    autoClose: 3000,
+  };
+};
 
 const TasksList: React.FC<{ user: User }> = ({ user }) => {
   const [tasks, setTasks] = useState<TasksResponse>({
@@ -88,14 +98,16 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       try {
         const parsedStor = JSON.parse(localStorage) as number[];
         if (!parsedStor.length) return;
-        
+
         console.log(parsedStor, tasks.unCompletedTasks);
-        const actualIds = parsedStor.filter(id => {
-          return tasks.unCompletedTasks!.find(el => el.task_id === id);
+        const actualIds = parsedStor.filter((id) => {
+          return tasks.unCompletedTasks!.find((el) => el.task_id === id);
         });
 
-
-        global.window.localStorage.setItem("tgTasks", JSON.stringify(actualIds));
+        global.window.localStorage.setItem(
+          "tgTasks",
+          JSON.stringify(actualIds)
+        );
       } catch (error) {
         console.error("Something wrong with local storage");
       }
@@ -110,7 +122,10 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
 
     if (!completeStatus.success) {
       console.error(completeStatus.details);
-      toast.update(toasterId.current, toastReceivedSettings("error", "Some error occured"));
+      toast.update(
+        toasterId.current,
+        toastReceivedSettings("error", "Some error occured")
+      );
       return;
     }
 
@@ -119,12 +134,14 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       // вернет по сути, есть ли уже награда за подписку на тг канал
       const completedTask = await user.getRewardsForCompletedTasks();
       const reward = completedTask.rewardsClaimed;
-      
+
       // тут записываем в localstorage что был кликнут таск с тг
-      let tgTasks: (string | number[]) = global.window.localStorage.getItem("tgTasks") as string;
+      let tgTasks: string | number[] = global.window.localStorage.getItem(
+        "tgTasks"
+      ) as string;
       if (tgTasks) tgTasks = JSON.parse(tgTasks) as number[];
       else tgTasks = [] as number[];
-      const taskIndex = tgTasks.findIndex(el => el === task.task_id);
+      const taskIndex = tgTasks.findIndex((el) => el === task.task_id);
       if (reward.purple || reward.yellow) {
         // значит подписка была сделана, показываем модалку, награда получена
         toast.done(toasterId.current);
@@ -132,7 +149,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         setSelectedTask(task);
         setShowModal(true);
 
-        if (tgTasks.length && tgTasks.find(el => el === task.task_id)) {
+        if (tgTasks.length && tgTasks.find((el) => el === task.task_id)) {
           // удаляем из локального хранилища таску
           if (taskIndex === -1) return;
           tgTasks.splice(taskIndex, 1);
@@ -145,13 +162,14 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
 
       window.open(task.link_to_join, "_blank");
       setIsClaimingReward(false);
-      toast.update(toasterId.current, {...toastReceivedSettings("info", "Check subscription again") });
+      toast.update(toasterId.current, {
+        ...toastReceivedSettings("info", "Check subscription again"),
+      });
       return;
     }
     //* таска не телеграммная
     const completedTask = await user.getRewardsForCompletedTasks();
     const rewards = completedTask.rewardsClaimed;
-
 
     if (rewards.purple || rewards.yellow) {
       toast.done(toasterId.current);
@@ -159,9 +177,11 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       setShowModal(true);
       setIsClaimingReward(false);
       window.open(task.link_to_join, "_blank");
-    }
-    else {
-      toast.update(toasterId.current, toastReceivedSettings("error", "Some error occured!"));
+    } else {
+      toast.update(
+        toasterId.current,
+        toastReceivedSettings("error", "Some error occured!")
+      );
     }
     setIsClaimingReward(false);
   };
@@ -200,31 +220,44 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         )}
         {loading
           ? Array.from(new Array(5)).map((_, index) => (
-            <Skeleton
-              key={index}
-              variant='rounded'
-              height={84}
-              animation='wave'
-              sx={{
-                bgcolor: "var(--color-surface)",
-                marginBottom: "5px",
-                width: "100%",
-              }}
-            />
-          ))
-          : (tasks.unCompletedTasks ? tasks.unCompletedTasks : []).map((task) => {
-            let tgTasks: string | null | number[] = global.window.localStorage.getItem("tgTasks");
-            if (tgTasks) tgTasks = JSON.parse(tgTasks);
-            return <TaskCard
-              key={task.task_id}
-              task={task}
-              // если находим в localstorage запись о том что уже кликнули по таске, то 
-              // вешаем класс, который отобразит типа кнопку "Проверить"
-              className={tgTasks ? (tgTasks as number[]).find(el => el === task.task_id) ? "tg-status-check" : "" : ""}
-              onClick={() => handleTaskClick(task)}
-              id={`rewardTrigger-${task.task_id}`}
-            />
-          })}
+              <Skeleton
+                key={index}
+                variant='rounded'
+                height={84}
+                animation='wave'
+                sx={{
+                  bgcolor: "var(--color-surface)",
+                  marginBottom: "5px",
+                  width: "100%",
+                }}
+              />
+            ))
+          : (tasks.unCompletedTasks ? tasks.unCompletedTasks : []).map(
+              (task) => {
+                let tgTasks: string | null | number[] =
+                  global.window.localStorage.getItem("tgTasks");
+                if (tgTasks) tgTasks = JSON.parse(tgTasks);
+                return (
+                  <TaskCard
+                    key={task.task_id}
+                    task={task}
+                    // если находим в localstorage запись о том что уже кликнули по таске, то
+                    // вешаем класс, который отобразит типа кнопку "Проверить"
+                    className={
+                      tgTasks
+                        ? (tgTasks as number[]).find(
+                            (el) => el === task.task_id
+                          )
+                          ? "tg-status-check"
+                          : ""
+                        : ""
+                    }
+                    onClick={() => handleTaskClick(task)}
+                    id={`rewardTrigger-${task.task_id}`}
+                  />
+                );
+              }
+            )}
       </div>
       {selectedTask && (
         <RewardModal
@@ -233,7 +266,9 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
           onClose={() => {
             if (!tasks.unCompletedTasks) return;
             setShowModal(false);
-            const index = tasks.unCompletedTasks.findIndex(el => el.task_id === selectedTask.task_id);
+            const index = tasks.unCompletedTasks.findIndex(
+              (el) => el.task_id === selectedTask.task_id
+            );
             if (index !== -1) {
               tasks.unCompletedTasks.splice(index, 1);
               tasks.tasks.completed += 1;

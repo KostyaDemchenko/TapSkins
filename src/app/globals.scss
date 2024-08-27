@@ -218,9 +218,6 @@ span {
 }
 
 // toaster
-.Toastify__toast {
-  -webkit-tap-highlight-color: transparent;
-}
 
 .Toastify {
   --toastify-color-dark: var(--color-buttons-secondary-fill);
@@ -239,15 +236,31 @@ span {
     }
   }
 
-  .Toastify__toast-container--top-right {
-    top: 0;
-    right: 0px;
-    left: unset;
+  .Toastify__toast-container--top-center {
+    @include flex(center, center);
+    @include f-direction(column);
+    gap: 5px;
+
+    top: 5px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .Toastify__toast {
+    min-height: fit-content;
+    border-radius: 7px;
+    direction: unset;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .Toastify__toast-body {
+    flex: fit-content;
     padding-top: 0;
-    padding-bottom: 0;
+    padding-bottom: 5px;
+    margin: 0;
+    height: 30px;
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -257,7 +270,7 @@ span {
   }
 
   .Toastify__toast-theme--dark {
-    background: var(--color-surface);
+    background: var(--color-base-dark-mid-secondary-purple);
     color: var(--color-text-primary);
 
     .Toastify__progress-bar--error {
@@ -270,6 +283,11 @@ span {
   }
 
   .Toastify__toast--success {
+    @include flex(center, center);
+    @include f-direction(row);
+
+    width: 100%;
+
     -webkit-tap-highlight-color: transparent;
 
     .Toastify--animate-icon {
@@ -280,12 +298,22 @@ span {
   }
 
   .Toastify__toast--error {
+    @include flex(center, center);
+    @include f-direction(row);
+
+    width: 100%;
+
     -webkit-tap-highlight-color: transparent;
 
     .Toastify--animate-icon {
       svg {
         fill: var(--color-inputs-validation-failure);
       }
+    }
+
+    .Toastify__close-button {
+      height: 18px;
+      width: 18px;
     }
   }
 }

@@ -19,7 +19,7 @@ interface UserBalanceProps {
 }
 
 const toastifyOptions: ToastOptions = {
-  position: "top-right",
+  position: "top-center",
   autoClose: 3000,
   hideProgressBar: false,
   closeOnClick: false,
@@ -42,10 +42,12 @@ const useStamina = (user: User | undefined, wss: WebSocket | undefined) => {
 
     const intervalId = setInterval(() => {
       if (wss && wss.readyState === wss.OPEN) {
-        wss.send(JSON.stringify({
-          type: "stamina",
-          user: user.getInitData()
-        }));
+        wss.send(
+          JSON.stringify({
+            type: "stamina",
+            user: user.getInitData(),
+          })
+        );
       }
     }, 1000);
 
@@ -69,9 +71,17 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     wss.onmessage = (e) => {
       const response = JSON.parse(e.data);
       if (response.success && user) {
-        user.stamina = Math.min(response.stamina + calculateStamina(response.last_click), user.max_stamina);
+        user.stamina = Math.min(
+          response.stamina + calculateStamina(response.last_click),
+          user.max_stamina
+        );
         user.last_click = response.last_click;
-        setStamina(Math.min(response.stamina + calculateStamina(response.last_click), user.max_stamina));
+        setStamina(
+          Math.min(
+            response.stamina + calculateStamina(response.last_click),
+            user.max_stamina
+          )
+        );
       } else {
         console.error("Money wasn't increased");
         if (response.details) {
@@ -149,7 +159,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     if (!user) return;
     if (exchangeStatus && exchangeStatus.loading) return;
 
-
     // Используем легкое тактильное воздействие при нажатии
     triggerHapticFeedback("medium");
     if (user && wss) {
@@ -171,10 +180,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     setTiltStyle({ transform: `rotateX(${0}deg) rotateY(${0}deg)` });
   };
 
-  const touchStart = (
-    e: React.TouchEvent<HTMLDivElement>
-  ) => {
-
+  const touchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     const event = e as
       | React.MouseEvent<HTMLDivElement, MouseEvent>
       | React.TouchEvent<HTMLDivElement>;
@@ -198,7 +204,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
         })
       );
     }
-
 
     const clientX = isTouch
       ? (event as React.TouchEvent<HTMLDivElement>).touches[0].clientX

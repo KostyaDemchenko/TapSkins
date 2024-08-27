@@ -18,7 +18,7 @@ import "@/src/app/globals.scss";
 import "./style.scss";
 
 const toastSettings: ToastOptions = {
-  position: "top-right",
+  position: "top-center",
   autoClose: 3000,
   hideProgressBar: false,
   closeOnClick: true,
@@ -101,7 +101,11 @@ export default function CartPage() {
 
       if (!cartItems) return;
 
-      const purchaseStatus = await user.buySkins(orderId, currentTimestamp, storedTradeLink);
+      const purchaseStatus = await user.buySkins(
+        orderId,
+        currentTimestamp,
+        storedTradeLink
+      );
 
       if (!purchaseStatus.success) {
         console.error(purchaseStatus);
@@ -164,7 +168,7 @@ export default function CartPage() {
 
   const getTotalPrice = () => {
     return cartItems!.reduce((accum, curVal) => accum + curVal.price, 0);
-  }
+  };
 
   // авторизация и инициализация корзины
   useEffect(() => {

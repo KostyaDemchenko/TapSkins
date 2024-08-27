@@ -12,7 +12,7 @@ import "./style.scss";
 import { SuccessDisplay, User } from "@/src/utils/types";
 
 const toastSettings: ToastOptions = {
-  position: "top-right",
+  position: "top-center",
   autoClose: 3000,
   hideProgressBar: false,
   closeOnClick: true,
