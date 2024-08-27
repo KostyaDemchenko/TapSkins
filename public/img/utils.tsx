@@ -1,13 +1,13 @@
 import { StaticImageData } from "next/image";
 import contactUs from "./contact_us.png";
 import bomb from "./bomb.png";
-import preloader from "./preloader.png";
+import main_preloader from "./main_preloader.png";
 import dailyRewardIcon from "./daily_reward_icon.png";
 
 const obj: { [key: string]: StaticImageData } = {
   contactUs: contactUs,
   bomb: bomb,
-  preloader: preloader,
+  main_preloader: main_preloader,
   dailyReward: dailyRewardIcon,
 };
 

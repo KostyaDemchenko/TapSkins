@@ -11,7 +11,7 @@ const Preloader: React.FC<{ duration?: number }> = ({ duration = 3000 }) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const intervalDuration = duration / 100; // Разделяем общую продолжительность на шаги прогресса
+    const intervalDuration = duration / 100;
     const interval = setInterval(() => {
       setProgress((prev) => (prev < 100 ? prev + 1 : 100));
     }, intervalDuration);
@@ -22,19 +22,8 @@ const Preloader: React.FC<{ duration?: number }> = ({ duration = 3000 }) => {
   return (
     <div className='preloader'>
       <div className='preloader-content'>
-        <div className='app-name'>
-          <p>T</p>
-          <p>A</p>
-          <p>P</p>
-          <br />
-          <p>S</p>
-          <p>K</p>
-          <p>I</p>
-          <p>N</p>
-          <p>S</p>
-        </div>
         <Image
-          src={imgObj.preloader}
+          src={imgObj.main_preloader}
           alt='App Prototype'
           placeholder='blur'
           priority
