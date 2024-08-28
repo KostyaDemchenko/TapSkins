@@ -355,7 +355,7 @@ interface TaskCardProps {
   };
   className?: string;
   id?: string;
-  onClick: () => void; // Добавляем пропс для обработки клика
+  onClick: () => void;
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({
@@ -367,8 +367,11 @@ const TaskCard: React.FC<TaskCardProps> = ({
   <a
     id={id}
     onClick={onClick}
+    href={task.link_to_join} // Добавляем ссылку
+    target='_blank' // Открываем ссылку в новой вкладке
+    rel='noopener noreferrer' // Для безопасности
     className={`task-card ${className}`}
-    style={{ cursor: "pointer" }} // Добавляем указатель, чтобы обозначить кликабельность
+    style={{ cursor: "pointer" }}
   >
     <div className='task-icon'>
       <img src={task.social_icon} alt={task.platform_type} />

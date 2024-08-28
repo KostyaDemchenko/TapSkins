@@ -160,14 +160,17 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       if (taskIndex === -1) tgTasks.push(task.task_id);
       window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
 
-      window.open(task.link_to_join, "_blank");
-      setIsClaimingReward(false);
+      setTimeout(() => {
+        window.open(task.link_to_join, "_blank");
+        setIsClaimingReward(false);
+      }, 100); // Небольшая задержка
+
       toast.update(toasterId.current, {
         ...toastReceivedSettings("info", "Check subscription again"),
       });
       return;
     }
-    //* таска не телеграммная
+
     const completedTask = await user.getRewardsForCompletedTasks();
     const rewards = completedTask.rewardsClaimed;
 
@@ -176,7 +179,9 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       setSelectedTask(task);
       setShowModal(true);
       setIsClaimingReward(false);
-      window.open(task.link_to_join, "_blank");
+      setTimeout(() => {
+        window.open(task.link_to_join, "_blank");
+      }, 100); // Небольшая задержка
     } else {
       toast.update(
         toasterId.current,
