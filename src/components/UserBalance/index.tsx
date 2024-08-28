@@ -38,17 +38,20 @@ const useStamina = (user: User | undefined, wss: WebSocket | undefined) => {
   const [stamina, setStamina] = React.useState<number>(user ? user.stamina : 0);
 
   React.useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (!user) return;
-      if (wss && wss.readyState === wss.OPEN) {
-        wss.send(
-          JSON.stringify({
-            type: "stamina",
-            user: user.getInitData(),
-          })
-        );
-      }
-    }, user ? user.stamina_regen_time : 1000);
+    const intervalId = setInterval(
+      () => {
+        if (!user) return;
+        if (wss && wss.readyState === wss.OPEN) {
+          wss.send(
+            JSON.stringify({
+              type: "stamina",
+              user: user.getInitData(),
+            })
+          );
+        }
+      },
+      user ? user.stamina_regen_time : 1000
+    );
 
     return () => clearInterval(intervalId);
   }, [user, wss]);
@@ -155,7 +158,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   const clickerButtonHandler = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
-
     const platform = window.Telegram.WebApp.platform;
     // if (platform === "tdesktop") return;
     if (!user) return;
@@ -169,6 +171,16 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
         console.log("Still connecting with websocket");
         return;
       }
+
+      if (wss.readyState === wss.CLOSED) {
+        toast.error(
+          "Connection lost, please reload the page.",
+          toastifyOptions
+        );
+        console.log("WebSocket connection is closed");
+        return;
+      }
+
       user.increaseBalance();
       wss.send(
         JSON.stringify({
