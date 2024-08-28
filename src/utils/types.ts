@@ -109,7 +109,7 @@ export class User {
     );
 
     if (!response.ok) {
-      console.log("Error to auth", response);
+      console.log("Error to auth", await response.json());
       return {
         success: false,
         bonus: null,
