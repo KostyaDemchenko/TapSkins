@@ -189,6 +189,10 @@ export default function SkinStorePage() {
           name='viewport'
           content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
         ></meta>
+        <meta name='screen-orientation' content='portrait' />
+        <meta name='x5-orientation' content='portrait' />
+        <meta name='x5-fullscreen' content='true' />
+        <meta name='full-screen' content='yes' />
       </Head>
       <Script
         src='https://telegram.org/js/telegram-web-app.js'
