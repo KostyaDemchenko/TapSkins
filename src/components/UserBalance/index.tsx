@@ -48,7 +48,7 @@ const useStamina = (user: User | undefined, wss: WebSocket | undefined) => {
           })
         );
       }
-    }, 1000);
+    }, user ? user.stamina_regen_time : 1000);
 
     return () => clearInterval(intervalId);
   }, [user, wss]);
@@ -157,8 +157,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
   ) => {
 
     const platform = window.Telegram.WebApp.platform;
-    if (platform === "tdesktop") return;
-    console.log(window.Telegram.WebApp);
+    // if (platform === "tdesktop") return;
     if (!user) return;
     if (exchangeStatus && exchangeStatus.loading) return;
 

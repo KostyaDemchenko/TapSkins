@@ -1,4 +1,4 @@
-import { SkinStoreDataStructured, TaskStoreDataStructured } from "@/typing";
+import { SkinStoreDataStructured } from "@/typing";
 import { postFetch } from "./functions";
 
 export type UserObj = {
@@ -12,10 +12,20 @@ export type UserObj = {
   [key: string]: number;
 };
 
+type ConfigFields = {
+  yellow_coin_per_tap: number;
+  max_user_stamina: number;
+  exchange_coefficient: number;
+  stamina_decrease_per_tap: number;
+  stamina_increase: number;
+  stamina_regen_time: number;
+};
+
 export type registerUserResponse = {
   user: User;
   bonus?: { balance_common: number; balance_purple: number } | null;
   success: boolean;
+  config: ConfigFields;
 };
 
 export class User {
@@ -33,12 +43,11 @@ export class User {
     balance_purple: number;
   } | null = null;
 
-  private backendAddress: string = process.env.NEXT_PUBLIC_BACKEND_ADDRESS!;
-  public staminaStep = 3; // сколько стамины в периоде будет добавляться
-  private balance_icnrease_amnt: number = 1000;
-  private staminaDecrease = 5;
-  public staminaDelay = 500; // период добавления стамины в секундах
-  private exchangeCoeff = 10000; // сколько золотых монеток нужно чтобы получить 1 фиолетовую
+  public backendAddress: string = process.env.NEXT_PUBLIC_BACKEND_ADDRESS!;
+  public balance_icnrease_amnt = 1000;
+  public staminaDecrease = 5;
+  public exchangeCoeff = 10000; // сколько золотых монеток нужно чтобы получить 1 фиолетовую
+  public stamina_regen_time = 1000; // период в миллисекундах, за которое будет добавляться стамина
 
   constructor(user_id: number, initData: string) {
     this.user_id = user_id;
@@ -109,7 +118,7 @@ export class User {
     );
 
     if (!response.ok) {
-      console.log("Error to auth", await response.json());
+      console.error("Error to auth", await response.json());
       return {
         success: false,
         bonus: null,
@@ -123,7 +132,8 @@ export class User {
       console.log("Error ocured due to getting user");
       return false;
     }
-    this.setUser(data.user);
+    console.log(data);
+    this.setUser(data.user, data.config);
 
     return data;
   }
@@ -151,7 +161,7 @@ export class User {
       res(data.subscribed);
     });
   }
-  protected setUser(obj: User) {
+  protected setUser(obj: User, config?: ConfigFields) {
     this.user_id = obj.user_id;
     this.balance_purple = obj.balance_purple;
     this.balance_common = obj.balance_common;
@@ -159,6 +169,14 @@ export class User {
     this.invited_users = obj.invited_users;
     this.last_click = obj.last_click;
     this.stamina = obj.stamina;
+
+    if (config) {
+      this.balance_icnrease_amnt = config.yellow_coin_per_tap;
+      this.staminaDecrease = config.stamina_decrease_per_tap;
+      this.exchangeCoeff = config.exchange_coefficient;
+      this.max_stamina = config.max_user_stamina;
+      this.stamina_regen_time = config.stamina_regen_time;
+    }
 
     if (obj.max_stamina) this.max_stamina = obj.max_stamina;
   }
