@@ -96,8 +96,9 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
 
   React.useEffect(() => {
     if (!exchangeStatus) return;
-
-    if (exchangeStatus.loading && !exchangeStatus.success) {
+  
+    // Проверяем, загружается ли процесс обмена
+    if (exchangeStatus.loading) {
       if (!toastElement.current) {
         toastElement.current = toast.loading("Exchanging...", toastifyOptions);
       } else {
@@ -108,16 +109,21 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
         });
       }
     } else {
-      toast.update(toastElement.current!, {
-        render: exchangeStatus.message,
-        type: exchangeStatus.success ? "success" : "error",
-        isLoading: false,
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      // Если процесс завершился, сбрасываем `toastElement.current` для новых операций
+      if (toastElement.current) {
+        toast.update(toastElement.current, {
+          render: exchangeStatus.message,
+          type: exchangeStatus.success ? "success" : "error",
+          isLoading: false,
+          autoClose: 3000,
+          pauseOnHover: false,
+          closeOnClick: true,
+        });
+        toastElement.current = undefined; // Сбрасываем элемент тостера
+      }
     }
   }, [exchangeStatus]);
+  
 
   React.useEffect(() => {
     if (user && user.receivedBonus) {
