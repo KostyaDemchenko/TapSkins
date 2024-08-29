@@ -159,7 +159,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     const platform = window.Telegram.WebApp.platform;
-    if (platform === "tdesktop") return;
+    // if (platform === "tdesktop") return;
     if (!user) return;
     if (exchangeStatus && exchangeStatus.loading) return;
 
