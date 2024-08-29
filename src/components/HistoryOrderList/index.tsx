@@ -40,7 +40,7 @@ const HistoryorderList: React.FC<HistoryorderListProps> = ({ info }) => {
       case "Canceled":
         return "var(--color-system-red)";
       default:
-        return "inherit"; // Используем цвет по умолчанию, если статус не соответствует ни одному из известных
+        return "inherit";
     }
   };
 
@@ -83,7 +83,7 @@ const HistoryorderList: React.FC<HistoryorderListProps> = ({ info }) => {
                     <p className='order-info-status-title'>Status:</p>
                     <p
                       className='order-info-status'
-                      style={{ color: getStatusColor(orderGroup[0].status) }} // Применяем цвет статуса
+                      style={{ color: getStatusColor(orderGroup[0].status) }}
                     >
                       {orderGroup[0].status}
                     </p>
@@ -100,18 +100,22 @@ const HistoryorderList: React.FC<HistoryorderListProps> = ({ info }) => {
                     />
                   ))}
                 </div>
-                <Button
-                  label={`Support Center`}
-                  className='btn-primary-50 bg-secondary'
-                  icon=''
-                  id='contactUsModalTrigger'
-                />
-                <ContactUsModal
-                  fade={false}
-                  subModal={true}
-                  height='75dvh'
-                  triggerId='contactUsModalTrigger'
-                />
+                {combinedSkins.map((skin, index) => (
+                  <React.Fragment key={`contact-${orderId}-${index}`}>
+                    <Button
+                      label={`Support Center`}
+                      className='btn-primary-50 bg-secondary'
+                      icon=''
+                      id={`contactUsModalTrigger-${orderId}-${index}`}
+                    />
+                    <ContactUsModal
+                      fade={false}
+                      subModal={true}
+                      height='75dvh'
+                      triggerId={`contactUsModalTrigger-${orderId}-${index}`}
+                    />
+                  </React.Fragment>
+                ))}
               </Modal>
             </React.Fragment>
           );

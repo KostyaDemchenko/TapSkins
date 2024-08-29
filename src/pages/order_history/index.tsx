@@ -115,7 +115,7 @@ export default function rewards_page() {
           user && <HistoryorderList info={orderHistory} />
         ) : (
           <div className='empty-cart'>
-            <p>No items in the cart!</p>
+            <p>No items in the history!</p>
             <a className='btn-secondary-35' href='/skin_store_page'>
               <span className='material-symbols-outlined'>shopping_cart</span>{" "}
               To store
