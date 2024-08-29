@@ -50,3 +50,17 @@ main {
     }
   }
 }
+
+.empty-cart {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  @include flex(center, center);
+  @include f-direction(column);
+  gap: 35px;
+
+  p {
+    @include p-montserrat-18-125-regular;
+  }
+}

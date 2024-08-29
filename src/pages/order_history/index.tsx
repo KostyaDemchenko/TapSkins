@@ -8,6 +8,8 @@ import ContactUsModal from "@/src/components/ContactUsModal";
 import HistoryorderList from "@/src/components/HistoryOrderList";
 import Skeleton from "@mui/material/Skeleton";
 
+import iconObj from "@/public/icons/utils";
+
 import "@/src/app/globals.scss";
 import "./style.scss";
 
@@ -109,8 +111,16 @@ export default function rewards_page() {
               ))}
             </div>
           </div>
-        ) : (
+        ) : orderHistory.length > 0 ? (
           user && <HistoryorderList info={orderHistory} />
+        ) : (
+          <div className='empty-cart'>
+            <p>No items in the cart!</p>
+            <a className='btn-secondary-35' href='/skin_store_page'>
+              <span className='material-symbols-outlined'>shopping_cart</span>{" "}
+              To store
+            </a>
+          </div>
         )}
       </main>
       <ContactUsModal triggerId='contactUsModal' />
