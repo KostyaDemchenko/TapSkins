@@ -32,6 +32,7 @@ export default function SkinStorePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [skins, setSkins] = useState<Skin[]>([]);
   const [filteredSkins, setFilteredSkins] = useState<Skin[]>([]);
+  const [quickFilteredSkins, setQuickFilteredSkins] = useState<Skin[]>([]);
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [minFloat, setMinFloat] = useState<number | null>(null);
@@ -61,29 +62,23 @@ export default function SkinStorePage() {
           const data = await userClass.getSkins();
           setSkins(data);
           setFilteredSkins(data);
+          setQuickFilteredSkins(data); // Изначально быстрые фильтры применяются ко всему массиву
 
           const prices = data.map((skin: Skin) => skin.price);
-          console.log(prices); // Проверьте, что это массив
           if (prices && prices.length > 0) {
             setMinPrice(Math.min(...prices));
             setMaxPrice(Math.max(...prices));
-          } else {
-            console.error("Prices array is not iterable or is empty:", prices);
           }
 
           const floats = data.map((skin: Skin) => skin.float);
-          console.log(floats); // Проверьте, что это массив
           if (floats && floats.length > 0) {
             setMinFloat(Math.min(...floats));
             setMaxFloat(Math.max(...floats));
-          } else {
-            console.error("Floats array is not iterable or is empty:", floats);
           }
 
           const uniqueWeaponTypes: string[] = Array.from(
             new Set(data.map((skin: Skin) => skin.weapon_type))
           );
-          console.log(uniqueWeaponTypes); // Проверьте, что это массив
           setWeaponTypes(uniqueWeaponTypes);
         } catch (error) {
           console.error("Error fetching the skin store data:", error);
@@ -95,56 +90,10 @@ export default function SkinStorePage() {
     })();
   }, [tg]);
 
-  const applyFilters = (filters: any) => {
-    const filtered = skins.filter((skin: Skin) => {
-      return (
-        (filters.priceRange[0] === null ||
-          skin.price >= filters.priceRange[0]) &&
-        (filters.priceRange[1] === null ||
-          skin.price <= filters.priceRange[1]) &&
-        (filters.floatRange[0] === null ||
-          skin.float >= filters.floatRange[0]) &&
-        (filters.floatRange[1] === null ||
-          skin.float <= filters.floatRange[1]) &&
-        (filters.weapon.length === 0 ||
-          filters.weapon.includes(skin.weapon_name)) &&
-        (!filters.starTrack || skin.startrack === "Startrack") &&
-        (filters.rarity.length === 0 || filters.rarity.includes(skin.rarity))
-      );
-    });
-    setFilteredSkins(filtered);
-    setFilters(filters);
-  };
-
-  const handleSearch = (term: string) => {
-    setSearchTerm(term);
-    const filtered = skins.filter(
-      (skin: Skin) =>
-        skin.skin_name.toLowerCase().includes(term.toLowerCase()) ||
-        skin.weapon_name.toLowerCase().includes(term.toLowerCase())
-    );
-    setFilteredSkins(filtered);
-  };
-
-  const handleWeaponTypeFilter = (weaponType: string) => {
-    if (weaponType === "All") {
-      setFilteredSkins(skins);
-    } else {
-      const filtered = skins.filter(
-        (skin: Skin) => skin.weapon_type === weaponType
-      );
-      setFilteredSkins(filtered);
-    }
-  };
-
-  const handleSort = (sortOption: string) => {
-    setSortOption(sortOption);
-  };
-
-  const getSortedSkins = () => {
-    let sortedSkins = [...filteredSkins];
-
-    switch (sortOption) {
+  // Функция сортировки для применения после фильтров
+  const sortSkins = (skinsToSort: Skin[], option: string) => {
+    let sortedSkins = [...skinsToSort];
+    switch (option) {
       case "price_low_to_high":
         sortedSkins.sort((a, b) => a.price - b.price);
         break;
@@ -166,8 +115,61 @@ export default function SkinStorePage() {
       default:
         break;
     }
-
     return sortedSkins;
+  };
+
+  // Применяем быстрый фильтр и обновляем промежуточный список
+  const handleWeaponTypeFilter = (weaponType: string) => {
+    let filtered = skins;
+    if (weaponType !== "All") {
+      filtered = skins.filter((skin: Skin) => skin.weapon_type === weaponType);
+    }
+    // Сортируем после применения быстрого фильтра
+    const sorted = sortSkins(filtered, sortOption);
+    setQuickFilteredSkins(sorted);
+    setFilteredSkins(sorted); // Обновляем основной список для отображения
+  };
+
+  // Применяем обычные фильтры к отфильтрованному списку после быстрого фильтра
+  const applyFilters = (filters: any) => {
+    const filtered = quickFilteredSkins.filter((skin: Skin) => {
+      return (
+        (filters.priceRange[0] === null ||
+          skin.price >= filters.priceRange[0]) &&
+        (filters.priceRange[1] === null ||
+          skin.price <= filters.priceRange[1]) &&
+        (filters.floatRange[0] === null ||
+          skin.float >= filters.floatRange[0]) &&
+        (filters.floatRange[1] === null ||
+          skin.float <= filters.floatRange[1]) &&
+        (filters.weapon.length === 0 ||
+          filters.weapon.includes(skin.weapon_name)) &&
+        (!filters.starTrack || skin.startrack === "Startrack") &&
+        (filters.rarity.length === 0 || filters.rarity.includes(skin.rarity))
+      );
+    });
+    const sorted = sortSkins(filtered, sortOption); // Сортируем после фильтрации
+    setFilteredSkins(sorted);
+    setFilters(filters);
+  };
+
+  // Поиск выполняется по уже отфильтрованному списку быстрыми фильтрами
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    const filtered = quickFilteredSkins.filter(
+      (skin: Skin) =>
+        skin.skin_name.toLowerCase().includes(term.toLowerCase()) ||
+        skin.weapon_name.toLowerCase().includes(term.toLowerCase())
+    );
+    const sorted = sortSkins(filtered, sortOption); // Сортируем после поиска
+    setFilteredSkins(sorted);
+  };
+
+  const handleSort = (sortOption: string) => {
+    setSortOption(sortOption);
+    // Сортируем текущий отображаемый список
+    const sorted = sortSkins(filteredSkins, sortOption);
+    setFilteredSkins(sorted);
   };
 
   return (
@@ -228,7 +230,7 @@ export default function SkinStorePage() {
           <SkinStore
             user={user}
             searchTerm={searchTerm}
-            skins={getSortedSkins()}
+            skins={filteredSkins}
             isLoading={isLoading}
             filters={filters}
           />

@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-
 import Skeleton from "@mui/material/Skeleton";
 import { SkinCard } from "@/src/components/Carts";
 import { ToastContainer, toast, ToastOptions, Id } from "react-toastify";
-
 import { Cart, Skin, SuccessDisplay, User } from "@/src/utils/types";
-
 import "./style.scss";
 
 const toastSettings: ToastOptions = {
@@ -35,6 +32,7 @@ const SkinStore: React.FC<SkinStoreProps> = ({
   user,
 }) => {
   const [filteredSkins, setFilteredSkins] = useState<Skin[]>(skins);
+  const [quickFilteredSkins, setQuickFilteredSkins] = useState<Skin[]>(skins);
   const userCart = useRef<Cart | null>(null);
   const toastId = useRef<Id | null>(null);
   const addingToCart = useRef<boolean>(false);
@@ -43,54 +41,85 @@ const SkinStore: React.FC<SkinStoreProps> = ({
     if (user) {
       userCart.current = new Cart(user.getBalancePurple());
     }
-    let filtered = skins;
+  }, [user]);
 
+  // Применяем быстрые фильтры и обновляем состояние `quickFilteredSkins`
+  useEffect(() => {
+    let quickFiltered = skins;
+
+    // Применяем быстрый фильтр по типу предмета (например, перчатки)
+    if (
+      filters.itemType &&
+      filters.itemType.length > 0 &&
+      filters.itemType !== "All"
+    ) {
+      quickFiltered = quickFiltered.filter((skin) =>
+        filters.itemType.includes(skin.weapon_type)
+      );
+    }
+
+    setQuickFilteredSkins(quickFiltered);
+  }, [skins, filters.itemType]);
+
+  // Применяем обычные фильтры и поиск по уже отфильтрованному быстрому списку
+  useEffect(() => {
+    let finalFiltered = quickFilteredSkins;
+
+    // Применяем поиск по отфильтрованному быстрому списку
     if (searchTerm) {
-      filtered = filtered.filter((skin) =>
+      finalFiltered = finalFiltered.filter((skin) =>
         skin.skin_name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
+    // Применяем фильтры по цене
     if (filters.priceRange) {
-      filtered = filtered.filter(
+      finalFiltered = finalFiltered.filter(
         (skin) =>
           skin.price >= filters.priceRange[0] &&
           skin.price <= filters.priceRange[1]
       );
     }
 
+    // Применяем фильтры по float значению
     if (filters.floatRange) {
-      filtered = filtered.filter(
+      finalFiltered = finalFiltered.filter(
         (skin) =>
           skin.float >= filters.floatRange[0] &&
           skin.float <= filters.floatRange[1]
       );
     }
 
+    // Применяем фильтры по типу оружия
     if (filters.weaponType && filters.weaponType.length > 0) {
-      filtered = filtered.filter((skin) =>
+      finalFiltered = finalFiltered.filter((skin) =>
         filters.weaponType.includes(skin.weapon_type)
       );
     }
 
+    // Применяем фильтры по названию оружия
     if (filters.weapon && filters.weapon.length > 0) {
-      filtered = filtered.filter((skin) =>
+      finalFiltered = finalFiltered.filter((skin) =>
         filters.weapon.includes(skin.weapon_name)
       );
     }
 
+    // Применяем фильтры по редкости
     if (filters.rarity && filters.rarity.length > 0) {
-      filtered = filtered.filter((skin) =>
+      finalFiltered = finalFiltered.filter((skin) =>
         filters.rarity.includes(skin.rarity)
       );
     }
 
+    // Применяем фильтр по Startrack
     if (filters.starTrack) {
-      filtered = filtered.filter((skin) => skin.startrack === "Startrack");
+      finalFiltered = finalFiltered.filter(
+        (skin) => skin.startrack === "Startrack"
+      );
     }
 
-    setFilteredSkins(filtered);
-  }, [searchTerm, skins, filters]);
+    setFilteredSkins(finalFiltered);
+  }, [searchTerm, quickFilteredSkins, filters]);
 
   if (isLoading) {
     return (
@@ -169,7 +198,7 @@ const SkinStore: React.FC<SkinStoreProps> = ({
               addToCartHandle={addToCartHandle}
               skin={skin}
               key={skin.item_id}
-              onSkinActionComplete={removeSkinFromList} // Передаем функцию удаления
+              onSkinActionComplete={removeSkinFromList}
             />
           ))
         )}

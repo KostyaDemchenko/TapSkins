@@ -59,6 +59,7 @@ main {
   @include flex(center, center);
   @include f-direction(column);
   gap: 35px;
+  width: 100%;
 
   p {
     @include p-montserrat-18-125-regular;
