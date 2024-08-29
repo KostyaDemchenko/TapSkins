@@ -67,7 +67,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [lastDailyClick, setLastDailyClick] = useState<string>(
     formatDate(user.last_daily_bonus_time_clicked)
-  ); // Добавлено состояние для отслеживания последнего клика
+  );
 
   const toasterId = useRef<Id>();
   const [isClaimingReward, setIsClaimingReward] = useState<boolean>(false);
@@ -87,9 +87,9 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
     };
 
     fetchTasks();
-  }, [lastDailyClick]); // Обновляем задачи при изменении lastDailyClick
+  }, [lastDailyClick]);
 
-  // удаляем из локального хранилища таски, которых нету
+  // Удаляем из локального хранилища таски, которых нету
   useEffect(() => {
     if (tasks.unCompletedTasks) {
       const localStorage = global.window.localStorage.getItem("tgTasks");
@@ -126,44 +126,50 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         toasterId.current,
         toastReceivedSettings("error", "Some error occured")
       );
+      setIsClaimingReward(false);
       return;
     }
 
-    //* таска телеграм
+    // Проверяем таску Телеграма
     if (task.platform_type === "Telegram") {
-      // вернет по сути, есть ли уже награда за подписку на тг канал
       const completedTask = await user.getRewardsForCompletedTasks();
       const reward = completedTask.rewardsClaimed;
 
-      // тут записываем в localstorage что был кликнут таск с тг
+      // Записываем в localStorage, что был кликнут таск Telegram
       let tgTasks: string | number[] = global.window.localStorage.getItem(
         "tgTasks"
       ) as string;
       if (tgTasks) tgTasks = JSON.parse(tgTasks) as number[];
       else tgTasks = [] as number[];
       const taskIndex = tgTasks.findIndex((el) => el === task.task_id);
+
       if (reward.purple || reward.yellow) {
-        // значит подписка была сделана, показываем модалку, награда получена
+        // Если подписка была сделана, показываем модалку, награда получена
         toast.done(toasterId.current);
         setIsClaimingReward(false);
         setSelectedTask(task);
-        setShowModal(true);
+
+        // Задержка перед показом модалки
+        setTimeout(() => {
+          setShowModal(true);
+        }, 5000);
 
         if (tgTasks.length && tgTasks.find((el) => el === task.task_id)) {
-          // удаляем из локального хранилища таску
-          if (taskIndex === -1) return;
-          tgTasks.splice(taskIndex, 1);
-          window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
+          if (taskIndex !== -1) {
+            tgTasks.splice(taskIndex, 1);
+            window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
+          }
         }
         return;
       }
+
       if (taskIndex === -1) tgTasks.push(task.task_id);
       window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
 
       setTimeout(() => {
         window.open(task.link_to_join, "_blank");
         setIsClaimingReward(false);
-      }, 100); // Небольшая задержка
+      }, 100);
 
       toast.update(toasterId.current, {
         ...toastReceivedSettings("info", "Check subscription again"),
@@ -177,35 +183,40 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
     if (rewards.purple || rewards.yellow) {
       toast.done(toasterId.current);
       setSelectedTask(task);
-      setShowModal(true);
+
+      // Задержка перед показом модалки
+      setTimeout(() => {
+        setShowModal(true);
+      }, 5000);
+
       setIsClaimingReward(false);
       setTimeout(() => {
         window.open(task.link_to_join, "_blank");
-      }, 100); // Небольшая задержка
+      }, 100);
     } else {
       toast.update(
         toasterId.current,
         toastReceivedSettings("error", "Some error occured!")
       );
+      setIsClaimingReward(false);
     }
-    setIsClaimingReward(false);
   };
 
   return (
     <>
       <ProgressBar
         titleVisible={true}
-        title='Tasks'
+        title="Tasks"
         total={tasks.tasks.total}
-        completed={tasks.tasks.completed} // Можно заменить на переменную, которая считает завершенные задачи
-        isLoading={loading} // Передаем состояние загрузки
+        completed={tasks.tasks.completed}
+        isLoading={loading}
       />
-      <div className='tasks-list'>
+      <div className="tasks-list">
         {loading ? (
           <Skeleton
-            variant='rounded'
+            variant="rounded"
             height={84}
-            animation='wave'
+            animation="wave"
             sx={{
               bgcolor: "var(--color-surface)",
               marginBottom: "5px",
@@ -215,11 +226,9 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         ) : (
           user && (
             <DailyReward
-              lastTimeClicked={lastDailyClick} // Используем состояние
+              lastTimeClicked={lastDailyClick}
               user={user}
-              onRewardClaimed={(newLastClick) =>
-                setLastDailyClick(newLastClick)
-              } // Обновляем состояние при получении награды
+              onRewardClaimed={(newLastClick) => setLastDailyClick(newLastClick)}
             />
           )
         )}
@@ -227,9 +236,9 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
           ? Array.from(new Array(5)).map((_, index) => (
               <Skeleton
                 key={index}
-                variant='rounded'
+                variant="rounded"
                 height={84}
-                animation='wave'
+                animation="wave"
                 sx={{
                   bgcolor: "var(--color-surface)",
                   marginBottom: "5px",
