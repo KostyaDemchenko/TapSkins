@@ -37,7 +37,6 @@ const SkinStore: React.FC<SkinStoreProps> = ({
   const [filteredSkins, setFilteredSkins] = useState<Skin[]>(skins);
   const userCart = useRef<Cart | null>(null);
   const toastId = useRef<Id | null>(null);
-
   const addingToCart = useRef<boolean>(false);
 
   useEffect(() => {
@@ -159,15 +158,21 @@ const SkinStore: React.FC<SkinStoreProps> = ({
     <>
       <ToastContainer />
       <div className='skin-store-container'>
-        {filteredSkins.map((skin) => (
-          <SkinCard
-            user={user}
-            addToCartHandle={addToCartHandle}
-            skin={skin}
-            key={skin.item_id}
-            onSkinActionComplete={removeSkinFromList} // Передаем функцию удаления
-          />
-        ))}
+        {filteredSkins.length === 0 ? (
+          <div className='empty-cart'>
+            <p>No items by your filters :(</p>
+          </div>
+        ) : (
+          filteredSkins.map((skin) => (
+            <SkinCard
+              user={user}
+              addToCartHandle={addToCartHandle}
+              skin={skin}
+              key={skin.item_id}
+              onSkinActionComplete={removeSkinFromList} // Передаем функцию удаления
+            />
+          ))
+        )}
       </div>
     </>
   );

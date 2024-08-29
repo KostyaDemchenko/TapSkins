@@ -89,7 +89,7 @@ const Filters: React.FC<FiltersProps> = ({
       <Modal
         modalTitle='Filters'
         triggerId='filtersModalTrigger'
-        height='60dvh'
+        height='70dvh'
         closeElement={
           <Button
             label='Apply'
