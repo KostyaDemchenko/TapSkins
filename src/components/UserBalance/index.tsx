@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import Image from "next/image";
 
 import ExchangeCurrency from "@/src/components/ExchangeCurrency";
@@ -96,7 +96,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
 
   React.useEffect(() => {
     if (!exchangeStatus) return;
-  
+
     // Проверяем, загружается ли процесс обмена
     if (exchangeStatus.loading) {
       if (!toastElement.current) {
@@ -123,7 +123,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ user, wss }) => {
       }
     }
   }, [exchangeStatus]);
-  
 
   React.useEffect(() => {
     if (user && user.receivedBonus) {
