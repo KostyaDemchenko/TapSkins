@@ -132,7 +132,6 @@ export class User {
       console.log("Error ocured due to getting user");
       return false;
     }
-    console.log(data);
     this.setUser(data.user, data.config);
 
     return data;

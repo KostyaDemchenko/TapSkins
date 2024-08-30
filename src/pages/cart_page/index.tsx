@@ -116,38 +116,6 @@ export default function CartPage() {
         });
         return;
       }
-      // const orderData = cartItems.map((item) => ({
-      // skin_name: item.skin_name,
-      // image_src: item.image_src,
-      // item_id: item.item_id,
-      // user_id: user.user_id,
-      // order_id: orderId,
-      // price: item.price,
-      // float: item.float,
-      // rarity: item.rarity,
-      // status: "In Progress",
-      // startrack: item.startrack,
-      // user_trade_link: storedTradeLink,
-      // }));
-
-      // const promises = orderData.map(async (data) => {
-      //   const response = await fetch("/api/order_history/create", {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       "last-order-id": orderId.toString(),
-      //       "last-order-timestamp": currentTimestamp.toString(),
-      //     },
-      //     body: JSON.stringify(data),
-      //   });
-
-      //   if (!response.ok) {
-      //     throw new Error("Failed to submit order");
-      //   }
-      //   return await response.json();
-      // });
-
-      // await Promise.all(promises);
 
       userCart.current?.clearCart();
       setCartItems([]);
