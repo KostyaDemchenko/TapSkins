@@ -65,7 +65,7 @@ const userBalanceStore: React.FC<userBalanceStoreProps> = ({ user }) => {
         </div>
       </div>
       <Button
-        label='Convert'
+        label={`Convert ${user ? user.getExchangeBallance() === 0 ? "" : `${user.getExchangeBallance().toLocaleString("RU-ru")}` : ""}`}
         id='balance_exchange'
         className='btn-secondary-25'
       />
