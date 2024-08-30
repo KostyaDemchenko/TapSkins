@@ -13,7 +13,7 @@ const colorMap: { [key: string]: string } = {
   Mythical: "#713BDB",
   Legendary: "#CD2ADB",
   Ancient: "#D13E3E",
-  "Exceedingly rare": "#E5A725",
+  ExceedinglyRare: "#E5A725",
 };
 
 const Rare: React.FC<ColorLabelProps> = ({ rarity }) => {

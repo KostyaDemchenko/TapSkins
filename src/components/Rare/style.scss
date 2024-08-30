@@ -26,6 +26,10 @@
       .rare-name {
         @include p-montserrat-14-125-medium;
         color: var(--color-text-primary);
+
+        &:active {
+          transform: scale(1);
+        }
       }
       .color-block {
         width: 18px;
