@@ -280,7 +280,9 @@ export default function CartPage() {
               {cartItems.map((el) => (
                 <SkinOrderCard
                   key={el.item_id}
-                  deleteHandle={() => deleteHandle(el)}
+                  deleteHandle={() => {
+                    if (!isDeleting) deleteHandle(el);
+                  }}
                   skin={el}
                 />
               ))}
@@ -311,7 +313,7 @@ export default function CartPage() {
                 className='btn-primary-25 purchase-buying'
                 icon=''
                 disabled={(() => {
-                  if (isDeleting) return true;
+                  if (isDeleting || opportunityToBuy.loading === true) return true;
                   if (!user || !userCart.current) return true; // Добавлена проверка на наличие корзины
                   return user.getBalancePurple() < getTotalPrice();
                 })()}
