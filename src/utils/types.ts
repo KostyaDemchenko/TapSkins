@@ -81,7 +81,6 @@ export class User {
 
     try {
       const { success, result } = await res.json();
-      console.log(result);
       this.balance_common = result.balance_common;
       this.balance_purple = result.balance_purple;
       return success as SuccessDisplay;
