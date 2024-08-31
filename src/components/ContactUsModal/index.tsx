@@ -30,7 +30,7 @@ const ContactUsModal: React.FC<ContactUsModalProps> = ({
       triggerId={triggerId}
       className='contact-us-modal'
       closeElement={
-        <a className='btn-primary-50' href='https://t.me/dmitro_fewd'>
+        <a className='btn-primary-50' href='https://t.me/andjwed'>
           Write a Message
         </a>
       }
