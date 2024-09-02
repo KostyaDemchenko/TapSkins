@@ -10,9 +10,17 @@ interface NotAMobileProps {}
 const NotAMobile: React.FC<NotAMobileProps> = () => {
   return (
     <div className='container not-a-mobile'>
-      <p>Play on your mobile!</p>
-      <Image src={imgObj.qr} width={250} height={250} alt='qr code' priority />
-      <p>Scan me!</p>
+      <p className='title'>Play on your mobile!</p>
+      <a href='https://t.me/TapSkins_bot' className='link' target='_blank'>
+        <Image
+          src={imgObj.qr}
+          width={250}
+          height={250}
+          alt='qr code'
+          priority
+        />
+      </a>
+      <p className='description'>Scan me!</p>
     </div>
   );
 };
