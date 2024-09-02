@@ -1,0 +1,12 @@
+@import "@/src/app/shortSyles.scss";
+
+.not-a-mobile {
+  @include flex(center, center);
+  @include f-direction(column);
+
+  gap: 20px;
+  width: 100dvw;
+  height: 100dvh;
+
+  z-index: 9999;
+}
