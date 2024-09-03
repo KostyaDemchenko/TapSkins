@@ -11,6 +11,7 @@ import SkinStore from "@/src/components/SkinStoreList";
 import Filters from "@/src/components/Filters";
 import Search from "@/src/components/Search";
 import Sort from "@/src/components/Sort";
+import NotAMobile from "@/src/components/NotAMobile"; // Импортируем компонент NotAMobile
 
 import "@/src/app/globals.scss";
 import "./style.scss";
@@ -41,10 +42,24 @@ export default function SkinStorePage() {
   const [filters, setFilters] = useState<any>({});
   const [weaponTypes, setWeaponTypes] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<string>("relevant");
+  const [isMobile, setIsMobile] = useState<boolean>(true); // Новое состояние для проверки устройства
   const userBalance = useRef(0);
 
+  // Проверка платформы устройства
   useEffect(() => {
     if (!tg) return;
+
+    // Проверяем платформу Telegram Web App
+    const platform = tg.platform;
+    if (platform !== "android" && platform !== "ios") {
+      setIsMobile(false); // Если не Android и не iOS, показываем компонент NotAMobile
+    } else {
+      setIsMobile(true);
+    }
+  }, [tg]);
+
+  useEffect(() => {
+    if (!isMobile || !tg) return; // Проверка на мобильное устройство
 
     tg.expand();
     tg.setHeaderColor("#080918");
@@ -88,7 +103,7 @@ export default function SkinStorePage() {
         setUser(userClass);
       }
     })();
-  }, [tg]);
+  }, [tg, isMobile]);
 
   // Функция сортировки для применения после фильтров
   const sortSkins = (skinsToSort: Skin[], option: string) => {
@@ -181,11 +196,11 @@ export default function SkinStorePage() {
         />
         <link
           rel='stylesheet'
-          href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
+          href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght@20..48,100..700,0..1,-50..200'
         />
         <link
           rel='stylesheet'
-          href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
+          href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght@20..48,100..700,0..1,-50..200'
         />
         <meta
           name='viewport'
@@ -203,38 +218,42 @@ export default function SkinStorePage() {
         }}
       />
       <main>
-        <div className='container'>
-          <div className='middle-box'>
-            {user && <UserBalanceStore user={user} />}
-            {!user && <UserBalanceStore />}
-            <div className='top-box'>
-              <Search onSearch={handleSearch} />
-              <Filters
-                minPrice={minPrice ?? 0}
-                maxPrice={maxPrice ?? 100}
-                minFloat={minFloat ?? 0}
-                maxFloat={maxFloat ?? 1}
-                skins={skins}
-                onApply={applyFilters}
-              />
+        {isMobile ? ( // Если мобильное устройство, показываем основной контент
+          <div className='container'>
+            <div className='middle-box'>
+              {user && <UserBalanceStore user={user} />}
+              {!user && <UserBalanceStore />}
+              <div className='top-box'>
+                <Search onSearch={handleSearch} />
+                <Filters
+                  minPrice={minPrice ?? 0}
+                  maxPrice={maxPrice ?? 100}
+                  minFloat={minFloat ?? 0}
+                  maxFloat={maxFloat ?? 1}
+                  skins={skins}
+                  onApply={applyFilters}
+                />
+              </div>
+              <div className='bottom-box'>
+                <FastFilters
+                  weaponTypes={weaponTypes}
+                  isLoading={isLoading}
+                  onFilterSelect={handleWeaponTypeFilter}
+                />
+                <Sort isLoading={isLoading} onSort={handleSort} />
+              </div>
             </div>
-            <div className='bottom-box'>
-              <FastFilters
-                weaponTypes={weaponTypes}
-                isLoading={isLoading}
-                onFilterSelect={handleWeaponTypeFilter}
-              />
-              <Sort isLoading={isLoading} onSort={handleSort} />
-            </div>
+            <SkinStore
+              user={user}
+              searchTerm={searchTerm}
+              skins={filteredSkins}
+              isLoading={isLoading}
+              filters={filters}
+            />
           </div>
-          <SkinStore
-            user={user}
-            searchTerm={searchTerm}
-            skins={filteredSkins}
-            isLoading={isLoading}
-            filters={filters}
-          />
-        </div>
+        ) : (
+          <NotAMobile /> // Если не мобильное устройство, показываем компонент NotAMobile
+        )}
       </main>
       <Nav />
     </>
