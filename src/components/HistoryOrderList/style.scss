@@ -2,10 +2,10 @@
 
 .history-order-list {
   width: 100%;
-  height: calc(100dvh - 160px);
+  height: calc(100dvh - 150px);
 
   .container {
-    @include flex(center, flex-start);
+    @include flex(flex-start, flex-start);
     @include f-direction(column);
 
     gap: 5px;
