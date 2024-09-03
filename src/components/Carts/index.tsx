@@ -34,63 +34,18 @@ interface SkinCardProps {
   skin: Skin;
   className?: string;
   addToCartHandle: (skin: Skin) => void;
-  user: User | null;
-  onSkinActionComplete: (skinId: number) => void;
+  onBuyNowClick: (skin_id: number, price: number) => void;
 }
 
 const SkinCard: React.FC<SkinCardProps> = ({
   skin,
   className = "",
   addToCartHandle,
-  user,
-  onSkinActionComplete,
+  onBuyNowClick
 }) => {
   const [modalId] = useState(`cartTrigger-${skin.item_id}`);
   const [modalIdValidate] = useState(`validate-${skin.item_id}`);
   const [subModalIdValidate] = useState(`sub-validate-${skin.item_id}`);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const toastId = useRef<Id | null>(null);
-
-  const handleBuyNow = async (skin_id: number) => {
-    if (!user) {
-      toast.error(
-        "User data not available. Please try again later.",
-        toastSettings
-      );
-      return;
-    }
-    try {
-      // Показать тостер загрузки
-      toastId.current = toast.loading("Processing purchase...", toastSettings);
-      setIsSubmitting(true);
-
-      const storedTradeLink = localStorage.getItem("tradeLink") || "";
-      const response = await user.buyNowSkin(skin_id, storedTradeLink);
-
-      // Обновляем тостер на успешное сообщение
-      toast.update(toastId.current!, {
-        render: response.message,
-        type: response.success ? "success" : "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-
-      if (response.success) {
-        // Удаляем скин из списка после успешной покупки
-        onSkinActionComplete(skin_id);
-      }
-    } catch (error) {
-      // Обновляем тостер на сообщение об ошибке
-      toast.update(toastId.current!, {
-        render: "Failed to complete purchase. Please try again.",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <>
@@ -146,7 +101,7 @@ const SkinCard: React.FC<SkinCardProps> = ({
 
       <ValidationModal
         triggerId={modalIdValidate}
-        onConfirm={() => handleBuyNow(skin.item_id)}
+        onConfirm={() => onBuyNowClick(skin.item_id, skin.price)}
       />
 
       <Modal modalTitle='' height='90dvh' triggerId={modalId}>
@@ -202,7 +157,7 @@ const SkinCard: React.FC<SkinCardProps> = ({
           fade={false}
           subModal={true}
           triggerId={subModalIdValidate}
-          onConfirm={() => handleBuyNow(skin.item_id)}
+          onConfirm={() => onBuyNowClick(skin.item_id, skin.price)}
         />
       </Modal>
     </>

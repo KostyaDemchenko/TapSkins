@@ -363,7 +363,8 @@ export class User {
 
   async buyNowSkin(
     skin_id: number,
-    user_trade_link: string
+    user_trade_link: string,
+    price: number
   ): Promise<SuccessDisplay> {
     const response = await postFetch(
       `${this.backendAddress}/skins/${skin_id}`,
@@ -379,6 +380,8 @@ export class User {
       console.error(data);
       return data;
     }
+
+    this.balance_purple -= price;
 
     return data;
   }

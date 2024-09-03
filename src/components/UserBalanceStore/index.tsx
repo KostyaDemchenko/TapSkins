@@ -11,7 +11,7 @@ import "./style.scss";
 import { Skeleton } from "@mui/material";
 
 interface userBalanceStoreProps {
-  user?: User;
+  user?: User | null;
 }
 
 const userBalanceStore: React.FC<userBalanceStoreProps> = ({ user }) => {

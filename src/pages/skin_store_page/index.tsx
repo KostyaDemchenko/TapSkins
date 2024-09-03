@@ -41,7 +41,7 @@ export default function SkinStorePage() {
   const [filters, setFilters] = useState<any>({});
   const [weaponTypes, setWeaponTypes] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<string>("relevant");
-  const userBalance = useRef(0);
+  const [userBalance, setUserBalance] = useState<number>(user ? user.getBalancePurple() : 0);
 
   useEffect(() => {
     if (!tg) return;
@@ -57,7 +57,6 @@ export default function SkinStorePage() {
       const response = await userClass.authUser(tg);
       console.log("Sending...");
       if (response) {
-        userBalance.current = userClass.getBalancePurple();
         try {
           const data = await userClass.getSkins();
           setSkins(data);
@@ -205,8 +204,7 @@ export default function SkinStorePage() {
       <main>
         <div className='container'>
           <div className='middle-box'>
-            {user && <UserBalanceStore user={user} />}
-            {!user && <UserBalanceStore />}
+            <UserBalanceStore user={user} />
             <div className='top-box'>
               <Search onSearch={handleSearch} />
               <Filters
@@ -229,6 +227,7 @@ export default function SkinStorePage() {
           </div>
           <SkinStore
             user={user}
+            setUserBalance={(new_balance: number) => setUserBalance(new_balance)}
             searchTerm={searchTerm}
             skins={filteredSkins}
             isLoading={isLoading}

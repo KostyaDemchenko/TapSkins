@@ -22,6 +22,7 @@ interface SkinStoreProps {
   isLoading: boolean;
   filters: any;
   user: User | null;
+  setUserBalance: (new_balance: number) => void;
 }
 
 const SkinStore: React.FC<SkinStoreProps> = ({
@@ -30,12 +31,14 @@ const SkinStore: React.FC<SkinStoreProps> = ({
   isLoading,
   filters,
   user,
+  setUserBalance
 }) => {
   const [filteredSkins, setFilteredSkins] = useState<Skin[]>(skins);
   const [quickFilteredSkins, setQuickFilteredSkins] = useState<Skin[]>(skins);
   const userCart = useRef<Cart | null>(null);
   const toastId = useRef<Id | null>(null);
   const addingToCart = useRef<boolean>(false);
+  const isSubmitting = useRef<boolean>(false);
 
   useEffect(() => {
     if (user) {
@@ -183,6 +186,49 @@ const SkinStore: React.FC<SkinStoreProps> = ({
     );
   };
 
+  const handleBuyNow = async (skin_id: number, price: number) => {
+    if (isSubmitting.current) return;
+    if (!user) {
+      toast.error(
+        "User data not available. Please try again later.",
+        toastSettings
+      );
+      return;
+    }
+    try {
+      // Показать тостер загрузки
+      toastId.current = toast.loading("Processing purchase...", toastSettings);
+      isSubmitting.current = true;
+
+      const storedTradeLink = localStorage.getItem("tradeLink") || "";
+      const response = await user.buyNowSkin(skin_id, storedTradeLink, price);
+
+      // Обновляем тостер на успешное сообщение
+      toast.update(toastId.current!, {
+        render: response.message,
+        type: response.success ? "success" : "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      if (response.success) {
+        setUserBalance(user.getBalancePurple());
+        // Удаляем скин из списка после успешной покупки
+        removeSkinFromList(skin_id);
+      }
+    } catch (error) {
+      // Обновляем тостер на сообщение об ошибке
+      toast.update(toastId.current!, {
+        render: "Failed to complete purchase. Please try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    } finally {
+      isSubmitting.current = false;
+    }
+  };
+
   return (
     <>
       <ToastContainer />
@@ -194,11 +240,10 @@ const SkinStore: React.FC<SkinStoreProps> = ({
         ) : (
           filteredSkins.map((skin) => (
             <SkinCard
-              user={user}
+              onBuyNowClick={handleBuyNow}
               addToCartHandle={addToCartHandle}
               skin={skin}
               key={skin.item_id}
-              onSkinActionComplete={removeSkinFromList}
             />
           ))
         )}
