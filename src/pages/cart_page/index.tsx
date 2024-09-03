@@ -232,105 +232,107 @@ export default function CartPage() {
       <div style={{ position: "absolute" }}>
         <ToastContainer />
       </div>
-      <main>
-        {isMobile ? (
-          <div className='container'>
-            <div className='top-box'>
-              <h3 className='items-amnt'>
-                Items ({cartItems ? cartItems.length : 0})
-              </h3>
-              <a className='btn-secondary-35' href='/order_history'>
-                History
-              </a>
-            </div>
-
-            {isLoading ? (
-              <div className='skeleton-box'>
-                {Array.from(new Array(3)).map((_, index) => (
-                  <Skeleton
-                    key={index}
-                    variant='rounded'
-                    height={120}
-                    animation='wave'
-                    sx={{
-                      bgcolor: "var(--color-surface)",
-                      width: "100%",
-                    }}
-                  />
-                ))}
-              </div>
-            ) : cartItems && cartItems.length > 0 ? (
-              <>
-                {cartItems.map((el) => (
-                  <SkinOrderCard
-                    key={el.item_id}
-                    deleteHandle={() => {
-                      if (!isDeleting) deleteHandle(el);
-                    }}
-                    skin={el}
-                  />
-                ))}
-                <div className='info-box'>
-                  <div className='total-price-box'>
-                    <p>Total</p>
-                    <h4>
-                      {getTotalPrice().toLocaleString("RU-ru")}{" "}
-                      <Image
-                        src={iconObj.purpleCoin}
-                        width={12}
-                        height={12}
-                        alt='Purple coin'
-                      />
-                    </h4>
-                  </div>
-                  <div className='reservation-info'>
-                    <span className='material-symbols-rounded reservation-info-icon'>
-                      info
-                    </span>
-                    <p className='reservation-info-text'>
-                      Items added to your cart will be reserved for 24 hours
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  label='Buy'
-                  className='btn-primary-25 purchase-buying'
-                  icon=''
-                  disabled={(() => {
-                    if (isDeleting || opportunityToBuy.loading === true)
-                      return true;
-                    if (!user || !userCart.current) return true; // Добавлена проверка на наличие корзины
-                    return user.getBalancePurple() < getTotalPrice();
-                  })()}
-                  id='tradeLinkValidation'
-                  onClick={() => {
-                    // Открываем модальное окно, без отправки заказа
-                  }}
-                />
-                <ValidationModal
-                  onConfirm={() => {
-                    handleOrderSubmission();
-                  }}
-                  triggerId='tradeLinkValidation'
-                />
-              </>
-            ) : (
-              <div className='empty-cart'>
-                <p>No items in the cart!</p>
-                <a className='btn-secondary-35' href='/skin_store_page'>
-                  <span className='material-symbols-outlined'>
-                    shopping_cart
-                  </span>{" "}
-                  To store
+      {isMobile ? (
+        <>
+          <main>
+            <div className='container'>
+              <div className='top-box'>
+                <h3 className='items-amnt'>
+                  Items ({cartItems ? cartItems.length : 0})
+                </h3>
+                <a className='btn-secondary-35' href='/order_history'>
+                  History
                 </a>
               </div>
-            )}
-          </div>
-        ) : (
-          <NotAMobile />
-        )}
-      </main>
-      <Nav />
+
+              {isLoading ? (
+                <div className='skeleton-box'>
+                  {Array.from(new Array(3)).map((_, index) => (
+                    <Skeleton
+                      key={index}
+                      variant='rounded'
+                      height={120}
+                      animation='wave'
+                      sx={{
+                        bgcolor: "var(--color-surface)",
+                        width: "100%",
+                      }}
+                    />
+                  ))}
+                </div>
+              ) : cartItems && cartItems.length > 0 ? (
+                <>
+                  {cartItems.map((el) => (
+                    <SkinOrderCard
+                      key={el.item_id}
+                      deleteHandle={() => {
+                        if (!isDeleting) deleteHandle(el);
+                      }}
+                      skin={el}
+                    />
+                  ))}
+                  <div className='info-box'>
+                    <div className='total-price-box'>
+                      <p>Total</p>
+                      <h4>
+                        {getTotalPrice().toLocaleString("RU-ru")}{" "}
+                        <Image
+                          src={iconObj.purpleCoin}
+                          width={12}
+                          height={12}
+                          alt='Purple coin'
+                        />
+                      </h4>
+                    </div>
+                    <div className='reservation-info'>
+                      <span className='material-symbols-rounded reservation-info-icon'>
+                        info
+                      </span>
+                      <p className='reservation-info-text'>
+                        Items added to your cart will be reserved for 24 hours
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    label='Buy'
+                    className='btn-primary-25 purchase-buying'
+                    icon=''
+                    disabled={(() => {
+                      if (isDeleting || opportunityToBuy.loading === true)
+                        return true;
+                      if (!user || !userCart.current) return true;
+                      return user.getBalancePurple() < getTotalPrice();
+                    })()}
+                    id='tradeLinkValidation'
+                    onClick={() => {
+                      // Открываем модальное окно, без отправки заказа
+                    }}
+                  />
+                  <ValidationModal
+                    onConfirm={() => {
+                      handleOrderSubmission();
+                    }}
+                    triggerId='tradeLinkValidation'
+                  />
+                </>
+              ) : (
+                <div className='empty-cart'>
+                  <p>No items in the cart!</p>
+                  <a className='btn-secondary-35' href='/skin_store_page'>
+                    <span className='material-symbols-outlined'>
+                      shopping_cart
+                    </span>{" "}
+                    To store
+                  </a>
+                </div>
+              )}
+            </div>
+          </main>
+          <Nav />
+        </>
+      ) : (
+        <NotAMobile />
+      )}
     </>
   );
 }

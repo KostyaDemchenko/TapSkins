@@ -41,7 +41,7 @@ export default function RewardsPage() {
       const userClass = new User(tg.initDataUnsafe.user.id, tg.initData);
       const response = await userClass.authUser(tg);
 
-      // пока не будет это выполнено, никаких нахуй дальше действий
+      // пока не будет это выполнено, никаких дальнейших действий
       if (response) {
         setUser(userClass);
       }
@@ -78,21 +78,17 @@ export default function RewardsPage() {
           setTg(global.window.Telegram.WebApp);
         }}
       />
-      <main>
-        {isMobile ? (
-          <>
+      {isMobile ? ( // Условный рендеринг для мобильных устройств
+        <>
+          <main>
             <h1 className='page-title'>Reward Center</h1>
-            <h1 className='page-title'>Reward Center</h1>
-
-            <h1 className='page-title'>Reward Center</h1>
-
             {user && <RewardCenter user={user} />}
-          </>
-        ) : (
-          <NotAMobile />
-        )}
-      </main>
-      <Nav />
+          </main>
+          <Nav /> {/* Навигация отображается только для мобильных устройств */}
+        </>
+      ) : (
+        <NotAMobile />
+      )}
     </>
   );
 }

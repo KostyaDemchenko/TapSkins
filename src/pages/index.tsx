@@ -5,7 +5,7 @@ import Head from "next/head";
 import Nav from "@/src/components/Nav";
 import UserBalance from "@/src/components/UserBalance";
 import Preloader from "@/src/components/MainPreloader";
-import NotAMobile from "@/src/components/NotAMobile"; // Импортируем компонент NotAMobile
+import NotAMobile from "@/src/components/NotAMobile";
 
 import { registerUserResponse, User } from "../utils/types";
 
@@ -25,9 +25,9 @@ export default function Home() {
   // Состояние для отображения прелоадера
   const [showPreloader, setShowPreloader] = useState(false);
   const [authCompleted, setAuthCompleted] = useState(false);
-  const [isMobile, setIsMobile] = useState<boolean>(true); // Состояние для проверки устройства
+  const [isMobile, setIsMobile] = useState<boolean>(true);
 
-  const preloaderDuration = 3000; // Переменная для задания времени отображения прелоадера
+  const preloaderDuration = 3000;
 
   // Проверка платформы устройства
   useEffect(() => {
@@ -36,14 +36,14 @@ export default function Home() {
     // Проверяем платформу Telegram Web App
     const platform = tg.platform;
     if (platform !== "android" && platform !== "ios") {
-      setIsMobile(false); // Если не Android и не iOS, показываем компонент NotAMobile
+      setIsMobile(false);
     } else {
       setIsMobile(true);
     }
   }, [tg]);
 
   useEffect(() => {
-    if (!isMobile) return; // Если не мобильное устройство, не выполняем дальнейшие действия
+    if (!isMobile) return;
 
     // Проверяем, отображался ли прелоадер ранее
     const hasSeenPreloader = sessionStorage.getItem("hasSeenPreloader");
@@ -57,7 +57,7 @@ export default function Home() {
   }, [isMobile]);
 
   useEffect(() => {
-    if (!isMobile || !tg) return; // Проверка на мобильное устройство и наличие tg
+    if (!isMobile || !tg) return;
 
     // Прелоадер скрывается после указанного времени, но только если авторизация завершена
     const preloaderTimeout = setTimeout(() => {
@@ -70,7 +70,7 @@ export default function Home() {
   }, [authCompleted, preloaderDuration, isMobile, tg]);
 
   useEffect(() => {
-    if (!isMobile || !tg) return; // Проверка на мобильное устройство и наличие tg
+    if (!isMobile || !tg) return;
 
     tg.expand();
     tg.setHeaderColor("#080918");
@@ -150,26 +150,27 @@ export default function Home() {
         }}
       />
 
-      {isMobile ? ( // Если на мобильном, показываем основной контент
-        showPreloader ? (
-          <Preloader duration={preloaderDuration} />
-        ) : (
-          <main
-            style={{
-              display: "flex",
-              gap: "15px",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            {user && wss && <UserBalance user={user} wss={wss} />}
-          </main>
-        )
+      {isMobile ? (
+        <>
+          {showPreloader ? (
+            <Preloader duration={preloaderDuration} />
+          ) : (
+            <main
+              style={{
+                display: "flex",
+                gap: "15px",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              {user && wss && <UserBalance user={user} wss={wss} />}
+            </main>
+          )}
+          <Nav />
+        </>
       ) : (
-        <NotAMobile /> // Если не на мобильном, показываем компонент NotAMobile
+        <NotAMobile />
       )}
-
-      <Nav />
     </>
   );
 }

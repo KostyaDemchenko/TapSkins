@@ -100,9 +100,10 @@ export default function OrderHistoryPage() {
           setTg(global.window.Telegram.WebApp);
         }}
       />
-      <main>
-        {isMobile ? (
-          <>
+      {isMobile ? (
+        <>
+          <main>
+            {/* Основной контент страницы OrderHistory */}
             <a className='title' href='/cart_page'>
               <span className='material-symbols-outlined'>
                 chevron_backward
@@ -140,13 +141,13 @@ export default function OrderHistoryPage() {
                 </a>
               </div>
             )}
-          </>
-        ) : (
-          <NotAMobile />
-        )}
-      </main>
-      <ContactUsModal triggerId='contactUsModal' />
-      <Nav />
+            <ContactUsModal triggerId='contactUsModal' />
+          </main>
+          <Nav />
+        </>
+      ) : (
+        <NotAMobile />
+      )}
     </>
   );
 }

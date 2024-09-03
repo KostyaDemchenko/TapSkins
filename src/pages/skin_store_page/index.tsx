@@ -217,45 +217,47 @@ export default function SkinStorePage() {
           setTg(global.window.Telegram.WebApp);
         }}
       />
-      <main>
-        {isMobile ? ( // Если мобильное устройство, показываем основной контент
-          <div className='container'>
-            <div className='middle-box'>
-              {user && <UserBalanceStore user={user} />}
-              {!user && <UserBalanceStore />}
-              <div className='top-box'>
-                <Search onSearch={handleSearch} />
-                <Filters
-                  minPrice={minPrice ?? 0}
-                  maxPrice={maxPrice ?? 100}
-                  minFloat={minFloat ?? 0}
-                  maxFloat={maxFloat ?? 1}
-                  skins={skins}
-                  onApply={applyFilters}
-                />
+      {isMobile ? ( // Если мобильное устройство, показываем основной контент
+        <>
+          <main>
+            <div className='container'>
+              <div className='middle-box'>
+                {user && <UserBalanceStore user={user} />}
+                {!user && <UserBalanceStore />}
+                <div className='top-box'>
+                  <Search onSearch={handleSearch} />
+                  <Filters
+                    minPrice={minPrice ?? 0}
+                    maxPrice={maxPrice ?? 100}
+                    minFloat={minFloat ?? 0}
+                    maxFloat={maxFloat ?? 1}
+                    skins={skins}
+                    onApply={applyFilters}
+                  />
+                </div>
+                <div className='bottom-box'>
+                  <FastFilters
+                    weaponTypes={weaponTypes}
+                    isLoading={isLoading}
+                    onFilterSelect={handleWeaponTypeFilter}
+                  />
+                  <Sort isLoading={isLoading} onSort={handleSort} />
+                </div>
               </div>
-              <div className='bottom-box'>
-                <FastFilters
-                  weaponTypes={weaponTypes}
-                  isLoading={isLoading}
-                  onFilterSelect={handleWeaponTypeFilter}
-                />
-                <Sort isLoading={isLoading} onSort={handleSort} />
-              </div>
+              <SkinStore
+                user={user}
+                searchTerm={searchTerm}
+                skins={filteredSkins}
+                isLoading={isLoading}
+                filters={filters}
+              />
             </div>
-            <SkinStore
-              user={user}
-              searchTerm={searchTerm}
-              skins={filteredSkins}
-              isLoading={isLoading}
-              filters={filters}
-            />
-          </div>
-        ) : (
-          <NotAMobile /> // Если не мобильное устройство, показываем компонент NotAMobile
-        )}
-      </main>
-      <Nav />
+          </main>
+          <Nav />
+        </>
+      ) : (
+        <NotAMobile /> // Если не мобильное устройство, показываем компонент NotAMobile
+      )}
     </>
   );
 }
