@@ -2,7 +2,7 @@
 
 .history-order-list {
   width: 100%;
-  height: calc(100dvh - 200px);
+  height: calc(100dvh - 160px);
 
   .container {
     @include flex(center, flex-start);
