@@ -118,16 +118,6 @@ const SkinCard: React.FC<SkinCardProps> = ({
                 <span className='startrack'>{skin.startrack}</span>
               )}
             </h3>
-            <div className='available-box'>
-              <p className='available'>Available:</p>
-              <p className='available-user-value'>Sample</p>
-              <Image
-                src={iconObj.purpleCoin}
-                width={12}
-                height={12}
-                alt='Purple coin'
-              />
-            </div>
           </div>
           <Float floatValue={skin.float} />
           <Rare rarity={skin.rarity} />

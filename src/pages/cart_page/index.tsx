@@ -8,6 +8,7 @@ import Button from "@/src/components/Button";
 import ValidationModal from "@/src/components/ValidationModal";
 import Skeleton from "@mui/material/Skeleton";
 import { SkinOrderCard } from "@/src/components/Carts";
+import NotAMobile from "@/src/components/NotAMobile"; // Импортируем компонент NotAMobile
 import { Id, ToastContainer, ToastOptions, toast } from "react-toastify";
 
 import iconObj from "@/public/icons/utils";
@@ -38,9 +39,23 @@ export default function CartPage() {
     success: false,
     message: "",
   });
+  const [isMobile, setIsMobile] = useState<boolean>(true); // Новое состояние для проверки устройства
 
   const userCart = useRef<null | Cart>(null);
   const toastId = useRef<Id | null>(null);
+
+  // Проверка платформы устройства
+  useEffect(() => {
+    if (!tg) return;
+
+    // Проверяем платформу Telegram Web App
+    const platform = tg.platform;
+    if (platform !== "android" && platform !== "ios") {
+      setIsMobile(false); // Если не Android и не iOS, показываем компонент NotAMobile
+    } else {
+      setIsMobile(true);
+    }
+  }, [tg]);
 
   const deleteHandle = async (el: Skin) => {
     if (!user || !userCart.current) return;
@@ -140,7 +155,7 @@ export default function CartPage() {
 
   // авторизация и инициализация корзины
   useEffect(() => {
-    if (!tg) return;
+    if (!isMobile || !tg) return; // Проверка на мобильное устройство
 
     tg.expand();
     tg.setHeaderColor("#080918");
@@ -160,7 +175,7 @@ export default function CartPage() {
       }
       setIsLoading(false);
     })();
-  }, [tg]);
+  }, [tg, isMobile]);
 
   // отслеживание состояния возможности покупки
   useEffect(() => {
@@ -217,98 +232,107 @@ export default function CartPage() {
       <div style={{ position: "absolute" }}>
         <ToastContainer />
       </div>
-      <main>
-        <div className='container'>
-          <div className='top-box'>
-            <h3 className='items-amnt'>
-              Items ({cartItems ? cartItems.length : 0})
-            </h3>
-            <a className='btn-secondary-35' href='/order_history'>
-              History
-            </a>
-          </div>
-
-          {isLoading ? (
-            <div className='skeleton-box'>
-              {Array.from(new Array(3)).map((_, index) => (
-                <Skeleton
-                  key={index}
-                  variant='rounded'
-                  height={120}
-                  animation='wave'
-                  sx={{
-                    bgcolor: "var(--color-surface)",
-                    width: "100%",
-                  }}
-                />
-              ))}
-            </div>
-          ) : cartItems && cartItems.length > 0 ? (
-            <>
-              {cartItems.map((el) => (
-                <SkinOrderCard
-                  key={el.item_id}
-                  deleteHandle={() => {
-                    if (!isDeleting) deleteHandle(el);
-                  }}
-                  skin={el}
-                />
-              ))}
-              <div className='info-box'>
-                <div className='total-price-box'>
-                  <p>Total</p>
-                  <h4>
-                    {getTotalPrice().toLocaleString("RU-ru")}{" "}
-                    <Image
-                      src={iconObj.purpleCoin}
-                      width={12}
-                      height={12}
-                      alt='Purple coin'
-                    />
-                  </h4>
-                </div>
-                <div className='reservation-info'>
-                  <span className='material-symbols-rounded reservation-info-icon'>
-                    info
-                  </span>
-                  <p className='reservation-info-text'>
-                    Items added to your cart will be reserved for 24 hours
-                  </p>
-                </div>
+      {isMobile ? (
+        <>
+          <main>
+            <div className='container'>
+              <div className='top-box'>
+                <h3 className='items-amnt'>
+                  Items ({cartItems ? cartItems.length : 0})
+                </h3>
+                <a className='btn-secondary-35' href='/order_history'>
+                  History
+                </a>
               </div>
-              <Button
-                label='Buy'
-                className='btn-primary-25 purchase-buying'
-                icon=''
-                disabled={(() => {
-                  if (isDeleting || opportunityToBuy.loading === true) return true;
-                  if (!user || !userCart.current) return true; // Добавлена проверка на наличие корзины
-                  return user.getBalancePurple() < getTotalPrice();
-                })()}
-                id='tradeLinkValidation'
-                onClick={() => {
-                  // Открываем модальное окно, без отправки заказа
-                }}
-              />
-              <ValidationModal
-                onConfirm={() => {
-                  handleOrderSubmission();
-                }}
-                triggerId='tradeLinkValidation'
-              />
-            </>
-          ) : (
-            <div className='empty-cart'>
-              <p>No items in the cart!</p>
-              <a className='btn-secondary-35' href='/skin_store_page'>
-                <span className='material-symbols-outlined'>shopping_cart</span>{" "}
-                To store
-              </a>
+
+              {isLoading ? (
+                <div className='skeleton-box'>
+                  {Array.from(new Array(3)).map((_, index) => (
+                    <Skeleton
+                      key={index}
+                      variant='rounded'
+                      height={120}
+                      animation='wave'
+                      sx={{
+                        bgcolor: "var(--color-surface)",
+                        width: "100%",
+                      }}
+                    />
+                  ))}
+                </div>
+              ) : cartItems && cartItems.length > 0 ? (
+                <>
+                  {cartItems.map((el) => (
+                    <SkinOrderCard
+                      key={el.item_id}
+                      deleteHandle={() => {
+                        if (!isDeleting) deleteHandle(el);
+                      }}
+                      skin={el}
+                    />
+                  ))}
+                  <div className='info-box'>
+                    <div className='total-price-box'>
+                      <p>Total</p>
+                      <h4>
+                        {getTotalPrice().toLocaleString("RU-ru")}{" "}
+                        <Image
+                          src={iconObj.purpleCoin}
+                          width={12}
+                          height={12}
+                          alt='Purple coin'
+                        />
+                      </h4>
+                    </div>
+                    <div className='reservation-info'>
+                      <span className='material-symbols-rounded reservation-info-icon'>
+                        info
+                      </span>
+                      <p className='reservation-info-text'>
+                        Items added to your cart will be reserved for 24 hours
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    label='Buy'
+                    className='btn-primary-25 purchase-buying'
+                    icon=''
+                    disabled={(() => {
+                      if (isDeleting || opportunityToBuy.loading === true)
+                        return true;
+                      if (!user || !userCart.current) return true;
+                      return user.getBalancePurple() < getTotalPrice();
+                    })()}
+                    id='tradeLinkValidation'
+                    onClick={() => {
+                      // Открываем модальное окно, без отправки заказа
+                    }}
+                  />
+                  <ValidationModal
+                    onConfirm={() => {
+                      handleOrderSubmission();
+                    }}
+                    triggerId='tradeLinkValidation'
+                  />
+                </>
+              ) : (
+                <div className='empty-cart'>
+                  <p>No items in the cart!</p>
+                  <a className='btn-secondary-35' href='/skin_store_page'>
+                    <span className='material-symbols-outlined'>
+                      shopping_cart
+                    </span>{" "}
+                    To store
+                  </a>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </main>
-      <Nav />
+          </main>
+          <Nav />
+        </>
+      ) : (
+        <NotAMobile />
+      )}
     </>
   );
 }

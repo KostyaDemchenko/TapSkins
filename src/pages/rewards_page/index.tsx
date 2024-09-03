@@ -1,20 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Script from "next/script";
 import Head from "next/head";
 
 import Nav from "@/src/components/Nav";
 import RewardCenter from "@/src/components/RewardCenter";
-import { User, UserObj } from "@/src/utils/types";
+import NotAMobile from "@/src/components/NotAMobile"; // Импортируем компонент NotAMobile
+import { User } from "@/src/utils/types";
 
 import "@/src/app/globals.scss";
 import "./style.scss";
 
-export default function rewards_page() {
-  const [tg, setTg] = React.useState<WebApp | null>();
-  const [user, setUser] = React.useState<User | null>(null);
+export default function RewardsPage() {
+  const [tg, setTg] = useState<WebApp | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [isMobile, setIsMobile] = useState<boolean>(true); // Новое состояние для проверки устройства
 
-  React.useEffect(() => {
+  // Проверка платформы устройства
+  useEffect(() => {
     if (!tg) return;
+
+    // Проверяем платформу Telegram Web App
+    const platform = tg.platform;
+    if (platform !== "android" && platform !== "ios") {
+      setIsMobile(false); // Если не Android и не iOS, показываем компонент NotAMobile
+    } else {
+      setIsMobile(true);
+    }
+  }, [tg]);
+
+  useEffect(() => {
+    if (!isMobile || !tg) return; // Проверка на мобильное устройство
 
     tg.expand();
     tg.setHeaderColor("#080918");
@@ -26,12 +41,12 @@ export default function rewards_page() {
       const userClass = new User(tg.initDataUnsafe.user.id, tg.initData);
       const response = await userClass.authUser(tg);
 
-      // пока не будет это выполнено, никаких нахуй дальше действий
+      // пока не будет это выполнено, никаких дальнейших действий
       if (response) {
         setUser(userClass);
       }
     })();
-  }, [tg]);
+  }, [tg, isMobile]);
 
   return (
     <>
@@ -63,12 +78,17 @@ export default function rewards_page() {
           setTg(global.window.Telegram.WebApp);
         }}
       />
-      <main>
-        <h1 className='page-title'>Reward Center</h1>
-
-        {user && <RewardCenter user={user} />}
-      </main>
-      <Nav />
+      {isMobile ? ( // Условный рендеринг для мобильных устройств
+        <>
+          <main>
+            <h1 className='page-title'>Reward Center</h1>
+            {user && <RewardCenter user={user} />}
+          </main>
+          <Nav /> {/* Навигация отображается только для мобильных устройств */}
+        </>
+      ) : (
+        <NotAMobile />
+      )}
     </>
   );
 }

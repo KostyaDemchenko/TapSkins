@@ -7,20 +7,33 @@ import { User, OrderHistiryData } from "@/src/utils/types";
 import ContactUsModal from "@/src/components/ContactUsModal";
 import HistoryorderList from "@/src/components/HistoryOrderList";
 import Skeleton from "@mui/material/Skeleton";
-
-import iconObj from "@/public/icons/utils";
+import NotAMobile from "@/src/components/NotAMobile"; // Импортируем компонент NotAMobile
 
 import "@/src/app/globals.scss";
 import "./style.scss";
 
-export default function rewards_page() {
+export default function OrderHistoryPage() {
   const [tg, setTg] = useState<WebApp | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [orderHistory, setOrderHistory] = useState<OrderHistiryData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isMobile, setIsMobile] = useState<boolean>(true); // Новое состояние для проверки устройства
 
+  // Проверка платформы устройства
   useEffect(() => {
     if (!tg) return;
+
+    // Проверяем платформу Telegram Web App
+    const platform = tg.platform;
+    if (platform !== "android" && platform !== "ios") {
+      setIsMobile(false); // Если не Android и не iOS, показываем компонент NotAMobile
+    } else {
+      setIsMobile(true);
+    }
+  }, [tg]);
+
+  useEffect(() => {
+    if (!isMobile || !tg) return; // Проверка на мобильное устройство
 
     tg.expand();
     tg.setHeaderColor("#080918");
@@ -55,7 +68,7 @@ export default function rewards_page() {
         }
       }
     })();
-  }, [tg]);
+  }, [tg, isMobile]);
 
   return (
     <>
@@ -87,44 +100,54 @@ export default function rewards_page() {
           setTg(global.window.Telegram.WebApp);
         }}
       />
-      <main>
-        <a className='title' href='/cart_page'>
-          <span className='material-symbols-outlined'>chevron_backward</span>
-          <h1 className='page-title'>History</h1>
-        </a>
-
-        {loading ? (
-          <div className='history-order-list'>
-            <div className='container'>
-              {Array.from(new Array(5)).map((_, index) => (
-                <Skeleton
-                  key={index}
-                  variant='rectangular'
-                  height={84}
-                  animation='wave'
-                  sx={{
-                    bgcolor: "var(--color-surface)",
-                    marginBottom: "5px",
-                    width: "100%",
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        ) : orderHistory.length > 0 ? (
-          user && <HistoryorderList info={orderHistory} />
-        ) : (
-          <div className='empty-cart'>
-            <p>No items in the history!</p>
-            <a className='btn-secondary-35' href='/skin_store_page'>
-              <span className='material-symbols-outlined'>shopping_cart</span>{" "}
-              To store
+      {isMobile ? (
+        <>
+          <main>
+            {/* Основной контент страницы OrderHistory */}
+            <a className='title' href='/cart_page'>
+              <span className='material-symbols-outlined'>
+                chevron_backward
+              </span>
+              <h1 className='page-title'>History</h1>
             </a>
-          </div>
-        )}
-      </main>
-      <ContactUsModal triggerId='contactUsModal' />
-      <Nav />
+            {loading ? (
+              <div className='history-order-list'>
+                <div className='container'>
+                  {Array.from(new Array(5)).map((_, index) => (
+                    <Skeleton
+                      key={index}
+                      variant='rectangular'
+                      height={84}
+                      animation='wave'
+                      sx={{
+                        bgcolor: "var(--color-surface)",
+                        marginBottom: "5px",
+                        width: "100%",
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : orderHistory.length > 0 ? (
+              user && <HistoryorderList info={orderHistory} />
+            ) : (
+              <div className='empty-cart'>
+                <p>No items in the history!</p>
+                <a className='btn-secondary-35' href='/skin_store_page'>
+                  <span className='material-symbols-outlined'>
+                    shopping_cart
+                  </span>{" "}
+                  To store
+                </a>
+              </div>
+            )}
+            <ContactUsModal triggerId='contactUsModal' />
+          </main>
+          <Nav />
+        </>
+      ) : (
+        <NotAMobile />
+      )}
     </>
   );
 }

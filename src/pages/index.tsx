@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Script from "next/script";
 import Head from "next/head";
 
 import Nav from "@/src/components/Nav";
 import UserBalance from "@/src/components/UserBalance";
 import Preloader from "@/src/components/MainPreloader";
+import NotAMobile from "@/src/components/NotAMobile";
 
 import { registerUserResponse, User } from "../utils/types";
 
@@ -13,9 +14,7 @@ import "@/src/app/globals.scss";
 const webSocketAddress = process.env.NEXT_PUBLIC_WEBSOCKET_ADDRESS!;
 
 export default function Home() {
-  const [tg, setTg] = React.useState<WebApp | null>();
-  // нужно добавить еще одно состояние, undefined, которое бы значило что авторизация провалилась
-  // null - еще пользователя нету, то есть был послан запрос с авторизацией
+  const [tg, setTg] = React.useState<WebApp | null>(null);
   const [user, setUser] = React.useState<User | null>(null);
   // boolean - подписан\неподписан
   // undefined - еще ничего не отправлено
@@ -25,11 +24,27 @@ export default function Home() {
 
   // Состояние для отображения прелоадера
   const [showPreloader, setShowPreloader] = useState(false);
-  const [authCompleted, setAuthCompleted] = useState(false); // Новое состояние для завершения авторизации
+  const [authCompleted, setAuthCompleted] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean>(true);
 
-  const preloaderDuration = 3000; // Переменная для задания времени отображения прелоадера
+  const preloaderDuration = 3000;
+
+  // Проверка платформы устройства
+  useEffect(() => {
+    if (!tg) return;
+
+    // Проверяем платформу Telegram Web App
+    const platform = tg.platform;
+    if (platform !== "android" && platform !== "ios") {
+      setIsMobile(false);
+    } else {
+      setIsMobile(true);
+    }
+  }, [tg]);
 
   useEffect(() => {
+    if (!isMobile) return;
+
     // Проверяем, отображался ли прелоадер ранее
     const hasSeenPreloader = sessionStorage.getItem("hasSeenPreloader");
 
@@ -39,9 +54,11 @@ export default function Home() {
     } else {
       setShowPreloader(false);
     }
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
+    if (!isMobile || !tg) return;
+
     // Прелоадер скрывается после указанного времени, но только если авторизация завершена
     const preloaderTimeout = setTimeout(() => {
       if (authCompleted) {
@@ -50,10 +67,10 @@ export default function Home() {
     }, preloaderDuration);
 
     return () => clearTimeout(preloaderTimeout);
-  }, [authCompleted, preloaderDuration]);
+  }, [authCompleted, preloaderDuration, isMobile, tg]);
 
   useEffect(() => {
-    if (!tg) return;
+    if (!isMobile || !tg) return;
 
     tg.expand();
     tg.setHeaderColor("#080918");
@@ -100,7 +117,7 @@ export default function Home() {
       // Устанавливаем состояние завершения авторизации
       setAuthCompleted(true);
     })();
-  }, [tg]);
+  }, [tg, isMobile]);
 
   return (
     <>
@@ -133,23 +150,27 @@ export default function Home() {
         }}
       />
 
-      {showPreloader ? (
-        <Preloader duration={preloaderDuration} /> // Передаем переменную времени отображения прелоадера
+      {isMobile ? (
+        <>
+          {showPreloader ? (
+            <Preloader duration={preloaderDuration} />
+          ) : (
+            <main
+              style={{
+                display: "flex",
+                gap: "15px",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              {user && wss && <UserBalance user={user} wss={wss} />}
+            </main>
+          )}
+          <Nav />
+        </>
       ) : (
-        <main
-          style={{
-            display: "flex",
-            gap: "15px",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          {/* {!user && <UserBalance />} */}
-          {user && wss && <UserBalance user={user} wss={wss} />}
-        </main>
+        <NotAMobile />
       )}
-
-      <Nav />
     </>
   );
 }

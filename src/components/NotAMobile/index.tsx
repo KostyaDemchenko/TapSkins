@@ -9,7 +9,7 @@ interface NotAMobileProps {}
 
 const NotAMobile: React.FC<NotAMobileProps> = () => {
   return (
-    <div className='container not-a-mobile'>
+    <div className='not-a-mobile'>
       <p className='title'>Play on your mobile!</p>
       <a href='https://t.me/TapSkins_bot' className='link' target='_blank'>
         <Image
