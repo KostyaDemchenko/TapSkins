@@ -312,7 +312,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
   <a
     id={id}
     onClick={onClick}
-    href={task.link_to_join} // Добавляем ссылку
+    //href={task.link_to_join} // Добавляем ссылку
     target='_blank' // Открываем ссылку в новой вкладке
     rel='noopener noreferrer' // Для безопасности
     className={`task-card ${className}`}

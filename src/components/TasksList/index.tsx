@@ -100,7 +100,6 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         const parsedStor = JSON.parse(localStorage) as number[];
         if (!parsedStor.length) return;
 
-        console.log(parsedStor, tasks.unCompletedTasks);
         const actualIds = parsedStor.filter((id) => {
           return tasks.unCompletedTasks!.find((el) => el.task_id === id);
         });
@@ -133,7 +132,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
     }
 
     // Проверяем таску Телеграма
-    if (task.platform_type === "Telegram") {
+    if (task.platform_type.toLowerCase() === "telegram") {
       const completedTask = await user.getRewardsForCompletedTasks();
       const reward = completedTask.rewardsClaimed;
 
@@ -157,44 +156,42 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
           }
         }
       }
-      else {
-        if (taskIndex === -1) tgTasks.push(task.task_id);
-        window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
-  
+      if (taskIndex === -1) tgTasks.push(task.task_id);
+      window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
+
+      setTimeout(() => {
         window.open(task.link_to_join, "_blank");
-        isClaimingReward.current = false;
-  
-        toast.update(toasterId.current, {
-          ...toastReceivedSettings("info", "Check subscription again"),
-        });
-      }
+      }, 100);
+      isClaimingReward.current = false;
+
+      toast.update(toasterId.current, {
+        ...toastReceivedSettings("info", "Check subscription again"),
+      });
       return;
     }
-    else {
-      const completedTask = await user.getRewardsForCompletedTasks();
-      const rewards = completedTask.rewardsClaimed;
-  
-      if (rewards.purple || rewards.yellow) {
-        toast.done(toasterId.current);
-        setSelectedTask(task);
-  
-        // Задержка перед показом модалки
-        setTimeout(() => {
-          setShowModal(true);
-        }, 5000);
-  
-        isClaimingReward.current = false;
-        setTimeout(() => {
-          window.open(task.link_to_join, "_blank");
-        }, 100);
-      } else {
-        toast.update(
-          toasterId.current,
-          toastReceivedSettings("error", "Some error occured!")
-        );
-        isClaimingReward.current = false;
-      }
+    const completedTask = await user.getRewardsForCompletedTasks();
+    const rewards = completedTask.rewardsClaimed;
+
+    if (rewards.purple || rewards.yellow) {
+      toast.done(toasterId.current);
+      setSelectedTask(task);
+
+      // Задержка перед показом модалки
+      setTimeout(() => {
+        setShowModal(true);
+      }, 5000);
+
+      isClaimingReward.current = false;
+      setTimeout(() => {
+        window.open(task.link_to_join, "_blank");
+      }, 100);
+      return;
     }
+    toast.update(
+      toasterId.current,
+      toastReceivedSettings("error", "Some error occured!")
+    );
+    isClaimingReward.current = false;
 
   };
 
