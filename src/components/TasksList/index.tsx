@@ -117,7 +117,6 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
   const handleTaskClick = async (task: TaskProps) => {
     if (isClaimingReward.current) return;
     isClaimingReward.current = true;
-    // isClaimingReward(true);
     toasterId.current = toast.loading("Checking for reward...", toastSettings);
     const completeStatus = await user.completeTask(task.task_id);
 
