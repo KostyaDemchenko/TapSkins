@@ -147,7 +147,6 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         isClaimingReward.current = false;
         setSelectedTask(task);
 
-        // Задержка перед показом модалки
         setShowModal(true);
 
         // удаляем таск из локала если он там есть
@@ -171,30 +170,32 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       }
       return;
     }
-
-    const completedTask = await user.getRewardsForCompletedTasks();
-    const rewards = completedTask.rewardsClaimed;
-
-    if (rewards.purple || rewards.yellow) {
-      toast.done(toasterId.current);
-      setSelectedTask(task);
-
-      // Задержка перед показом модалки
-      setTimeout(() => {
-        setShowModal(true);
-      }, 5000);
-
-      isClaimingReward.current = false;
-      setTimeout(() => {
-        window.open(task.link_to_join, "_blank");
-      }, 100);
-    } else {
-      toast.update(
-        toasterId.current,
-        toastReceivedSettings("error", "Some error occured!")
-      );
-      isClaimingReward.current = false;
+    else {
+      const completedTask = await user.getRewardsForCompletedTasks();
+      const rewards = completedTask.rewardsClaimed;
+  
+      if (rewards.purple || rewards.yellow) {
+        toast.done(toasterId.current);
+        setSelectedTask(task);
+  
+        // Задержка перед показом модалки
+        setTimeout(() => {
+          setShowModal(true);
+        }, 5000);
+  
+        isClaimingReward.current = false;
+        setTimeout(() => {
+          window.open(task.link_to_join, "_blank");
+        }, 100);
+      } else {
+        toast.update(
+          toasterId.current,
+          toastReceivedSettings("error", "Some error occured!")
+        );
+        isClaimingReward.current = false;
+      }
     }
+
   };
 
   return (
