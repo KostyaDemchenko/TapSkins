@@ -150,10 +150,9 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         setSelectedTask(task);
 
         // Задержка перед показом модалки
-        setTimeout(() => {
-          setShowModal(true);
-        }, 5000);
+        setShowModal(true);
 
+        // удаляем таск из локала если он там есть
         if (tgTasks.length && tgTasks.find((el) => el === task.task_id)) {
           if (taskIndex !== -1) {
             tgTasks.splice(taskIndex, 1);
@@ -166,10 +165,8 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       if (taskIndex === -1) tgTasks.push(task.task_id);
       window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
 
-      setTimeout(() => {
-        window.open(task.link_to_join, "_blank");
-        setIsClaimingReward(false);
-      }, 100);
+      window.open(task.link_to_join, "_blank");
+      setIsClaimingReward(false);
 
       toast.update(toasterId.current, {
         ...toastReceivedSettings("info", "Check subscription again"),
@@ -234,44 +231,44 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         )}
         {loading
           ? Array.from(new Array(5)).map((_, index) => (
-              <Skeleton
-                key={index}
-                variant="rounded"
-                height={84}
-                animation="wave"
-                sx={{
-                  bgcolor: "var(--color-surface)",
-                  marginBottom: "5px",
-                  width: "100%",
-                }}
-              />
-            ))
+            <Skeleton
+              key={index}
+              variant="rounded"
+              height={84}
+              animation="wave"
+              sx={{
+                bgcolor: "var(--color-surface)",
+                marginBottom: "5px",
+                width: "100%",
+              }}
+            />
+          ))
           : (tasks.unCompletedTasks ? tasks.unCompletedTasks : []).map(
-              (task) => {
-                let tgTasks: string | null | number[] =
-                  global.window.localStorage.getItem("tgTasks");
-                if (tgTasks) tgTasks = JSON.parse(tgTasks);
-                return (
-                  <TaskCard
-                    key={task.task_id}
-                    task={task}
-                    // если находим в localstorage запись о том что уже кликнули по таске, то
-                    // вешаем класс, который отобразит типа кнопку "Проверить"
-                    className={
-                      tgTasks
-                        ? (tgTasks as number[]).find(
-                            (el) => el === task.task_id
-                          )
-                          ? "tg-status-check"
-                          : ""
+            (task) => {
+              let tgTasks: string | null | number[] =
+                global.window.localStorage.getItem("tgTasks");
+              if (tgTasks) tgTasks = JSON.parse(tgTasks);
+              return (
+                <TaskCard
+                  key={task.task_id}
+                  task={task}
+                  // если находим в localstorage запись о том что уже кликнули по таске, то
+                  // вешаем класс, который отобразит типа кнопку "Проверить"
+                  className={
+                    tgTasks
+                      ? (tgTasks as number[]).find(
+                        (el) => el === task.task_id
+                      )
+                        ? "tg-status-check"
                         : ""
-                    }
-                    onClick={() => handleTaskClick(task)}
-                    id={`rewardTrigger-${task.task_id}`}
-                  />
-                );
-              }
-            )}
+                      : ""
+                  }
+                  onClick={() => handleTaskClick(task)}
+                  id={`rewardTrigger-${task.task_id}`}
+                />
+              );
+            }
+          )}
       </div>
       {selectedTask && (
         <RewardModal
