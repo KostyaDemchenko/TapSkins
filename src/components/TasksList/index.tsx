@@ -120,6 +120,9 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
     toasterId.current = toast.loading("Checking for reward...", toastSettings);
     const completeStatus = await user.completeTask(task.task_id);
 
+    const linkEl = document.createElement("a");
+    linkEl.href = task.link_to_join;
+
     if (!completeStatus.success) {
       console.error(completeStatus.details);
       toast.update(
@@ -158,9 +161,8 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       if (taskIndex === -1) tgTasks.push(task.task_id);
       window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
 
-      setTimeout(() => {
-        window.open(task.link_to_join, "_blank");
-      }, 100);
+      // window.open(task.link_to_join, "_blank");
+      linkEl.click();
       isClaimingReward.current = false;
 
       toast.update(toasterId.current, {
@@ -181,9 +183,8 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       }, 5000);
 
       isClaimingReward.current = false;
-      setTimeout(() => {
-        window.open(task.link_to_join, "_blank");
-      }, 100);
+      // window.open(task.link_to_join, "_blank");
+      linkEl.click();
       return;
     }
     toast.update(
