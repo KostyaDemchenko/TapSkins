@@ -138,11 +138,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       const reward = completedTask.rewardsClaimed;
 
       // Записываем в localStorage, что был кликнут таск Telegram
-      let tgTasks: string | number[] = global.window.localStorage.getItem(
-        "tgTasks"
-      ) as string;
-      if (tgTasks) tgTasks = JSON.parse(tgTasks) as number[];
-      else tgTasks = [] as number[];
+      let tgTasks: number[] = JSON.parse(global.window.localStorage.getItem("tgTasks") || "[]");
       const taskIndex = tgTasks.findIndex((el) => el === task.task_id);
 
       if (reward.purple || reward.yellow) {
@@ -161,18 +157,18 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
             window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
           }
         }
-        return;
       }
-
-      if (taskIndex === -1) tgTasks.push(task.task_id);
-      window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
-
-      window.open(task.link_to_join, "_blank");
-      isClaimingReward.current = false;
-
-      toast.update(toasterId.current, {
-        ...toastReceivedSettings("info", "Check subscription again"),
-      });
+      else {
+        if (taskIndex === -1) tgTasks.push(task.task_id);
+        window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
+  
+        window.open(task.link_to_join, "_blank");
+        isClaimingReward.current = false;
+  
+        toast.update(toasterId.current, {
+          ...toastReceivedSettings("info", "Check subscription again"),
+        });
+      }
       return;
     }
 
