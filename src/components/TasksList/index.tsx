@@ -70,7 +70,8 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
   );
 
   const toasterId = useRef<Id>();
-  const [isClaimingReward, setIsClaimingReward] = useState<boolean>(false);
+  const isClaimingReward = useRef<boolean>(false);
+  // const [isClaimingReward, setIsClaimingReward] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -115,8 +116,9 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
   }, [tasks]);
 
   const handleTaskClick = async (task: TaskProps) => {
-    if (isClaimingReward) return;
-    setIsClaimingReward(true);
+    if (isClaimingReward.current) return;
+    isClaimingReward.current = true;
+    // isClaimingReward(true);
     toasterId.current = toast.loading("Checking for reward...", toastSettings);
     const completeStatus = await user.completeTask(task.task_id);
 
@@ -126,7 +128,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         toasterId.current,
         toastReceivedSettings("error", "Some error occured")
       );
-      setIsClaimingReward(false);
+      isClaimingReward.current = false;
       return;
     }
 
@@ -146,7 +148,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       if (reward.purple || reward.yellow) {
         // Если подписка была сделана, показываем модалку, награда получена
         toast.done(toasterId.current);
-        setIsClaimingReward(false);
+        isClaimingReward.current = false;
         setSelectedTask(task);
 
         // Задержка перед показом модалки
@@ -166,7 +168,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
       window.localStorage.setItem("tgTasks", JSON.stringify(tgTasks));
 
       window.open(task.link_to_join, "_blank");
-      setIsClaimingReward(false);
+      isClaimingReward.current = false;
 
       toast.update(toasterId.current, {
         ...toastReceivedSettings("info", "Check subscription again"),
@@ -186,7 +188,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         setShowModal(true);
       }, 5000);
 
-      setIsClaimingReward(false);
+      isClaimingReward.current = false;
       setTimeout(() => {
         window.open(task.link_to_join, "_blank");
       }, 100);
@@ -195,7 +197,7 @@ const TasksList: React.FC<{ user: User }> = ({ user }) => {
         toasterId.current,
         toastReceivedSettings("error", "Some error occured!")
       );
-      setIsClaimingReward(false);
+      isClaimingReward.current = false;
     }
   };
 
